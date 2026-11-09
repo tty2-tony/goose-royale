@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerald Royale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2b2118;
+    --panel: rgba(255, 250, 238, 0.94);
+    --panel-edge: #e2c991;
+    --accent: #f29c1f;
+    --accent-dark: #c4720a;
+    --blue: #3d7be0;
+    --red: #e04a3d;
+    --green: #3fae5a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #9fd8f0; }
+  body { font-family: 'Fredoka', 'Trebuchet MS', sans-serif; color: var(--ink); user-select: none; }
+  canvas { display: block; }
+  #ui { position: fixed; inset: 0; pointer-events: none; }
+  #ui > * { pointer-events: auto; }
+
+  #topbar { white-space: nowrap;
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 14px; align-items: center;
+    background: var(--panel); border: 3px solid var(--panel-edge); border-radius: 18px;
+    padding: 8px 16px; box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+  }
+  #title { font-weight: 700; font-size: 22px; letter-spacing: 0.5px; }
+  #title span { color: var(--accent-dark); }
+  .pill { background: #fff; border-radius: 12px; padding: 4px 12px; font-weight: 600; font-size: 18px; border: 2px solid var(--panel-edge); }
+  #gold b { color: #b8860b; }
+  #phase { min-width: 170px; text-align: center; }
+
+  button.big {
+    font-family: inherit; font-weight: 700; font-size: 20px; color: #fff; cursor: pointer;
+    background: var(--red); border: none; border-radius: 14px; padding: 8px 22px;
+    box-shadow: 0 4px 0 #9e2a20; transition: transform 0.05s;
+  }
+  button.big:hover { filter: brightness(1.08); }
+  button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #9e2a20; }
+  button.big:disabled { background: #aaa; box-shadow: 0 4px 0 #777; cursor: default; }
+
+  #help {
+    position: absolute; top: 80px; left: 14px; width: 230px;
+    background: var(--panel); border: 3px solid var(--panel-edge); border-radius: 16px;
+    padding: 10px 14px; font-size: 15px; line-height: 1.35;
+  }
+  #help h3 { margin: 0 0 4px; font-size: 17px; }
+  #help ol { margin: 0; padding-left: 20px; }
+
+  #info {
+    position: absolute; top: 80px; right: 14px; width: 240px; display: none;
+    background: var(--panel); border: 3px solid var(--panel-edge); border-radius: 16px;
+    padding: 10px 14px; font-size: 15px; line-height: 1.35;
+  }
+  #info h3 { margin: 0; font-size: 19px; }
+  #info .role { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); font-weight: 700; }
+  #info .stats { display: flex; gap: 10px; margin: 6px 0; font-weight: 600; }
+
+  #shop {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; align-items: stretch;
+    background: var(--panel); border: 3px solid var(--panel-edge); border-radius: 18px; padding: 10px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+  }
+  #shop .label { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 700; color: var(--accent-dark); text-align: center; letter-spacing: 2px; }
+  .card {
+    width: 118px; background: #fff; border: 3px solid #d9c49a; border-radius: 14px; padding: 8px;
+    cursor: pointer; text-align: center; transition: transform 0.08s, border-color 0.08s; position: relative;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .card.sold, .card.poor { opacity: 0.4; cursor: default; transform: none; border-color: #d9c49a; }
+  .card .swatch { width: 42px; height: 42px; border-radius: 50%; margin: 2px auto 4px; border: 3px solid rgba(0,0,0,0.15); position: relative; }
+  .card .swatch::after { content: ''; position: absolute; width: 14px; height: 8px; background: #f59a23; border-radius: 0 8px 8px 0; right: -9px; top: 13px; }
+  .card .name { font-weight: 700; font-size: 16px; }
+  .card .role { font-size: 12px; color: #8a7350; text-transform: uppercase; letter-spacing: 1px; }
+  .card .cost { position: absolute; top: 6px; right: 8px; font-weight: 700; color: #b8860b; }
+  .card .mini { font-size: 12px; margin-top: 2px; color: #5a4a35; }
+
+  #overlay {
+    position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+    background: rgba(30, 40, 60, 0.45);
+  }
+  #overlay .box {
+    background: var(--panel); border: 4px solid var(--panel-edge); border-radius: 22px; padding: 26px 36px;
+    text-align: center; max-width: 420px;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: 40px; }
+  #overlay p { margin: 0 0 16px; font-size: 18px; }
+
+  .hpbar { position: absolute; width: 46px; height: 7px; background: rgba(0,0,0,0.45); border-radius: 4px; pointer-events: none; transform: translate(-50%, -50%); overflow: hidden; }
+  .hpbar i { display: block; height: 100%; border-radius: 4px; transition: width 0.15s; }
+  .hpbar.player i { background: #4fd16b; }
+  .hpbar.enemy i { background: #ff5b4a; }
+  .tag { position: absolute; transform: translate(-50%, -100%); font-weight: 700; font-size: 13px; color: #fff; text-shadow: 0 1px 2px #000, 0 0 3px #000; pointer-events: none; white-space: nowrap; }
+  .float { position: absolute; transform: translate(-50%, -50%); font-weight: 700; font-size: 18px; pointer-events: none; text-shadow: 0 2px 0 rgba(0,0,0,0.45); animation: floatUp 0.9s ease-out forwards; }
+  .float.dmg { color: #fff; }
+  .float.heal { color: #7dff95; }
+  .float.big { font-size: 24px; color: #ffd84a; }
+  @keyframes floatUp { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -40px; } }
+  #hud { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="ui">
+  <div id="hud"></div>
+  <div id="topbar">
+    <div id="title">Gerald <span>Royale</span></div>
+    <div class="pill" id="gold">Gold: <b>10</b></div>
+    <div class="pill" id="phase">Build your flock!</div>
+    <button class="big" id="fightBtn">FIGHT!</button>
+    <button class="big" id="speedBtn" style="background:#3d7be0;box-shadow:0 4px 0 #2a56a0;font-size:16px">Speed x1</button>
+  </div>
+  <div id="help">
+    <h3>How to play</h3>
+    <ol>
+      <li>Buy geese from the shop.</li>
+      <li>Drag them around on your side (the blue half).</li>
+      <li>Press <b>FIGHT!</b> and watch them battle.</li>
+    </ol>
+    <div style="margin-top:6px;font-size:13px;color:#6b5a40">Right-click a goose to sell it back. Point at any goose to see what it does.</div>
+  </div>
+  <div id="info"></div>
+  <div id="shop"></div>
+  <div id="overlay"><div class="box"><h1 id="ovTitle"></h1><p id="ovText"></p><button class="big" id="againBtn">Play again</button></div></div>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+// ---------------------------------------------------------------------------
+// Goose types
+// ---------------------------------------------------------------------------
+const TYPES = {
+  gerald: {
+    name: 'Gerald', role: 'Hero', hp: 700, atk: 55, range: 1, cd: 1.0, speed: 1.6, cost: 0, scale: 1.2,
+    color: 0xffffff, hero: true,
+    desc: 'The leader of your flock! Every few seconds he lets out a MIGHTY HONK that hits every enemy near him.',
+  },
+  hiss: {
+    name: 'Captain Hiss', role: 'Enemy Hero', hp: 700, atk: 55, range: 1, cd: 1.0, speed: 1.6, cost: 0, scale: 1.2,
+    color: 0x3a3a44, hero: true,
+    desc: 'The grumpy boss of the rival flock. He has a mighty honk too, so watch out!',
+  },
+  brute: {
+    name: 'Brute', role: 'Tank', hp: 600, atk: 30, range: 1, cd: 1.2, speed: 1.2, cost: 3, scale: 1.25,
+    color: 0x9aa0a6, desc: 'A big, tough goose in a helmet. Put him in front to protect the others.',
+  },
+  honker: {
+    name: 'Honker', role: 'Ranged', hp: 280, atk: 42, range: 3.6, cd: 1.1, speed: 1.3, cost: 3, scale: 1.0,
+    color: 0xf4f1e8, projectile: 'honk',
+    desc: 'Blasts sound waves from far away with a megaphone. Keep her in the back row.',
+  },
+  sprinter: {
+    name: 'Sprinter', role: 'Fast', hp: 300, atk: 26, range: 1, cd: 0.55, speed: 2.8, cost: 2, scale: 0.85,
+    color: 0xb07a45, desc: 'Super speedy! Runs straight at enemies and pecks really fast.',
+  },
+  nurse: {
+    name: 'Nurse', role: 'Healer', hp: 300, atk: 14, range: 3.2, cd: 1.4, speed: 1.3, cost: 3, scale: 0.95,
+    color: 0xffffff, projectile: 'heal', heal: 40,
+    desc: 'Heals the most hurt goose on her team. When nobody is hurt, she throws small pebbles.',
+  },
+};
+const SHOP_POOL = ['brute', 'honker', 'sprinter', 'nurse'];
+const START_GOLD = 10;
+const COLS = 8, ROWS = 6, T = 1; // rows 0-2 player, 3-5 enemy
+const HERO_HONK_CD = 5, HERO_HONK_RADIUS = 1.8, HERO_HONK_DMG = 60;
+
+// ---------------------------------------------------------------------------
+// Scene
+// ---------------------------------------------------------------------------
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9fd8f0);
+scene.fog = new THREE.Fog(0x9fd8f0, 22, 45);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+const camTarget = new THREE.Vector3(0, 0, 0.9);
+let camAngle = 0, camDist = 9.6, camHeight = 7.6;
+function placeCamera() {
+  camera.position.set(Math.sin(camAngle) * camDist, camHeight, Math.cos(camAngle) * camDist);
+  camera.lookAt(camTarget);
+}
+placeCamera();
+
+scene.add(new THREE.HemisphereLight(0xdff4ff, 0x6b8f3a, 1.4));
+const sun = new THREE.DirectionalLight(0xfff2d6, 2.2);
+sun.position.set(-6, 12, 6);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 30 });
+scene.add(sun);
+
+// Toon shading ramp
+const toonGrad = new THREE.DataTexture(new Uint8Array([90, 170, 255]), 3, 1, THREE.RedFormat);
+toonGrad.minFilter = toonGrad.magFilter = THREE.NearestFilter;
+toonGrad.needsUpdate = true;
+const toon = (color, extra = {}) => new THREE.MeshToonMaterial({ color, gradientMap: toonGrad, ...extra });
+
+// Ground, pond, island
+const ground = new THREE.Mesh(new THREE.CircleGeometry(40, 48), toon(0x7cc356));
+ground.rotation.x = -Math.PI / 2; ground.position.y = -0.3; ground.receiveShadow = true;
+scene.add(ground);
+const pond = new THREE.Mesh(new THREE.CircleGeometry(9.5, 48), toon(0x4fa8d8, { transparent: true, opacity: 0.9 }));
+pond.rotation.x = -Math.PI / 2; pond.position.y = -0.25; pond.scale.set(1, 0.85, 1);
+scene.add(pond);
+const island = new THREE.Mesh(new THREE.BoxGeometry(COLS * T + 0.8, 0.4, ROWS * T + 0.8), toon(0xc9a46a));
+island.position.y = -0.21; island.receiveShadow = true;
+scene.add(island);
+
+// Board tiles
+const tiles = [];
+for (let r = 0; r < ROWS; r++) {
+  for (let c = 0; c < COLS; c++) {
+    const player = r < 3;
+    const light = (r + c) % 2 === 0;
+    const base = new THREE.Color(player ? (light ? 0x9fdc7a : 0x8ccf68) : (light ? 0xb9d97a : 0xa8cc68));
+    const mat = new THREE.MeshLambertMaterial({ color: base });
+    const t = new THREE.Mesh(new THREE.BoxGeometry(T * 0.96, 0.1, T * 0.96), mat);
+    const p = tileToWorld(c, r);
+    t.position.set(p.x, -0.04, p.z);
+    t.receiveShadow = true;
+    t.userData = { c, r, base };
+    scene.add(t);
+    tiles.push(t);
+  }
+}
+// Team zone stripes along the board edges
+for (const [z, col] of [[3.15, 0x3d7be0], [-3.15, 0xe04a3d]]) {
+  const s = new THREE.Mesh(new THREE.BoxGeometry(COLS * T + 0.8, 0.12, 0.25), toon(col));
+  s.position.set(0, 0.0, z); scene.add(s);
+}
+
+// Scenery: trees, rocks, lily pads, clouds
+function tree(x, z, s = 1) {
+  const g = new THREE.Group();
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 0.8, 6), toon(0x8a5a32));
+  trunk.position.y = 0.4;
+  const top1 = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.4, 7), toon(0x3f9a4a));
+  top1.position.y = 1.4;
+  const top2 = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.1, 7), toon(0x4fb35a));
+  top2.position.y = 2.0;
+  g.add(trunk, top1, top2);
+  g.traverse(m => { if (m.isMesh) m.castShadow = true; });
+  g.position.set(x, -0.3, z); g.scale.setScalar(s);
+  scene.add(g);
+}
+[[-11, -6, 1.3], [-12, 1, 1], [-10.5, 7, 1.2], [11, -5, 1.1], [12, 2, 1.4], [10, 8, 0.9], [-4, -11, 1.2], [3, -12, 1.5], [8, -10, 1]]
+  .forEach(([x, z, s]) => tree(x, z, s));
+for (let i = 0; i < 9; i++) {
+  const a = (i / 9) * Math.PI * 2 + 0.3;
+  const pad = new THREE.Mesh(new THREE.CircleGeometry(0.35, 12, 0.3, Math.PI * 1.8), toon(0x5fbf5f));
+  pad.rotation.x = -Math.PI / 2; pad.rotation.z = a;
+  pad.position.set(Math.cos(a) * 7.6, -0.23, Math.sin(a) * 6.3);
+  scene.add(pad);
+}
+const clouds = [];
+for (let i = 0; i < 6; i++) {
+  const g = new THREE.Group();
+  for (let j = 0; j < 4; j++) {
+    const puff = new THREE.Mesh(new THREE.SphereGeometry(0.8 + Math.random() * 0.5, 10, 8), toon(0xffffff));
+    puff.position.set(j * 0.9 - 1.3, Math.random() * 0.3, Math.random() * 0.4);
+    g.add(puff);
+  }
+  g.position.set(-25 + i * 10, 9 + Math.random() * 3, -18 - Math.random() * 6);
+  scene.add(g); clouds.push(g);
+}
+
+// ---------------------------------------------------------------------------
+// Goose models
+// ---------------------------------------------------------------------------
+function makeGooseModel(type, team) {
+  const def = TYPES[type];
+  const g = new THREE.Group();
+  const mats = [];
+  const mat = (c, extra) => { const m = toon(c, extra); mats.push(m); return m; };
+  const mesh = (geo, m, parent, pos, rot) => {
+    const o = new THREE.Mesh(geo, m);
+    if (pos) o.position.set(...pos);
+    if (rot) o.rotation.set(...rot);
+    o.castShadow = true;
+    (parent || g).add(o);
+    return o;
+  };
+  const bodyM = mat(def.color);
+  const orange = mat(0xf59a23);
+  const black = mat(type === 'hiss' ? 0xff3322 : 0x111111);
+
+  // Body and tail
+  const body = mesh(new THREE.SphereGeometry(0.32, 16, 12), bodyM, g, [0, 0.42, 0]);
+  body.scale.set(1, 0.85, 1.35);
+  mesh(new THREE.ConeGeometry(0.13, 0.28, 8), bodyM, g, [0, 0.52, -0.43], [-Math.PI / 2 + 0.7, 0, 0]);
+
+  // Neck + head (pivot so the whole neck can peck)
+  const neck = new THREE.Group();
+  neck.position.set(0, 0.52, 0.28);
+  neck.rotation.x = 0.2;
+  g.add(neck);
+  const neckColor = type === 'gerald' || type === 'nurse' || type === 'honker' ? def.color : def.color;
+  mesh(new THREE.CylinderGeometry(0.075, 0.09, 0.45, 10), mat(neckColor), neck, [0, 0.22, 0]);
+  mesh(new THREE.SphereGeometry(0.13, 14, 10), bodyM, neck, [0, 0.47, 0.03]);
+  mesh(new THREE.ConeGeometry(0.05, 0.17, 8), orange, neck, [0, 0.45, 0.2], [Math.PI / 2, 0, 0]);
+  mesh(new THREE.SphereGeometry(0.026, 6, 6), black, neck, [0.085, 0.51, 0.1]);
+  mesh(new THREE.SphereGeometry(0.026, 6, 6), black, neck, [-0.085, 0.51, 0.1]);
+
+  // Wings on pivots for flapping
+  const wings = [];
+  for (const side of [1, -1]) {
+    const pivot = new THREE.Group();
+    pivot.position.set(side * 0.26, 0.5, 0);
+    g.add(pivot);
+    const w = mesh(new THREE.SphereGeometry(0.22, 12, 8), mat(new THREE.Color(def.color).multiplyScalar(0.88).getHex()), pivot, [side * 0.05, -0.04, -0.04]);
+    w.scale.set(0.3, 0.6, 1.15);
+    wings.push({ pivot, side });
+  }
+
+  // Legs and feet
+  for (const side of [1, -1]) {
+    mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.2, 6), orange, g, [side * 0.12, 0.1, 0.05]);
+    mesh(new THREE.BoxGeometry(0.13, 0.025, 0.16), orange, g, [side * 0.12, 0.012, 0.1]);
+  }
+
+  // Accessories
+  const headTop = [0, 0.58, 0.03];
+  if (type === 'gerald') {
+    const gold = mat(0xffc93c, { emissive: 0x553300 });
+    mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 10), gold, neck, headTop);
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      mesh(new THREE.ConeGeometry(0.03, 0.08, 5), gold, neck, [Math.sin(a) * 0.085, 0.66, 0.03 + Math.cos(a) * 0.085]);
+    }
+    const cape = mesh(new THREE.PlaneGeometry(0.5, 0.55), mat(0x2f6fe0, { side: THREE.DoubleSide }), g, [0, 0.48, -0.2], [0.35, 0, 0]);
+    cape.scale.set(1.1, 1, 1);
+  } else if (type === 'hiss') {
+    const dark = mat(0x111111);
+    mesh(new THREE.CylinderGeometry(0.21, 0.21, 0.02, 16), dark, neck, [0, 0.57, 0.03]);
+    mesh(new THREE.CylinderGeometry(0.1, 0.13, 0.12, 12), dark, neck, [0, 0.64, 0.03]);
+    mesh(new THREE.BoxGeometry(0.05, 0.05, 0.01), mat(0xffffff), neck, [0, 0.64, 0.155]);
+    mesh(new THREE.PlaneGeometry(0.5, 0.55), mat(0x7a2a9a, { side: THREE.DoubleSide }), g, [0, 0.48, -0.2], [0.35, 0, 0]);
+  } else if (type === 'brute') {
+    const steel = mat(0x5d6670);
+    mesh(new THREE.SphereGeometry(0.15, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), steel, neck, [0, 0.49, 0.03]);
+    mesh(new THREE.ConeGeometry(0.03, 0.1, 6), steel, neck, [0, 0.67, 0.03]);
+  } else if (type === 'honker') {
+    mesh(new THREE.CylinderGeometry(0.1, 0.035, 0.2, 12, 1, true), mat(0xe03c3c, { side: THREE.DoubleSide }), neck, [0, 0.45, 0.27], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.TorusGeometry(0.09, 0.025, 6, 14), mat(0xe03c3c), neck, [0, 0.27, 0.02], [Math.PI / 2 - 0.2, 0, 0]);
+  } else if (type === 'sprinter') {
+    mesh(new THREE.TorusGeometry(0.13, 0.025, 6, 16), mat(0xe8352e), neck, [0, 0.52, 0.03], [Math.PI / 2, 0, 0]);
+    const stripe = mesh(new THREE.BoxGeometry(0.06, 0.02, 0.6), mat(0xffffff), g, [0, 0.68, 0]);
+    stripe.rotation.x = 0.05;
+  } else if (type === 'nurse') {
+    mesh(new THREE.BoxGeometry(0.17, 0.08, 0.13), mat(0xffffff), neck, [0, 0.61, 0.02]);
+    const red = mat(0xe8352e);
+    mesh(new THREE.BoxGeometry(0.07, 0.02, 0.005), red, neck, [0, 0.61, 0.088]);
+    mesh(new THREE.BoxGeometry(0.02, 0.06, 0.005), red, neck, [0, 0.61, 0.088]);
+  }
+
+  // Team ring
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(0.34, 0.44, 28),
+    new THREE.MeshBasicMaterial({ color: team === 'player' ? 0x3d7be0 : 0xe04a3d, side: THREE.DoubleSide })
+  );
+  ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02;
+  g.add(ring);
+
+  g.scale.setScalar(def.scale);
+  return { group: g, neck, wings, mats };
+}
+
+// ---------------------------------------------------------------------------
+// Units
+// ---------------------------------------------------------------------------
+let units = [];
+let uid = 0;
+const hud = document.getElementById('hud');
+
+function tileToWorld(c, r) { return { x: (c - (COLS - 1) / 2) * T, z: ((ROWS - 1) / 2 - r) * T }; }
+function worldToTile(x, z) {
+  const c = Math.round(x / T + (COLS - 1) / 2);
+  const r = Math.round((ROWS - 1) / 2 - z / T);
+  if (c < 0 || c >= COLS || r < 0 || r >= ROWS) return null;
+  return { c, r };
+}
+
+function createUnit(type, team, c, r) {
+  const def = TYPES[type];
+  const model = makeGooseModel(type, team);
+  const u = {
+    id: uid++, type, team, def, ...model,
+    c, r, hp: def.hp, maxHp: def.hp, atkTimer: Math.random() * 0.4, honkTimer: HERO_HONK_CD * 0.6,
+    dead: false, deathT: 0, flashT: 0, peckT: 0, flapT: 0, walkT: Math.random() * 10,
+    radius: 0.34 * def.scale, facing: team === 'player' ? Math.PI : 0,
+  };
+  model.group.traverse(o => { o.userData.unit = u; });
+  const p = tileToWorld(c, r);
+  model.group.position.set(p.x, 0, p.z);
+  model.group.rotation.y = u.facing;
+  scene.add(model.group);
+
+  u.bar = document.createElement('div');
+  u.bar.className = 'hpbar ' + team;
+  u.bar.innerHTML = '<i style="width:100%"></i>';
+  hud.appendChild(u.bar);
+  if (def.hero) {
+    u.tag = document.createElement('div');
+    u.tag.className = 'tag';
+    u.tag.textContent = def.name;
+    hud.appendChild(u.tag);
+  }
+  units.push(u);
+  return u;
+}
+
+function removeUnit(u) {
+  scene.remove(u.group);
+  u.bar.remove();
+  if (u.tag) u.tag.remove();
+  units = units.filter(x => x !== u);
+}
+
+function snapToTile(u) {
+  const p = tileToWorld(u.c, u.r);
+  u.group.position.set(p.x, 0, p.z);
+}
+
+const unitAt = (c, r) => units.find(u => !u.dead && u.c === c && u.r === r);
+
+// ---------------------------------------------------------------------------
+// Game state, shop, enemy AI team
+// ---------------------------------------------------------------------------
+let phase = 'setup'; // setup | battle | done
+let gold = START_GOLD;
+let shop = [];
+let battleTime = 0, endTimer = 0;
+
+const goldEl = document.querySelector('#gold b');
+const phaseEl = document.getElementById('phase');
+const fightBtn = document.getElementById('fightBtn');
+const shopEl = document.getElementById('shop');
+const infoEl = document.getElementById('info');
+const overlay = document.getElementById('overlay');
+
+function hex(c) { return '#' + new THREE.Color(c).getHexString(); }
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function rollShop() {
+  shop = Array.from({ length: 5 }, () => ({ type: pick(SHOP_POOL), sold: false }));
+  renderShop();
+}
+
+function renderShop() {
+  goldEl.textContent = gold;
+  shopEl.innerHTML = '<div class="label">SHOP</div>';
+  shop.forEach((item, i) => {
+    const d = TYPES[item.type];
+    const el = document.createElement('div');
+    el.className = 'card' + (item.sold ? ' sold' : (gold < d.cost || phase !== 'setup' ? ' poor' : ''));
+    el.innerHTML = `<div class="cost">${d.cost}g</div>
+      <div class="swatch" style="background:${hex(d.color)}"></div>
+      <div class="name">${d.name}</div><div class="role">${d.role}</div>
+      <div class="mini">HP ${d.hp} &middot; ATK ${d.atk}</div>`;
+    el.title = d.desc;
+    el.onclick = () => buy(i);
+    el.onmouseenter = () => showInfo(item.type);
+    el.onmouseleave = () => showInfo(null);
+    shopEl.appendChild(el);
+  });
+}
+
+function freeTileFor(type) {
+  const prefRows = TYPES[type].range > 1 ? [0, 1, 2] : [2, 1, 0];
+  const colOrder = [3, 4, 2, 5, 1, 6, 0, 7];
+  for (const r of prefRows) for (const c of colOrder) if (!unitAt(c, r)) return { c, r };
+  return null;
+}
+
+function buy(i) {
+  const item = shop[i];
+  if (phase !== 'setup' || item.sold) return;
+  const d = TYPES[item.type];
+  if (gold < d.cost) { flashPhase('Not enough gold!'); return; }
+  const spot = freeTileFor(item.type);
+  if (!spot) { flashPhase('No room on your side!'); return; }
+  gold -= d.cost;
+  item.sold = true;
+  const u = createUnit(item.type, 'player', spot.c, spot.r);
+  u.group.position.y = 2; // drop-in
+  u.dropT = 0.4;
+  renderShop();
+}
+
+function sell(u) {
+  if (phase !== 'setup' || u.team !== 'player' || u.def.hero) return;
+  gold += u.def.cost;
+  removeUnit(u);
+  renderShop();
+}
+
+let phaseFlashTimer = null;
+function flashPhase(msg) {
+  phaseEl.textContent = msg;
+  clearTimeout(phaseFlashTimer);
+  phaseFlashTimer = setTimeout(updatePhaseText, 1300);
+}
+function updatePhaseText() {
+  phaseEl.textContent = phase === 'setup' ? 'Build your flock!' : phase === 'battle' ? 'Battle!' : 'Battle over';
+}
+
+// A simple AI: spend the same budget at random, tanks and sprinters in front,
+// ranged and healers in the back, the hero in the middle.
+function buildEnemyTeam() {
+  createUnit('hiss', 'enemy', 3 + Math.round(Math.random()), 4);
+  let budget = START_GOLD;
+  const picks = [];
+  while (true) {
+    const options = SHOP_POOL.filter(t => TYPES[t].cost <= budget);
+    if (!options.length) break;
+    const t = pick(options);
+    picks.push(t); budget -= TYPES[t].cost;
+  }
+  for (const t of picks) {
+    const rows = TYPES[t].range > 1 ? [5, 4] : [3, 4];
+    let placed = false;
+    for (const r of rows) {
+      const cols = [0, 1, 2, 3, 4, 5, 6, 7].sort(() => Math.random() - 0.5);
+      for (const c of cols) if (!unitAt(c, r)) { createUnit(t, 'enemy', c, r); placed = true; break; }
+      if (placed) break;
+    }
+  }
+}
+
+function newGame() {
+  for (const u of [...units]) removeUnit(u);
+  for (const p of [...projectiles]) { scene.remove(p.mesh); }
+  projectiles.length = 0;
+  phase = 'setup';
+  gold = START_GOLD;
+  battleTime = 0; endTimer = 0;
+  createUnit('gerald', 'player', 3, 1);
+  buildEnemyTeam();
+  rollShop();
+  updatePhaseText();
+  fightBtn.disabled = false;
+  overlay.style.display = 'none';
+}
+
+fightBtn.onclick = () => {
+  if (phase !== 'setup') return;
+  phase = 'battle';
+  fightBtn.disabled = true;
+  updatePhaseText();
+  renderShop();
+  for (const u of units) u.home = { c: u.c, r: u.r };
+};
+document.getElementById('againBtn').onclick = newGame;
+let gameSpeed = 1;
+const speedBtn = document.getElementById('speedBtn');
+speedBtn.onclick = () => { gameSpeed = gameSpeed === 1 ? 2 : 1; speedBtn.textContent = 'Speed x' + gameSpeed; };
+
+function showInfo(type, u) {
+  if (phase === 'done') type = null;
+  if (!type) { infoEl.style.display = 'none'; return; }
+  const d = TYPES[type];
+  const hpText = u ? `${Math.max(0, Math.ceil(u.hp))}/${u.maxHp}` : d.hp;
+  infoEl.innerHTML = `<div class="role">${d.role}${u ? (u.team === 'player' ? ' &middot; your flock' : ' &middot; rival flock') : ''}</div>
+    <h3>${d.name}</h3>
+    <div class="stats"><span>HP ${hpText}</span><span>ATK ${d.atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
+    <div>${d.desc}</div>`;
+  infoEl.style.display = 'block';
+}
+
+// ---------------------------------------------------------------------------
+// Input: drag geese around during setup, right-click to sell, right-drag to orbit
+// ---------------------------------------------------------------------------
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+let dragging = null, hoverTile = null, orbit = null;
+
+function setMouse(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+}
+function unitUnderMouse() {
+  const hits = raycaster.intersectObjects(units.filter(u => !u.dead).map(u => u.group), true);
+  return hits.length ? hits[0].object.userData.unit : null;
+}
+function setTileHighlight(t) {
+  if (hoverTile) hoverTile.material.color.copy(hoverTile.userData.base);
+  hoverTile = t;
+  if (t) t.material.color.set(t.userData.r < 3 ? 0xfff27a : 0xff9a8a);
+}
+
+const canvas = renderer.domElement;
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+canvas.addEventListener('pointerdown', e => {
+  setMouse(e);
+  const u = unitUnderMouse();
+  if (e.button === 2) {
+    if (u && u.team === 'player' && phase === 'setup' && !u.def.hero) sell(u);
+    else orbit = { x: e.clientX, angle: camAngle };
+    return;
+  }
+  if (e.button !== 0) return;
+  if (u && u.team === 'player' && phase === 'setup') {
+    dragging = u;
+    canvas.setPointerCapture(e.pointerId);
+  }
+});
+canvas.addEventListener('pointermove', e => {
+  setMouse(e);
+  if (orbit) {
+    camAngle = Math.max(-0.9, Math.min(0.9, orbit.angle - (e.clientX - orbit.x) * 0.005));
+    placeCamera();
+    return;
+  }
+  if (dragging) {
+    const p = new THREE.Vector3();
+    if (raycaster.ray.intersectPlane(groundPlane, p)) {
+      dragging.group.position.set(p.x, 0.45, p.z);
+      const t = worldToTile(p.x, p.z);
+      setTileHighlight(t && t.r < 3 ? tiles[t.r * COLS + t.c] : null);
+    }
+    canvas.style.cursor = 'grabbing';
+    return;
+  }
+  const u = unitUnderMouse();
+  canvas.style.cursor = u && u.team === 'player' && phase === 'setup' ? 'grab' : 'default';
+  if (u) showInfo(u.type, u); else showInfo(null);
+});
+canvas.addEventListener('pointerup', e => {
+  if (orbit) { orbit = null; return; }
+  if (!dragging) return;
+  const u = dragging;
+  dragging = null;
+  const t = worldToTile(u.group.position.x, u.group.position.z);
+  if (t && t.r < 3) {
+    const other = unitAt(t.c, t.r);
+    if (other && other !== u) { other.c = u.c; other.r = u.r; snapToTile(other); }
+    u.c = t.c; u.r = t.r;
+  }
+  snapToTile(u);
+  setTileHighlight(null);
+  canvas.style.cursor = 'grab';
+});
+canvas.addEventListener('wheel', e => {
+  camDist = Math.max(8, Math.min(15, camDist + e.deltaY * 0.01));
+  camHeight = camDist * 0.79;
+  placeCamera();
+}, { passive: true });
+
+// ---------------------------------------------------------------------------
+// Battle simulation
+// ---------------------------------------------------------------------------
+const projectiles = [];
+const effects = [];
+const tmpV = new THREE.Vector3();
+
+const alive = team => units.filter(u => !u.dead && u.team === team);
+const dist = (a, b) => Math.hypot(a.group.position.x - b.group.position.x, a.group.position.z - b.group.position.z);
+function nearest(u, list) {
+  let best = null, bd = Infinity;
+  for (const o of list) { const d = dist(u, o); if (d < bd) { bd = d; best = o; } }
+  return best;
+}
+
+function damage(target, amount, opts = {}) {
+  if (target.dead) return;
+  target.hp -= amount;
+  target.flashT = 0.1;
+  floatText(target, '-' + Math.round(amount), opts.big ? 'big' : 'dmg');
+  if (target.hp <= 0) { target.hp = 0; target.dead = true; target.deathT = 0; target.bar.style.display = 'none'; if (target.tag) target.tag.style.display = 'none'; }
+}
+function heal(target, amount) {
+  if (target.dead) return;
+  const before = target.hp;
+  target.hp = Math.min(target.maxHp, target.hp + amount);
+  floatText(target, '+' + Math.round(target.hp - before), 'heal');
+}
+
+function floatText(u, text, cls) {
+  const s = project(u, 1.4);
+  if (!s) return;
+  const el = document.createElement('div');
+  el.className = 'float ' + cls;
+  el.textContent = text;
+  el.style.left = (s.x + (Math.random() - 0.5) * 20) + 'px';
+  el.style.top = s.y + 'px';
+  hud.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+function project(u, h) {
+  tmpV.set(u.group.position.x, u.group.position.y + h * u.def.scale, u.group.position.z).project(camera);
+  if (tmpV.z > 1) return null;
+  return { x: (tmpV.x * 0.5 + 0.5) * window.innerWidth, y: (-tmpV.y * 0.5 + 0.5) * window.innerHeight };
+}
+
+function spawnProjectile(from, to, kind) {
+  let mesh;
+  if (kind === 'honk') {
+    mesh = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.035, 6, 16), new THREE.MeshBasicMaterial({ color: 0xfff6c0 }));
+  } else if (kind === 'heal') {
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), new THREE.MeshBasicMaterial({ color: 0x6dff8a }));
+  } else {
+    mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06), toon(0x9a8f80));
+  }
+  mesh.position.set(from.group.position.x, 0.9 * from.def.scale, from.group.position.z);
+  scene.add(mesh);
+  projectiles.push({ mesh, from, to, kind, speed: kind === 'honk' ? 7 : 6 });
+}
+
+function honkRing(u, color = 0xffe066) {
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.2, 0.32, 32), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.set(u.group.position.x, 0.15, u.group.position.z);
+  scene.add(ring);
+  effects.push({ mesh: ring, t: 0, life: 0.5, grow: HERO_HONK_RADIUS / 0.3 });
+}
+
+function updateUnitAI(u, dt) {
+  const enemies = alive(u.team === 'player' ? 'enemy' : 'player');
+  const allies = alive(u.team);
+  if (!enemies.length) return;
+  const def = u.def;
+  u.atkTimer -= dt;
+
+  // Heroes: Mighty Honk
+  if (def.hero) {
+    u.honkTimer -= dt;
+    const close = enemies.filter(e => dist(u, e) <= HERO_HONK_RADIUS);
+    if (u.honkTimer <= 0 && close.length) {
+      u.honkTimer = HERO_HONK_CD;
+      honkRing(u, u.team === 'player' ? 0xffe066 : 0xc070ff);
+      u.flapT = 0.6;
+      for (const e of close) damage(e, HERO_HONK_DMG, { big: true });
+      floatText(u, 'HONK!', 'big');
+    }
+  }
+
+  // Healer picks the most hurt ally if any
+  let target = null, isHeal = false;
+  if (def.heal) {
+    const hurt = allies.filter(a => a.hp < a.maxHp - 5).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
+    if (hurt.length) { target = hurt[0]; isHeal = true; }
+  }
+  if (!target) target = nearest(u, enemies);
+
+  const d = dist(u, target);
+  const reach = def.range * T + (def.range > 1 ? 0 : u.radius * 0.5);
+  const dx = target.group.position.x - u.group.position.x;
+  const dz = target.group.position.z - u.group.position.z;
+  if (target !== u) u.facing = Math.atan2(dx, dz);
+
+  if (d > reach) {
+    const step = Math.min(def.speed * dt, d - reach + 0.01);
+    u.group.position.x += (dx / d) * step;
+    u.group.position.z += (dz / d) * step;
+    u.walkT += dt * def.speed * 6;
+  } else if (u.atkTimer <= 0) {
+    u.atkTimer = def.cd;
+    if (isHeal) { spawnProjectile(u, target, 'heal'); u.flapT = 0.3; }
+    else if (def.projectile === 'honk') { spawnProjectile(u, target, 'honk'); u.peckT = 0.25; }
+    else if (def.heal) { spawnProjectile(u, target, 'pebble'); u.peckT = 0.25; }
+    else { u.peckT = 0.25; damage(target, def.atk * (0.9 + Math.random() * 0.2)); }
+  }
+}
+
+function separate() {
+  const live = units.filter(u => !u.dead);
+  for (let i = 0; i < live.length; i++) {
+    for (let j = i + 1; j < live.length; j++) {
+      const a = live[i].group.position, b = live[j].group.position;
+      const dx = b.x - a.x, dz = b.z - a.z;
+      const d = Math.hypot(dx, dz) || 0.001;
+      const min = live[i].radius + live[j].radius;
+      if (d < min) {
+        const push = (min - d) / 2;
+        a.x -= (dx / d) * push; a.z -= (dz / d) * push;
+        b.x += (dx / d) * push; b.z += (dz / d) * push;
+      }
+    }
+  }
+  const hx = (COLS * T) / 2 - 0.2, hz = (ROWS * T) / 2 - 0.2;
+  for (const u of live) {
+    u.group.position.x = Math.max(-hx, Math.min(hx, u.group.position.x));
+    u.group.position.z = Math.max(-hz, Math.min(hz, u.group.position.z));
+  }
+}
+
+function updateProjectiles(dt) {
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    const p = projectiles[i];
+    const tp = p.to.group.position;
+    const target = new THREE.Vector3(tp.x, 0.6 * p.to.def.scale, tp.z);
+    const dir = target.sub(p.mesh.position);
+    const d = dir.length();
+    const step = p.speed * dt;
+    if (d <= step || p.to.dead) {
+      scene.remove(p.mesh);
+      projectiles.splice(i, 1);
+      if (p.to.dead) continue;
+      if (p.kind === 'heal') heal(p.to, p.from.def.heal);
+      else damage(p.to, p.from.def.atk * (0.9 + Math.random() * 0.2));
+      continue;
+    }
+    p.mesh.position.addScaledVector(dir.normalize(), step);
+    if (p.kind === 'honk') { p.mesh.lookAt(tp.x, p.mesh.position.y, tp.z); p.mesh.scale.multiplyScalar(1 + dt * 1.5); }
+    else p.mesh.rotation.x += dt * 10;
+  }
+}
+
+function endBattle() {
+  phase = 'done';
+  const p = alive('player').length, e = alive('enemy').length;
+  let win;
+  if (p && e) {
+    const frac = team => alive(team).reduce((s, u) => s + u.hp, 0) / units.filter(u => u.team === team).reduce((s, u) => s + u.maxHp, 0);
+    win = frac('player') >= frac('enemy');
+  } else win = p > 0;
+  document.getElementById('ovTitle').textContent = win ? 'Victory!' : 'Defeat...';
+  document.getElementById('ovTitle').style.color = win ? '#2f9e4a' : '#c0392b';
+  document.getElementById('ovText').textContent = win
+    ? `Gerald's flock wins! ${p} ${p === 1 ? 'goose is' : 'geese are'} still standing.`
+    : 'Captain Hiss wins this time. Try a different flock or a new formation!';
+  overlay.style.display = 'flex';
+  showInfo(null);
+  updatePhaseText();
+}
+
+// ---------------------------------------------------------------------------
+// Main loop
+// ---------------------------------------------------------------------------
+const clock = new THREE.Clock();
+let elapsed = 0;
+function tick() {
+  const realDt = Math.min(clock.getDelta(), 0.05);
+  const dt = phase === 'battle' ? realDt * gameSpeed : realDt;
+  elapsed += dt;
+
+  if (phase === 'battle') {
+    battleTime += dt;
+    for (const u of units) if (!u.dead) updateUnitAI(u, dt);
+    separate();
+    updateProjectiles(dt);
+    const over = !alive('player').length || !alive('enemy').length || battleTime > 60;
+    if (over) { endTimer += dt; if (endTimer > 1.2) endBattle(); }
+  }
+
+  // Animate geese
+  for (const u of [...units]) {
+    const g = u.group;
+    if (u.dead) {
+      u.deathT += dt;
+      g.rotation.z = Math.min(Math.PI / 2, u.deathT * 4);
+      g.position.y = -u.deathT * 0.3;
+      const s = Math.max(0.01, 1 - u.deathT * 0.9) * u.def.scale;
+      g.scale.setScalar(s);
+      if (u.deathT > 1.1) removeUnit(u);
+      continue;
+    }
+    // Turn smoothly toward the facing angle
+    let diff = u.facing - g.rotation.y;
+    diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+    g.rotation.y += diff * Math.min(1, dt * 10);
+
+    if (u.dropT !== undefined) {
+      u.dropT -= dt;
+      g.position.y = Math.max(0, u.dropT * 5);
+      if (u.dropT <= 0) { delete u.dropT; g.position.y = 0; }
+    } else if (u !== dragging) {
+      g.position.y = Math.abs(Math.sin(u.walkT)) * 0.06;
+      if (phase !== 'battle') u.walkT += dt * 1.5;
+    }
+
+    u.peckT = Math.max(0, u.peckT - dt);
+    u.neck.rotation.x = 0.2 + Math.sin((u.peckT / 0.25) * Math.PI) * 0.9;
+    u.flapT = Math.max(0, u.flapT - dt);
+    const flap = u.flapT > 0 ? Math.sin(elapsed * 30) * 0.7 : Math.sin(elapsed * 2 + u.id) * 0.05;
+    for (const w of u.wings) w.pivot.rotation.z = w.side * (flap + (u.flapT > 0 ? 0.6 : 0));
+
+    u.flashT = Math.max(0, u.flashT - dt);
+    const fl = 0x661a00;
+    for (const m of u.mats) { if (!m.userData.baseEmissive) m.userData.baseEmissive = m.emissive.getHex(); m.emissive.setHex(u.flashT > 0 ? fl : m.userData.baseEmissive); }
+  }
+
+  for (let i = effects.length - 1; i >= 0; i--) {
+    const f = effects[i];
+    f.t += dt;
+    const k = f.t / f.life;
+    f.mesh.scale.setScalar(1 + k * f.grow);
+    f.mesh.material.opacity = 0.9 * (1 - k);
+    if (k >= 1) { scene.remove(f.mesh); effects.splice(i, 1); }
+  }
+
+  for (const c of clouds) { c.position.x += dt * 0.4; if (c.position.x > 30) c.position.x = -30; }
+  pond.material.color.setHSL(0.55, 0.6, 0.57 + Math.sin(elapsed) * 0.01);
+
+  renderer.render(scene, camera);
+
+  // HUD overlays
+  for (const u of units) {
+    if (u.dead) continue;
+    const s = project(u, 1.35);
+    if (!s) continue;
+    u.bar.style.left = s.x + 'px';
+    u.bar.style.top = s.y + 'px';
+    u.bar.firstChild.style.width = (100 * u.hp / u.maxHp) + '%';
+    if (u.tag) { u.tag.style.left = s.x + 'px'; u.tag.style.top = (s.y - 6) + 'px'; }
+  }
+  requestAnimationFrame(tick);
+}
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Expose a tiny hook for automated testing
+window.__game = { get phase() { return phase; }, get units() { return units; }, get gold() { return gold; }, buy, newGame };
+
+newGame();
+tick();
+</script>
+</body>
+</html>
