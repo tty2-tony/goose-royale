@@ -10,29 +10,28 @@ To host it: in the repository's GitHub settings, open **Pages**, choose "Deploy 
 
 ## How to play
 
-1. Buy geese from the shop (you start with 10 gold). Reroll the shop for 1 gold.
-2. Drag them onto your (blue) half of the board. The Flock counter shows how many geese can fight this round; extras wait on the bench. Tap or click a goose to see it and sell it (right-click also sells).
-3. Press **FIGHT!** and watch the battle.
-4. Buy 3 of the same goose and they merge into a stronger level 2 (3 level 2s make a level 3).
-5. Win 10 battles before you lose your 3 hearts. Each round gives gold, a bigger flock limit and a tougher rival flock.
+1. Start a New Game from the title screen (or Continue a saved run).
+2. Buy geese in the shop and drag them onto your blue half. The Flock counter shows how many can fight; extras wait on the bench. Reroll the shop for 1 gold.
+3. Press **FIGHT!** (or Space) and watch the battle.
+4. Buy 3 of the same goose to merge them into a stronger one (3 level 2s make a level 3).
+5. Win 10 battles before you lose your 3 hearts. The 10th win is a final boss battle against Captain Hiss's Grand Armada. Round 5 is a boss battle too.
 
-Turn the camera with the arrow buttons, Q/E, the arrow keys, or by dragging empty space. Scroll to zoom.
+Every 3 rounds Gerald finds a Golden Feather: pick one of three power-ups. Saving gold earns a bonus of +1 per 5 gold kept (up to +3). Progress saves automatically in the browser.
 
-On phones and tablets: tap a goose to see it (and sell it), drag a goose to move it, swipe empty space to turn the camera, and tap ? for help. Works in portrait and landscape.
+Controls: drag geese to move them, tap or click a goose to see it and sell it, drag empty space (or use the arrow buttons, Q/E, arrow keys) to turn the camera, scroll to zoom. Works on phones in portrait and landscape.
 
 ## Geese
 
-| Goose | Cost | Role |
-|---|---|---|
-| Gerald | hero | Melee leader. Mighty Honk hits all nearby enemies every few seconds. |
-| Brute | 3 | Tank with lots of HP. |
-| Honker | 3 | Ranged sound-wave attacks. |
-| Sprinter | 2 | Fast, quick pecks, low HP. |
-| Nurse | 3 | Heals the most hurt ally. |
+| Goose | Cost | Unlocks | Role |
+|---|---|---|---|
+| Gerald | hero | start | Melee leader. Mighty Honk hits all nearby enemies. Grows stronger each round. |
+| Brute | 3 | round 1 | Tank with lots of HP. |
+| Honker | 3 | round 1 | Ranged sound-wave attacks. |
+| Sprinter | 2 | round 1 | Fast, quick pecks, low HP. |
+| Nurse | 3 | round 1 | Heals the most hurt ally. |
+| Golden Goose | 3 | round 2 | Weak fighter; gives bonus gold if she survives a battle. |
+| Egg Bomber | 4 | round 3 | Lobs eggs that splash an area. |
+| Ninja | 4 | round 4 | Leaps behind the enemy at the start; critical pecks. |
+| Drummer | 4 | round 5 | Nearby allies attack faster. |
 
-## Roadmap
-
-- Step 1 (done): board, goose types, shop, drag-to-place, auto-battle against a simple AI team.
-- Step 2 (done): rounds, hearts, gold income, shop rerolls, flock limit and bench, merging 3 copies to level up, role icons, camera turning, rival flocks that grow each round.
-- Mobile support (done): touch controls and a compact phone layout.
-- Step 3: polish, sound, title screen.
+Sound effects and music are synthesized in the browser (no audio files). The mute button is in the top bar.

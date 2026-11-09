@@ -15,30 +15,36 @@
     --accent-dark: #c4720a;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #9fd8f0; }
-  body { font-family: 'Fredoka', 'Trebuchet MS', sans-serif; color: var(--ink); user-select: none; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #9fd8f0; color-scheme: light; }
+  body { font-family: 'Fredoka', 'Trebuchet MS', sans-serif; color: var(--ink); user-select: none; -webkit-user-select: none; }
   canvas { display: block; touch-action: none; }
-  button { touch-action: manipulation; }
+  button { touch-action: manipulation; font-family: inherit; }
+  button:focus-visible { outline: 3px solid #2f6fe0; outline-offset: 2px; }
   #ui { position: fixed; inset: 0; pointer-events: none; }
   #ui > * { pointer-events: auto; }
-  #ui > #hud, #ui > #toast { pointer-events: none; }
+  #ui > #hud, #ui > #toast, #ui > #banner, #ui > #rivalTag { pointer-events: none; }
+  body.on-title #topbar, body.on-title #shop, body.on-title #help, body.on-title #camctl,
+  body.on-title #info, body.on-title #rivalTag, body.on-title #hud { display: none !important; }
 
   .panel { background: var(--panel); border: 3px solid var(--panel-edge); border-radius: 16px; box-shadow: 0 4px 0 rgba(0,0,0,0.12); }
 
   #topbar {
     position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 10px; align-items: center; white-space: nowrap; padding: 8px 12px;
+    display: flex; gap: 8px; align-items: center; white-space: nowrap; padding: 8px 12px;
   }
-  .pill { background: #fff; border-radius: 12px; padding: 4px 12px; font-weight: 600; font-size: 17px; border: 2px solid var(--panel-edge); display: flex; align-items: center; gap: 4px; }
+  .pill { background: #fff; border-radius: 12px; padding: 4px 11px; font-weight: 600; font-size: 17px; border: 2px solid var(--panel-edge); display: flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
   .pill small { font-size: 12px; color: #8a7350; text-transform: uppercase; letter-spacing: 1px; margin-right: 2px; }
   #gold b { color: #b8860b; }
   #hearts svg { width: 20px; height: 20px; }
+  #feathers { cursor: pointer; }
+  #feathers svg { width: 18px; height: 18px; fill: #e0a800; }
   #flock.full { background: #ffe1b0; border-color: #f29c1f; color: #a04f00; }
-  #flock.pulse { animation: pulse 0.5s 2; }
+  #flock.pulse, #gold.pulse { animation: pulse 0.5s 2; }
   @keyframes pulse { 50% { transform: scale(1.18); background: #ffb36b; } }
 
   button.big {
-    font-family: inherit; font-weight: 700; font-size: 20px; color: #fff; cursor: pointer;
+    font-weight: 700; font-size: 20px; color: #fff; cursor: pointer;
     background: #e04a3d; border: none; border-radius: 14px; padding: 8px 20px;
     box-shadow: 0 4px 0 #9e2a20; transition: transform 0.05s;
   }
@@ -47,15 +53,31 @@
   button.big:disabled { background: #aaa; box-shadow: 0 4px 0 #777; cursor: default; }
   button.blue { background: #3d7be0; box-shadow: 0 4px 0 #2a56a0; font-size: 16px; }
   button.blue:active { box-shadow: 0 1px 0 #2a56a0; }
+  button.green { background: #2f9e4a; box-shadow: 0 4px 0 #1f6e32; }
+  button.icon-btn { padding: 6px 10px; display: inline-flex; align-items: center; }
+  button.icon-btn svg { width: 22px; height: 22px; fill: #fff; }
+  #fightBtn { animation: glow 1.6s ease-in-out infinite; }
+  #fightBtn:disabled { animation: none; }
+  @keyframes glow { 50% { box-shadow: 0 4px 0 #9e2a20, 0 0 0 5px rgba(255, 120, 90, 0.35); } }
+
+  #rivalTag { position: absolute; top: 72px; left: 50%; transform: translateX(-50%); background: rgba(43, 33, 24, 0.78); color: #fff; font-weight: 600; font-size: 14px; padding: 3px 12px; border-radius: 10px; white-space: nowrap; }
+  #rivalTag.boss { background: rgba(122, 42, 154, 0.9); }
 
   #toast {
-    position: absolute; top: 76px; left: 50%; transform: translateX(-50%);
+    position: absolute; top: 104px; left: 50%; transform: translateX(-50%);
     background: #2b2118; color: #fff; font-weight: 600; padding: 6px 16px; border-radius: 12px;
-    opacity: 0; transition: opacity 0.2s;
+    opacity: 0; transition: opacity 0.2s; z-index: 4;
   }
   #toast.show { opacity: 0.92; }
 
-  #help { position: absolute; top: 80px; left: 14px; width: 236px; padding: 10px 14px; font-size: 15px; line-height: 1.35; }
+  #banner { position: absolute; top: 34%; left: 0; right: 0; text-align: center; opacity: 0; transition: opacity 0.25s; }
+  #banner.show { opacity: 1; }
+  #banner .big { font-size: 64px; font-weight: 700; color: #fff; -webkit-text-stroke: 3px #2b2118; paint-order: stroke fill; text-shadow: 0 5px 0 rgba(0,0,0,0.25); line-height: 1; }
+  #banner .sub { margin-top: 6px; font-size: 24px; font-weight: 700; color: #ffe066; -webkit-text-stroke: 2px #2b2118; paint-order: stroke fill; }
+  #banner.pop .big { animation: popIn 0.35s ease-out; }
+  @keyframes popIn { from { transform: scale(1.8); } to { transform: scale(1); } }
+
+  #help { position: absolute; top: 80px; left: 14px; width: 236px; padding: 10px 14px; font-size: 15px; line-height: 1.35; max-height: calc(100% - 250px); overflow-y: auto; }
   #help h2 { margin: 0 0 6px; font-size: 22px; }
   #help h2 span { color: var(--accent-dark); }
   #help ol { margin: 0; padding-left: 20px; }
@@ -68,6 +90,7 @@
   #info h3 { margin: 0; font-size: 19px; }
   #info .role { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); font-weight: 700; }
   #info .stats { display: flex; gap: 10px; margin: 6px 0; font-weight: 600; flex-wrap: wrap; }
+  #info .sell { margin-top: 8px; width: 100%; font-size: 16px; padding: 6px 10px; }
 
   .icon { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid rgba(0,0,0,0.25); flex: none; }
   .icon svg { width: 62%; height: 62%; fill: #fff; }
@@ -81,6 +104,7 @@
   .card:hover { transform: translateY(-4px); border-color: var(--accent); }
   .card.sold, .card.poor { opacity: 0.4; cursor: default; transform: none; border-color: #d9c49a; }
   .card.sold { visibility: hidden; }
+  .card.new { border-color: #2f9e4a; }
   .card .icon { width: 44px; height: 44px; margin: 0 auto 3px; }
   .card .name { font-weight: 700; font-size: 16px; }
   .card .role { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
@@ -88,20 +112,45 @@
   .card .mini { font-size: 12px; margin-top: 2px; color: #5a4a35; }
   .card .badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 8px; background: #fff3c4; border: 2px solid #e2c991; white-space: nowrap; }
   .card .badge.merge { background: #ffd23f; border-color: #c4720a; color: #7a3d00; }
+  .card .badge.fresh { background: #c9f2d2; border-color: #2f9e4a; color: #1f6e32; }
   #helpBtn { display: none; }
-  #info .sell { margin-top: 8px; width: 100%; font-size: 16px; padding: 6px 10px; }
   #reroll { width: 82px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 16px; padding: 6px; }
   #reroll svg { width: 26px; height: 26px; fill: #fff; }
   #reroll span { font-size: 13px; opacity: 0.9; }
 
   #camctl { position: absolute; bottom: 18px; right: 14px; display: flex; gap: 6px; align-items: center; padding: 6px 8px; font-weight: 600; font-size: 13px; }
-  #camctl button { font-family: inherit; font-weight: 700; font-size: 18px; width: 38px; height: 34px; border-radius: 10px; border: 2px solid var(--panel-edge); background: #fff; cursor: pointer; }
+  #camctl button { font-weight: 700; font-size: 18px; width: 38px; height: 34px; border-radius: 10px; border: 2px solid var(--panel-edge); background: #fff; cursor: pointer; color: var(--ink); }
   #camctl button:hover { background: #fff3c4; }
 
-  #overlay { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(30, 40, 60, 0.45); }
-  #overlay .box { padding: 26px 36px; text-align: center; max-width: 440px; border-radius: 22px; border-width: 4px; }
+  .screen { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(30, 40, 60, 0.45); padding: 16px; z-index: 6; }
+  .screen.show { display: flex; }
+  #overlay .box { padding: 24px 32px; text-align: center; max-width: 460px; border-radius: 22px; border-width: 4px; max-height: 100%; overflow-y: auto; }
   #overlay h1 { margin: 0 0 6px; font-size: 40px; }
-  #overlay p { margin: 0 0 16px; font-size: 18px; line-height: 1.4; }
+  #overlay p { margin: 0 0 12px; font-size: 18px; line-height: 1.4; }
+  .ledger { margin: 0 auto 14px; font-size: 15px; display: grid; grid-template-columns: 1fr auto; gap: 2px 18px; text-align: left; max-width: 260px; font-variant-numeric: tabular-nums; }
+  .ledger .tot { font-weight: 700; border-top: 2px solid var(--panel-edge); padding-top: 3px; }
+  .mvp { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 12px; font-weight: 600; }
+  .btnrow { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  #perkScreen .box { padding: 22px 26px; text-align: center; border-radius: 22px; border-width: 4px; max-width: 760px; max-height: 100%; overflow-y: auto; }
+  #perkScreen h1 { margin: 0; font-size: 34px; color: #b8860b; }
+  #perkScreen p { margin: 4px 0 14px; font-size: 17px; }
+  .perks { display: flex; gap: 12px; justify-content: center; }
+  .perk { width: 200px; background: #fff; border: 3px solid #e2c991; border-radius: 16px; padding: 14px 12px; cursor: pointer; transition: transform 0.1s, border-color 0.1s; text-align: center; color: var(--ink); font-size: 15px; }
+  .perk:hover, .perk:focus-visible { transform: translateY(-5px); border-color: #e0a800; }
+  .perk svg { width: 44px; height: 44px; fill: #e0a800; }
+  .perk h3 { margin: 4px 0; font-size: 19px; }
+
+  #titleScreen { background: radial-gradient(ellipse at center, rgba(20, 40, 70, 0.55), rgba(20, 40, 70, 0.25) 70%); flex-direction: column; gap: 14px; text-align: center; }
+  #titleScreen .logo { font-size: 84px; font-weight: 700; line-height: 0.95; color: #fff; -webkit-text-stroke: 4px #2b2118; paint-order: stroke fill; text-shadow: 0 7px 0 rgba(0,0,0,0.25); letter-spacing: 1px; }
+  #titleScreen .logo span { color: #ffc93c; display: block; }
+  #titleScreen .tagline { font-size: 22px; font-weight: 600; color: #fff; text-shadow: 0 2px 3px rgba(0,0,0,0.5); }
+  #titleScreen .menu { display: flex; flex-direction: column; gap: 12px; align-items: stretch; width: min(320px, 100%); margin-top: 8px; }
+  #titleScreen .menu button { font-size: 22px; padding: 12px 20px; }
+  #titleScreen .best { color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.6); font-size: 16px; min-height: 20px; }
+  #titleScreen .howto { display: none; max-width: 420px; text-align: left; font-size: 15px; padding: 12px 16px; line-height: 1.4; }
+  #titleScreen .howto.open { display: block; }
+  #titleScreen .howto ol { margin: 0; padding-left: 20px; }
 
   #hud { position: absolute; inset: 0; overflow: hidden; }
   .uhud { position: absolute; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; gap: 1px; pointer-events: none; }
@@ -114,23 +163,36 @@
   .hpbar i { display: block; height: 100%; border-radius: 4px; transition: width 0.15s; }
   .player .hpbar i { background: #4fd16b; }
   .enemy .hpbar i { background: #ff5b4a; }
-  .float { position: absolute; transform: translate(-50%, -50%); font-weight: 700; font-size: 18px; pointer-events: none; text-shadow: 0 2px 0 rgba(0,0,0,0.45); animation: floatUp 0.9s ease-out forwards; }
+  .float { position: absolute; transform: translate(-50%, -50%); font-weight: 700; font-size: 18px; pointer-events: none; text-shadow: 0 2px 0 rgba(0,0,0,0.45); animation: floatUp 0.9s ease-out forwards; white-space: nowrap; }
   .float.dmg { color: #fff; }
+  .float.crit { color: #ff8a3d; font-size: 22px; }
   .float.heal { color: #7dff95; }
+  .float.gold { color: #ffd23f; font-size: 20px; }
   .float.big { font-size: 24px; color: #ffd84a; }
   @keyframes floatUp { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -40px; } }
+  @media (prefers-reduced-motion: reduce) {
+    #fightBtn, .float, #banner.pop .big { animation: none; }
+  }
 
-  /* Phones and small windows: compact top bar, scrolling shop, help behind a button */
+  /* Phones and small windows: compact top bar, shrinking shop, help behind a button */
   @media (max-width: 760px), (max-height: 540px) {
     #topbar { top: calc(6px + env(safe-area-inset-top, 0px)); left: 6px; right: 6px; transform: none; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 5px; border-radius: 14px; }
-    .pill { font-size: 14px; padding: 2px 8px; border-radius: 10px; }
+    .pill { font-size: 14px; padding: 2px 7px; border-radius: 10px; }
     .pill small { font-size: 10px; letter-spacing: 0.5px; }
     #hearts svg { width: 16px; height: 16px; }
+    #feathers svg { width: 15px; height: 15px; }
     button.big { font-size: 15px; padding: 6px 12px; border-radius: 11px; }
+    button.icon-btn { padding: 5px 8px; }
+    button.icon-btn svg { width: 18px; height: 18px; }
     #helpBtn { display: inline-block; min-width: 34px; padding: 6px 10px; }
-    #help { display: none; z-index: 5; left: 50%; transform: translateX(-50%); top: 90px; width: min(320px, calc(100vw - 24px)); max-height: calc(100% - 120px); overflow-y: auto; }
+    #speedBtn .lbl { display: none; }
+    #speedBtn b { font-weight: 700; }
+    #help { display: none; z-index: 5; left: 50%; transform: translateX(-50%); top: 100px; width: min(320px, calc(100vw - 24px)); max-height: calc(100% - 130px); }
     #help.open { display: block; }
+    #rivalTag { top: calc(88px + env(safe-area-inset-top, 0px)); left: 8px; transform: none; font-size: 12px; max-width: calc(100vw - 110px); overflow: hidden; text-overflow: ellipsis; }
     #toast { top: auto; bottom: calc(150px + env(safe-area-inset-bottom, 0px)); width: max-content; max-width: calc(100vw - 24px); white-space: normal; text-align: center; }
+    #banner .big { font-size: 44px; }
+    #banner .sub { font-size: 18px; }
     #info { top: auto; right: 6px; left: 6px; width: auto; bottom: calc(132px + env(safe-area-inset-bottom, 0px)); padding: 8px 12px; font-size: 14px; }
     #info .desc { font-size: 13px; }
     #shop { left: 6px; right: 6px; transform: none; bottom: calc(6px + env(safe-area-inset-bottom, 0px)); padding: 6px; gap: 6px; overflow-x: auto; justify-content: flex-start; }
@@ -143,11 +205,19 @@
     .card .mini { font-size: 10px; }
     .card .badge { top: -11px; font-size: 9px; padding: 0 5px; }
     #reroll { flex: none; width: 70px; font-size: 14px; }
-    #camctl { bottom: auto; top: 96px; right: 6px; padding: 4px 6px; font-size: 0; }
+    #camctl { bottom: auto; top: calc(86px + env(safe-area-inset-top, 0px)); right: 6px; padding: 4px 6px; font-size: 0; }
     #camctl button { width: 34px; height: 30px; font-size: 16px; }
-    #overlay .box { padding: 18px 20px; max-width: calc(100vw - 32px); }
+    #overlay .box { padding: 16px 18px; max-width: calc(100vw - 32px); }
     #overlay h1 { font-size: 30px; }
     #overlay p { font-size: 16px; }
+    .perks { flex-direction: column; align-items: center; gap: 8px; }
+    .perk { width: min(320px, 100%); display: grid; grid-template-columns: 44px 1fr; gap: 0 10px; text-align: left; padding: 10px 12px; align-items: center; }
+    .perk svg { grid-row: span 2; width: 36px; height: 36px; }
+    .perk h3 { margin: 0; font-size: 17px; }
+    #perkScreen h1 { font-size: 26px; }
+    #titleScreen .logo { font-size: 56px; -webkit-text-stroke: 3px #2b2118; }
+    #titleScreen .tagline { font-size: 18px; }
+    #titleScreen .menu button { font-size: 19px; padding: 10px 16px; }
     .hpbar { width: 32px; height: 6px; }
     .uhud .icon { width: 14px; height: 14px; }
     .uhud .tag { font-size: 11px; }
@@ -157,7 +227,7 @@
   @media (max-width: 480px) {
     .card { flex: 1 1 0; width: auto; min-width: 0; padding: 6px 2px 4px; }
     .card .role, .card .mini { display: none; }
-    .card .name { font-size: 12px; }
+    .card .name { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .card .icon { width: 30px; height: 30px; }
     .card .cost { position: static; font-size: 12px; }
     #reroll { flex: 0 0 58px; width: 58px; font-size: 12px; padding: 4px; }
@@ -169,13 +239,17 @@
   }
   @media (max-height: 540px) and (min-width: 600px) {
     #topbar { left: 50%; right: auto; transform: translateX(-50%); flex-wrap: nowrap; }
+    #rivalTag { top: 56px; left: 50%; transform: translateX(-50%); }
     #camctl { top: 60px; }
     #info { left: auto; width: 260px; bottom: calc(126px + env(safe-area-inset-bottom, 0px)); }
     #shop { left: 50%; right: auto; transform: translateX(-50%); max-width: calc(100vw - 12px); }
+    #titleScreen .logo { font-size: 44px; }
+    #titleScreen { gap: 8px; }
+    #titleScreen .menu { flex-direction: row; width: auto; }
   }
 </style>
 </head>
-<body>
+<body class="on-title">
 <div id="ui">
   <div id="hud"></div>
   <div id="topbar" class="panel">
@@ -184,11 +258,15 @@
     <div class="pill" id="hearts"></div>
     <div class="pill" id="gold"><small>Gold</small><b>10</b></div>
     <div class="pill" id="flock"><small>Flock</small><b>1/4</b></div>
+    <div class="pill" id="feathers" title="Golden Feathers" hidden></div>
     <button class="big" id="fightBtn">FIGHT!</button>
-    <button class="big blue" id="speedBtn">Speed x1</button>
+    <button class="big blue" id="speedBtn"><span class="lbl">Speed </span><b>x1</b></button>
+    <button class="big blue icon-btn" id="muteBtn" title="Sound on or off"></button>
     <button class="big blue" id="helpBtn" title="How to play">?</button>
   </div>
+  <div id="rivalTag"></div>
   <div id="toast"></div>
+  <div id="banner"><div class="big"></div><div class="sub"></div></div>
   <div id="help" class="panel">
     <h2>Gerald <span>Royale</span></h2>
     <ol>
@@ -196,14 +274,33 @@
       <li>Drag them onto your blue half. Extra geese wait on the bench.</li>
       <li>Press <b>FIGHT!</b></li>
     </ol>
-    <div class="tip">Get 3 of the same goose and they merge into a stronger one with a star! Win 10 battles before you lose all your hearts.</div>
+    <div class="tip">Get 3 of the same goose and they merge into a stronger one with a star. New kinds of geese show up as you win. Every 3 rounds Gerald finds a Golden Feather power-up.</div>
     <div class="legend" id="legend"></div>
-    <div class="tip">Tap or click a goose to see it and sell it. Drag empty space to turn the camera.</div>
+    <div class="tip">Saving gold earns a bonus: +1 for every 5 gold you keep (up to +3). Tap or click a goose to see it and sell it. Drag empty space to turn the camera.</div>
   </div>
   <div id="info" class="panel"></div>
   <div id="shop" class="panel"></div>
   <div id="camctl" class="panel">Turn <button id="camL" title="Turn left (Q)">&lt;</button><button id="camR" title="Turn right (E)">&gt;</button></div>
-  <div id="overlay"><div class="box panel"><h1 id="ovTitle"></h1><p id="ovText"></p><button class="big" id="ovBtn"></button></div></div>
+  <div id="overlay" class="screen"><div class="box panel"><h1 id="ovTitle"></h1><p id="ovText"></p><div id="ovExtra"></div><div class="btnrow" id="ovBtns"></div></div></div>
+  <div id="perkScreen" class="screen"><div class="box panel"><h1>Golden Feather!</h1><p>Gerald found a Golden Feather. Pick one power-up for your flock.</p><div class="perks" id="perks"></div></div></div>
+  <div id="titleScreen" class="screen show">
+    <div class="logo">Gerald<span>Royale</span></div>
+    <div class="tagline">Lead your flock. Honk at your enemies.</div>
+    <div class="menu">
+      <button class="big green" id="contBtn" hidden>Continue</button>
+      <button class="big" id="newBtn">New Game</button>
+      <button class="big blue" id="howBtn">How to play</button>
+    </div>
+    <div class="howto panel" id="howto">
+      <ol>
+        <li>Buy geese in the shop and drag them onto your side of the pond.</li>
+        <li>Press FIGHT! Your geese battle on their own.</li>
+        <li>Buy 3 of the same goose to merge them into a stronger one.</li>
+        <li>Win 10 battles before you lose your 3 hearts. Watch out for boss battles!</li>
+      </ol>
+    </div>
+    <div class="best" id="bestLine"></div>
+  </div>
 </div>
 
 <script type="importmap">
@@ -211,6 +308,109 @@
 </script>
 <script type="module">
 import * as THREE from 'three';
+
+// ---------------------------------------------------------------------------
+// Storage helpers (storage can be missing or blocked, so everything is guarded)
+// ---------------------------------------------------------------------------
+const store = {
+  get(k) { try { return localStorage.getItem('geraldRoyale.' + k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem('geraldRoyale.' + k, v); } catch (e) { /* ignore */ } },
+  del(k) { try { localStorage.removeItem('geraldRoyale.' + k); } catch (e) { /* ignore */ } },
+};
+
+// ---------------------------------------------------------------------------
+// Sound: everything is synthesized with WebAudio, no audio files
+// ---------------------------------------------------------------------------
+const Sound = (() => {
+  let ctx = null, master = null, musicGain = null, noiseBuf = null;
+  let muted = store.get('muted') === '1';
+  let lastHit = 0, musicTimer = null, step = 0, tempo = 'calm';
+  function init() {
+    if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain(); master.gain.value = muted ? 0 : 0.55; master.connect(ctx.destination);
+      musicGain = ctx.createGain(); musicGain.gain.value = 0.35; musicGain.connect(master);
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      startMusic();
+    } catch (e) { ctx = null; }
+  }
+  function tone(freq, dur, { type = 'sine', vol = 0.2, slide = null, delay = 0, out = null, filter = null } = {}) {
+    if (!ctx) return;
+    const t = ctx.currentTime + delay;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    let node = o;
+    if (filter) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = filter; o.connect(f); node = f; }
+    node.connect(g); g.connect(out || master);
+    o.start(t); o.stop(t + dur + 0.03);
+  }
+  function noise(dur, vol, freq, delay = 0) {
+    if (!ctx) return;
+    const t = ctx.currentTime + delay;
+    const src = ctx.createBufferSource(); src.buffer = noiseBuf;
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 1.2;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(master);
+    src.start(t); src.stop(t + dur + 0.02);
+  }
+  const fx = {
+    honk(deep) {
+      const f = deep ? 200 : 330;
+      tone(f, deep ? 0.38 : 0.2, { type: 'sawtooth', vol: 0.12, slide: f * 0.78, filter: 1400 });
+      tone(f * 1.01, deep ? 0.38 : 0.2, { type: 'square', vol: 0.05, slide: f * 0.8, filter: 1000 });
+    },
+    hit() { const n = performance.now(); if (n - lastHit < 45) return; lastHit = n; noise(0.07, 0.18, 1500 + Math.random() * 800); },
+    crit() { noise(0.12, 0.25, 2600); tone(880, 0.1, { type: 'square', vol: 0.05 }); },
+    splash() { noise(0.3, 0.3, 380); tone(140, 0.25, { vol: 0.15, slide: 60 }); },
+    whoosh() { noise(0.25, 0.15, 900); },
+    heal() { tone(520, 0.25, { vol: 0.07, slide: 880 }); },
+    coin() { tone(988, 0.08, { type: 'square', vol: 0.06 }); tone(1318, 0.18, { type: 'square', vol: 0.06, delay: 0.07 }); },
+    buy() { tone(440, 0.08, { type: 'triangle', vol: 0.15 }); tone(660, 0.12, { type: 'triangle', vol: 0.15, delay: 0.06 }); },
+    sell() { tone(660, 0.08, { type: 'triangle', vol: 0.12 }); tone(440, 0.12, { type: 'triangle', vol: 0.12, delay: 0.06 }); },
+    click() { tone(800, 0.04, { type: 'triangle', vol: 0.08 }); },
+    error() { tone(200, 0.15, { type: 'square', vol: 0.06 }); },
+    merge() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.18, { type: 'triangle', vol: 0.14, delay: i * 0.07 })); },
+    perk() { [392, 523, 659, 784, 1046].forEach((f, i) => tone(f, 0.25, { type: 'sine', vol: 0.12, delay: i * 0.06 })); },
+    count() { tone(660, 0.12, { type: 'square', vol: 0.07 }); },
+    go() { fx.honk(true); tone(990, 0.3, { type: 'square', vol: 0.06 }); },
+    pop() { tone(300, 0.12, { vol: 0.12, slide: 120 }); noise(0.1, 0.1, 700); },
+    win() { [523, 659, 784, 1046, 784, 1046].forEach((f, i) => tone(f, 0.22, { type: 'triangle', vol: 0.14, delay: i * 0.11 })); },
+    lose() { [392, 349, 311, 262].forEach((f, i) => tone(f, 0.3, { type: 'triangle', vol: 0.13, delay: i * 0.16 })); },
+  };
+  // A small pentatonic loop. Calm while building, faster in battle.
+  const BASS = [130.8, 0, 196, 0, 174.6, 0, 196, 0, 146.8, 0, 196, 0, 130.8, 0, 98, 0];
+  const MEL = [523, 0, 587, 659, 0, 784, 659, 0, 587, 0, 523, 440, 0, 523, 0, 0, 659, 0, 784, 880, 0, 784, 659, 0, 587, 0, 659, 523, 0, 440, 0, 0];
+  function startMusic() {
+    clearTimeout(musicTimer);
+    const tick = () => {
+      if (ctx && !muted) {
+        const b = BASS[step % 16], m = MEL[step % 32];
+        if (b) tone(b, 0.22, { type: 'triangle', vol: 0.18, out: musicGain });
+        if (m && (tempo === 'battle' || step % 2 === 0)) tone(m, 0.16, { type: 'sine', vol: 0.09, out: musicGain });
+        if (tempo === 'battle' && step % 4 === 0) noise(0.05, 0.06, 4000);
+      }
+      step++;
+      musicTimer = setTimeout(tick, tempo === 'battle' ? 150 : 210);
+    };
+    tick();
+  }
+  return {
+    init, fx,
+    get muted() { return muted; },
+    setMuted(m) { muted = m; store.set('muted', m ? '1' : '0'); if (master) master.gain.value = m ? 0 : 0.55; },
+    setTempo(t) { tempo = t; },
+  };
+})();
+const sfx = (name, ...a) => Sound.fx[name](...a);
 
 // ---------------------------------------------------------------------------
 // Icons and roles
@@ -221,18 +421,29 @@ const SVG = {
   bolt: '<path d="M13 2L4 14h6l-1 8 9-12h-6z"/>',
   cross: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
   crown: '<path d="M3 19h18l-1.5-11-4.5 4-3-7-3 7-4.5-4z"/>',
+  coin: '<path fill-rule="evenodd" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14zm-1 2h2v10h-2z"/>',
+  egg: '<path d="M12 2c4 0 7 6.5 7 11a7 7 0 01-14 0c0-4.5 3-11 7-11z"/>',
+  shuriken: '<path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z"/>',
+  note: '<path d="M9 4l11-2v13.5a3 3 0 11-2-2.8V6.3l-7 1.3v10a3 3 0 11-2-2.8z"/>',
   star: '<path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z"/>',
   heart: '<path d="M12 21s-8-5.5-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.5-8 11-8 11z"/>',
+  feather: '<path d="M21 2C14 2 7.5 6 6.3 13.4L3 21l1.6.6 2.6-5.6C14 15 19.6 9.7 21 2z"/>',
   reroll: '<path d="M12 4a8 8 0 017.7 6h-2.1A6 6 0 006.3 8.5L9 11H3V5l1.9 1.9A8 8 0 0112 4zm-7.7 10h2.1a6 6 0 0011.3 1.5L15 13h6v6l-1.9-1.9A8 8 0 014.3 14z"/>',
+  soundOn: '<path d="M3 9h4l5-4v14l-5-4H3z"/><path d="M15 8.5a5 5 0 010 7l-1.4-1.4a3 3 0 000-4.2zM17.8 5.7a9 9 0 010 12.6l-1.4-1.4a7 7 0 000-9.8z"/>',
+  soundOff: '<path d="M3 9h4l5-4v14l-5-4H3z"/><path d="M15 9.4l1.4-1.4 2.1 2.1 2.1-2.1L22 9.4l-2.1 2.1 2.1 2.1-1.4 1.4-2.1-2.1-2.1 2.1-1.4-1.4 2.1-2.1z"/>',
 };
-const svg = (name, attrs = '') => `<svg viewBox="0 0 24 24" ${attrs}>${SVG[name]}</svg>`;
+const svg = (name, attrs = '') => `<svg viewBox="0 0 24 24" aria-hidden="true" ${attrs}>${SVG[name]}</svg>`;
 const ROLES = {
-  Hero:   { color: '#d9a514', icon: 'crown' },
-  Boss:   { color: '#8a3fb5', icon: 'crown' },
-  Tank:   { color: '#3f6fd1', icon: 'shield' },
-  Ranged: { color: '#e9a21a', icon: 'target' },
-  Fast:   { color: '#e8612c', icon: 'bolt' },
-  Healer: { color: '#3aa856', icon: 'cross' },
+  Hero:    { color: '#d9a514', icon: 'crown' },
+  Boss:    { color: '#8a3fb5', icon: 'crown' },
+  Tank:    { color: '#3f6fd1', icon: 'shield' },
+  Ranged:  { color: '#e9a21a', icon: 'target' },
+  Fast:    { color: '#e8612c', icon: 'bolt' },
+  Healer:  { color: '#3aa856', icon: 'cross' },
+  Lucky:   { color: '#b38600', icon: 'coin' },
+  Splash:  { color: '#c0392b', icon: 'egg' },
+  Sneaky:  { color: '#34495e', icon: 'shuriken' },
+  Support: { color: '#16a085', icon: 'note' },
 };
 const roleIcon = (role, size) => `<span class="icon" style="background:${ROLES[role].color};${size ? `width:${size}px;height:${size}px` : ''}">${svg(ROLES[role].icon)}</span>`;
 
@@ -248,35 +459,70 @@ const TYPES = {
   hiss: {
     name: 'Captain Hiss', role: 'Boss', hp: 700, atk: 55, range: 1, cd: 1.0, speed: 1.6, cost: 0, scale: 1.2,
     color: 0x3a3a44, hero: true,
-    desc: 'The grumpy boss of the rival flock. He has a mighty honk too, and he gets tougher every round.',
+    desc: 'The grumpy boss of the rival flocks. He has a mighty honk too, and he gets tougher every round.',
   },
   brute: {
-    name: 'Brute', role: 'Tank', hp: 600, atk: 30, range: 1, cd: 1.2, speed: 1.2, cost: 3, scale: 1.25,
+    name: 'Brute', role: 'Tank', hp: 620, atk: 30, range: 1, cd: 1.2, speed: 1.2, cost: 3, scale: 1.25, unlock: 1,
     color: 0x9aa0a6, desc: 'A big, tough goose in a helmet. Put him in front to protect the others.',
   },
   honker: {
-    name: 'Honker', role: 'Ranged', hp: 280, atk: 42, range: 3.6, cd: 1.1, speed: 1.3, cost: 3, scale: 1.0,
+    name: 'Honker', role: 'Ranged', hp: 280, atk: 42, range: 3.6, cd: 1.1, speed: 1.3, cost: 3, scale: 1.0, unlock: 1,
     color: 0xf4f1e8, projectile: 'honk',
     desc: 'Blasts sound waves from far away with a megaphone. Keep her in the back row.',
   },
   sprinter: {
-    name: 'Sprinter', role: 'Fast', hp: 300, atk: 26, range: 1, cd: 0.55, speed: 2.8, cost: 2, scale: 0.85,
+    name: 'Sprinter', role: 'Fast', hp: 310, atk: 26, range: 1, cd: 0.55, speed: 2.8, cost: 2, scale: 0.85, unlock: 1,
     color: 0xb07a45, desc: 'Super speedy! Runs straight at enemies and pecks really fast.',
   },
   nurse: {
-    name: 'Nurse', role: 'Healer', hp: 300, atk: 14, range: 3.2, cd: 1.4, speed: 1.3, cost: 3, scale: 0.95,
-    color: 0xffffff, projectile: 'heal', heal: 40,
+    name: 'Nurse', role: 'Healer', hp: 300, atk: 14, range: 3.2, cd: 1.4, speed: 1.3, cost: 3, scale: 0.95, unlock: 1,
+    color: 0xffffff, projectile: 'heal', heal: 42,
     desc: 'Heals the most hurt goose on her team. When nobody is hurt, she throws small pebbles.',
   },
+  golden: {
+    name: 'Golden Goose', role: 'Lucky', hp: 300, atk: 20, range: 1, cd: 1.0, speed: 1.3, cost: 3, scale: 0.95, unlock: 2,
+    color: 0xffd23f, goldPerWin: [1, 2, 4],
+    desc: 'A fancy goose who is not much of a fighter. If she is still standing after a battle, you get bonus gold (more at higher levels).',
+  },
+  bomber: {
+    name: 'Egg Bomber', role: 'Splash', hp: 300, atk: 34, range: 3.3, cd: 1.8, speed: 1.2, cost: 4, scale: 1.0, unlock: 3,
+    color: 0x7d8b5a, projectile: 'egg', splash: 1.15,
+    desc: 'Lobs eggs that splat on everyone in a small area. Great against crowds.',
+  },
+  ninja: {
+    name: 'Ninja', role: 'Sneaky', hp: 330, atk: 34, range: 1, cd: 0.75, speed: 2.4, cost: 4, scale: 0.92, unlock: 4,
+    color: 0x2e2e3e, leap: true, crit: 0.25,
+    desc: 'When the battle starts she leaps behind the enemy flock to attack the geese in the back. Sometimes lands a double-damage critical peck.',
+  },
+  drummer: {
+    name: 'Drummer', role: 'Support', hp: 420, atk: 18, range: 1, cd: 1.0, speed: 1.3, cost: 4, scale: 1.0, unlock: 5,
+    color: 0xf4f1e8, aura: [0.25, 0.4, 0.6],
+    desc: 'Plays a marching beat. Friendly geese near her attack faster (even faster at higher levels).',
+  },
 };
-const SHOP_POOL = ['brute', 'honker', 'sprinter', 'nurse'];
-const START_GOLD = 10, ROUND_GOLD = 5, WIN_BONUS = 2, REROLL_COST = 1;
+const SHOP_TYPES = ['brute', 'honker', 'sprinter', 'nurse', 'golden', 'bomber', 'ninja', 'drummer'];
+const START_GOLD = 10, ROUND_GOLD = 6, WIN_BONUS = 2, REROLL_COST = 1;
 const START_HEARTS = 3, WINS_TO_WIN = 10;
 const LEVEL_MULT = [1, 1.8, 3.2];
 const COLS = 8, ROWS = 6, T = 1; // rows 0-2 player, 3-5 enemy, row -1 is the bench
 const BENCH_Z = 4.15;
 const HERO_HONK_CD = 5, HERO_HONK_RADIUS = 1.8, HERO_HONK_DMG = 60;
-const flockCap = r => Math.min(8, 3 + r); // includes Gerald
+const PERK_ROUNDS = new Set([3, 6, 9, 12, 15, 18]);
+
+const PERKS = {
+  thick:   { name: 'Thick Feathers', desc: 'All your geese get +15% health.' },
+  sharp:   { name: 'Sharp Beaks', desc: 'All your geese get +15% attack.' },
+  quick:   { name: 'Quick Feet', desc: 'All your geese move and attack 12% faster.' },
+  mighty:  { name: 'Mightier Honk', desc: "Gerald's Mighty Honk reaches farther and hits 50% harder." },
+  healing: { name: 'Soothing Honk', desc: "Gerald's Mighty Honk also heals friendly geese near him." },
+  cape:    { name: 'Royal Cape', desc: 'Gerald gets +40% health.' },
+  piggy:   { name: 'Piggy Bank', desc: 'Get +2 extra gold every round.' },
+  roomy:   { name: 'Bigger Nest', desc: 'Your flock can have 1 more goose in battle.' },
+  reroll:  { name: 'Lucky Clover', desc: 'Your first shop reroll each round is free.' },
+};
+
+const RIVALS = ['The Puddle Pals', 'Mud Marsh Gang', 'The Reed Rascals', 'The Pond Pirates', "Hiss's Royal Guard",
+  'Lily Pad Bandits', 'The Thunder Ducks', 'The Frost Flock', 'The Swamp Kings', "Hiss's Grand Armada"];
 
 // ---------------------------------------------------------------------------
 // Scene
@@ -295,8 +541,7 @@ scene.fog = new THREE.Fog(0x9fd8f0, 22, 45);
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 const camTarget = new THREE.Vector3(0, 0, 1.3);
 const CAM_MAX_TURN = 0.6;
-let camAngle = 0, camAngleGoal = 0, camDist = 10.2, camHeight = 8.2, camZoom = 1;
-// Pull the camera back on narrow (portrait) screens so the whole board fits across
+let camAngle = 0, camAngleGoal = 0, camDist = 10.2, camHeight = 8.2, camZoom = 1, shake = 0;
 function fitCamera() {
   const aspect = window.innerWidth / window.innerHeight;
   const portrait = aspect < 0.8;
@@ -309,7 +554,8 @@ function fitCamera() {
 }
 fitCamera();
 function placeCamera() {
-  camera.position.set(camTarget.x + Math.sin(camAngle) * camDist, camHeight, camTarget.z + Math.cos(camAngle) * camDist);
+  const sx = shake ? (Math.random() - 0.5) * shake : 0, sy = shake ? (Math.random() - 0.5) * shake : 0;
+  camera.position.set(camTarget.x + Math.sin(camAngle) * camDist + sx, camHeight + sy, camTarget.z + Math.cos(camAngle) * camDist);
   camera.lookAt(camTarget);
 }
 placeCamera();
@@ -412,6 +658,42 @@ for (let i = 0; i < 6; i++) {
 }
 
 // ---------------------------------------------------------------------------
+// Feather particles
+// ---------------------------------------------------------------------------
+const featherGeo = new THREE.PlaneGeometry(0.09, 0.2);
+const featherMats = {};
+const feathers = [];
+function featherMat(color) {
+  if (!featherMats[color]) featherMats[color] = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true });
+  return featherMats[color];
+}
+function puff(pos, color, n = 4, power = 1) {
+  for (let i = 0; i < n; i++) {
+    let f = feathers.length >= 160 ? feathers.shift() : null;
+    if (!f) { f = { mesh: new THREE.Mesh(featherGeo, featherMat(color)) }; scene.add(f.mesh); }
+    f.mesh.material = featherMat(color);
+    f.mesh.visible = true;
+    f.mesh.position.set(pos.x + (Math.random() - 0.5) * 0.3, 0.6 + Math.random() * 0.4, pos.z + (Math.random() - 0.5) * 0.3);
+    f.vel = new THREE.Vector3((Math.random() - 0.5) * 2.5 * power, (1.5 + Math.random() * 2) * power, (Math.random() - 0.5) * 2.5 * power);
+    f.spin = new THREE.Vector3(Math.random() * 8, Math.random() * 8, Math.random() * 8);
+    f.life = 1.1 + Math.random() * 0.5; f.t = 0;
+    feathers.push(f);
+  }
+}
+function updateFeathers(dt) {
+  for (const f of feathers) {
+    if (!f.mesh.visible) continue;
+    f.t += dt;
+    f.vel.y -= 4.5 * dt;
+    f.vel.multiplyScalar(1 - dt * 1.8);
+    f.mesh.position.addScaledVector(f.vel, dt);
+    if (f.mesh.position.y < 0.02) { f.mesh.position.y = 0.02; f.vel.set(0, 0, 0); }
+    f.mesh.rotation.x += f.spin.x * dt; f.mesh.rotation.y += f.spin.y * dt;
+    if (f.t > f.life) f.mesh.visible = false;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Goose models
 // ---------------------------------------------------------------------------
 function makeGooseModel(type, team) {
@@ -427,7 +709,7 @@ function makeGooseModel(type, team) {
     (parent || g).add(o);
     return o;
   };
-  const bodyM = mat(def.color);
+  const bodyM = mat(def.color, type === 'golden' ? { emissive: 0x4a3000 } : {});
   const orange = mat(0xf59a23);
   const black = mat(type === 'hiss' ? 0xff3322 : 0x111111);
 
@@ -490,9 +772,33 @@ function makeGooseModel(type, team) {
     const red = mat(0xe8352e);
     mesh(new THREE.BoxGeometry(0.07, 0.02, 0.005), red, neck, [0, 0.61, 0.088]);
     mesh(new THREE.BoxGeometry(0.02, 0.06, 0.005), red, neck, [0, 0.61, 0.088]);
+  } else if (type === 'golden') {
+    const dark = mat(0x1a1a1a);
+    mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.015, 14), dark, neck, [0, 0.585, 0.03]);
+    mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.13, 14), dark, neck, [0, 0.655, 0.03]);
+    mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 14), mat(0xffffff), neck, [0.085, 0.51, 0.115]);
+  } else if (type === 'bomber') {
+    const lens = mat(0x9fd8f0, { emissive: 0x113344 });
+    const strap = mat(0x5a3b22);
+    mesh(new THREE.TorusGeometry(0.135, 0.02, 6, 16), strap, neck, [0, 0.52, 0.03], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.04, 10), lens, neck, [0.05, 0.53, 0.14], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.04, 10), lens, neck, [-0.05, 0.53, 0.14], [Math.PI / 2, 0, 0]);
+    const egg = mesh(new THREE.SphereGeometry(0.1, 10, 8), mat(0xfff8e6), g, [0.22, 0.62, -0.1]);
+    egg.scale.set(0.85, 1.15, 0.85);
+  } else if (type === 'ninja') {
+    const red = mat(0xd62f2f);
+    mesh(new THREE.TorusGeometry(0.135, 0.028, 6, 16), red, neck, [0, 0.5, 0.03], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.BoxGeometry(0.03, 0.02, 0.18), red, neck, [0.03, 0.5, -0.17], [0.4, 0.2, 0]);
+    mesh(new THREE.BoxGeometry(0.03, 0.02, 0.16), red, neck, [-0.03, 0.48, -0.16], [0.6, -0.2, 0]);
+    mesh(new THREE.BoxGeometry(0.2, 0.04, 0.02), mat(0xf4f1e8), neck, [0, 0.515, 0.125]);
+  } else if (type === 'drummer') {
+    const drum = mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.16, 16), mat(0xd62f2f), g, [0, 0.36, 0.36], [Math.PI / 2, 0, 0]);
+    drum.scale.set(1, 1, 1);
+    mesh(new THREE.CylinderGeometry(0.165, 0.165, 0.02, 16), mat(0xffffff), g, [0, 0.36, 0.45], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.CylinderGeometry(0.1, 0.11, 0.18, 12), mat(0x2a4fb0), neck, [0, 0.64, 0.03]);
+    mesh(new THREE.SphereGeometry(0.04, 8, 6), mat(0xffd23f), neck, [0, 0.75, 0.03]);
   }
 
-  // Team ring with the role color filling the middle
   const ring = new THREE.Mesh(
     new THREE.RingGeometry(0.34, 0.44, 28),
     new THREE.MeshBasicMaterial({ color: team === 'player' ? 0x3d7be0 : 0xe04a3d, side: THREE.DoubleSide })
@@ -507,6 +813,22 @@ function makeGooseModel(type, team) {
 }
 
 // ---------------------------------------------------------------------------
+// Game state
+// ---------------------------------------------------------------------------
+let phase = 'title'; // title | setup | battle | result | perk
+let gold = START_GOLD, round = 1, wins = 0, losses = 0, hearts = START_HEARTS;
+let perks = [], endless = false, freeRerollUsed = false;
+let stats = { merges: 0, goldEarned: 0, bestLevel: 1 };
+let shop = [];
+let battleTime = 0, endTimer = 0, gameSpeed = 1, countdownStep = 0;
+const has = p => perks.includes(p);
+const flockCap = () => Math.min(9, 3 + round + (has('roomy') ? 1 : 0)); // includes Gerald
+const isFinal = () => !endless && wins === WINS_TO_WIN - 1;
+const isBoss = () => isFinal() || round % 5 === 0;
+const rivalName = () => isFinal() ? "Hiss's Grand Armada" : (RIVALS[round - 1] || `Rival Flock #${round}`);
+const unlockedTypes = r => SHOP_TYPES.filter(t => TYPES[t].unlock <= r);
+
+// ---------------------------------------------------------------------------
 // Units
 // ---------------------------------------------------------------------------
 let units = [];
@@ -515,13 +837,24 @@ const hud = document.getElementById('hud');
 
 function applyStats(u) {
   const def = u.def;
-  let mult = LEVEL_MULT[u.level - 1];
-  if (def.hero) mult *= 1 + (u.team === 'player' ? 0.08 : 0.1) * (round - 1);
-  u.maxHp = Math.round(def.hp * mult);
+  let hpMult = LEVEL_MULT[u.level - 1], atkMult = hpMult, speedMult = 1;
+  if (def.hero) { const g = 1 + (u.team === 'player' ? 0.08 : 0.1) * (round - 1); hpMult *= g; atkMult *= g; }
+  if (u.team === 'player') {
+    if (has('thick')) hpMult *= 1.15;
+    if (has('sharp')) atkMult *= 1.15;
+    if (has('quick')) speedMult *= 1.12;
+    if (def.hero && has('cape')) hpMult *= 1.4;
+  } else {
+    const g = 1 + 0.03 * (round - 1);
+    if (!def.hero) { hpMult *= g; atkMult *= g; }
+    if (u.boss) { hpMult *= 1.5; atkMult *= 1.25; }
+  }
+  u.maxHp = Math.round(def.hp * hpMult);
   u.hp = u.maxHp;
-  u.atk = def.atk * mult;
-  u.healAmt = (def.heal || 0) * LEVEL_MULT[u.level - 1];
-  u.scale = def.scale * (1 + 0.14 * (u.level - 1));
+  u.atk = def.atk * atkMult;
+  u.speedMult = speedMult;
+  u.healAmt = (def.heal || 0) * LEVEL_MULT[u.level - 1] * (u.team === 'player' && has('sharp') ? 1.15 : 1);
+  u.scale = def.scale * (1 + 0.14 * (u.level - 1)) * (u.boss ? 1.4 : 1);
   u.radius = 0.34 * u.scale;
   u.group.scale.setScalar(u.scale);
   renderUnitHud(u);
@@ -529,18 +862,18 @@ function applyStats(u) {
 
 function renderUnitHud(u) {
   const stars = u.level > 1 ? Array.from({ length: u.level }, () => svg('star')).join('') : '';
-  u.hudEl.innerHTML = `${u.def.hero ? `<div class="tag">${u.def.name}</div>` : ''}
-    <div class="stars">${stars}</div>
+  const label = u.def.hero ? `<div class="tag">${u.boss ? 'BOSS ' : ''}${u.def.name}</div>` : '';
+  u.hudEl.innerHTML = `${label}<div class="stars">${stars}</div>
     <div class="row">${roleIcon(u.def.role)}<div class="hpbar"><i></i></div></div>`;
   u.barFill = u.hudEl.querySelector('.hpbar i');
 }
 
-function createUnit(type, team, c, r, level = 1) {
+function createUnit(type, team, c, r, level = 1, opts = {}) {
   const def = TYPES[type];
   const model = makeGooseModel(type, team);
   const u = {
-    id: uid++, type, team, def, level, ...model,
-    c, r, atkTimer: Math.random() * 0.4, honkTimer: HERO_HONK_CD * 0.6,
+    id: uid++, type, team, def, level, ...model, boss: !!opts.boss,
+    c, r, atkTimer: Math.random() * 0.4, honkTimer: HERO_HONK_CD * 0.6, dmgDone: 0, healDone: 0,
     dead: false, deathT: 0, flashT: 0, peckT: 0, flapT: 0, walkT: Math.random() * 10,
     facing: team === 'player' ? Math.PI : 0,
   };
@@ -553,6 +886,7 @@ function createUnit(type, team, c, r, level = 1) {
   model.group.rotation.y = u.facing;
   scene.add(model.group);
   units.push(u);
+  if (team === 'player') stats.bestLevel = Math.max(stats.bestLevel, level);
   return u;
 }
 
@@ -572,18 +906,14 @@ const playerUnits = () => units.filter(u => u.team === 'player');
 const boardCount = () => playerUnits().filter(u => u.r >= 0).length;
 
 // ---------------------------------------------------------------------------
-// Game state
+// UI helpers
 // ---------------------------------------------------------------------------
-let phase = 'setup'; // setup | battle | result
-let gold = START_GOLD, round = 1, wins = 0, hearts = START_HEARTS;
-let shop = [];
-let battleTime = 0, endTimer = 0, gameSpeed = 1;
-
 const $ = id => document.getElementById(id);
 const fightBtn = $('fightBtn'), shopEl = $('shop'), infoEl = $('info'), overlay = $('overlay');
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-$('legend').innerHTML = ['Tank', 'Ranged', 'Fast', 'Healer', 'Hero', 'Boss']
+$('legend').innerHTML = ['Tank', 'Ranged', 'Fast', 'Healer', 'Lucky', 'Splash', 'Sneaky', 'Support', 'Hero', 'Boss']
   .map(r => `<div>${roleIcon(r, 18)}${r}</div>`).join('');
 
 let toastTimer = null;
@@ -592,31 +922,52 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1900);
 }
-function pulseFlock() {
-  const f = $('flock');
+function pulse(id) {
+  const f = $(id);
   f.classList.remove('pulse'); void f.offsetWidth; f.classList.add('pulse');
 }
+let bannerTimer = null;
+function banner(big, sub = '', ms = 1400) {
+  const b = $('banner');
+  b.querySelector('.big').textContent = big;
+  b.querySelector('.sub').textContent = sub;
+  b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop', 'show');
+  clearTimeout(bannerTimer);
+  if (ms) bannerTimer = setTimeout(() => b.classList.remove('show'), ms);
+}
+function renderMute() { $('muteBtn').innerHTML = svg(Sound.muted ? 'soundOff' : 'soundOn'); }
+renderMute();
 
 function updateTopbar() {
   $('round').querySelector('b').textContent = round;
-  $('wins').querySelector('b').textContent = `${wins}/${WINS_TO_WIN}`;
+  $('wins').querySelector('b').textContent = endless ? wins : `${wins}/${WINS_TO_WIN}`;
   $('gold').querySelector('b').textContent = gold;
   $('hearts').innerHTML = Array.from({ length: START_HEARTS }, (_, i) =>
     svg('heart', `style="fill:${i < hearts ? '#e8352e' : '#d8cfc0'}"`)).join('');
-  const cap = flockCap(round), n = boardCount();
+  const cap = flockCap(), n = boardCount();
   $('flock').querySelector('b').textContent = `${n}/${cap}${n >= cap ? ' FULL' : ''}`;
   $('flock').classList.toggle('full', n >= cap);
   $('flock').title = `Up to ${cap} geese can fight this round (Gerald counts). Extra geese wait on the bench.`;
+  const fe = $('feathers');
+  fe.hidden = perks.length === 0;
+  fe.innerHTML = `${svg('feather')}<b>${perks.length}</b>`;
+  fe.title = 'Golden Feathers: ' + perks.map(p => PERKS[p].name).join(', ');
+  const rt = $('rivalTag');
+  rt.textContent = `Round ${round} vs ${rivalName()}`;
+  rt.classList.toggle('boss', isBoss());
 }
+$('feathers').onclick = () => toast(perks.map(p => PERKS[p].name).join(' + ') || 'No Golden Feathers yet');
 
 function rollShop() {
-  shop = Array.from({ length: 5 }, () => ({ type: pick(SHOP_POOL), sold: false }));
+  const pool = unlockedTypes(round);
+  shop = Array.from({ length: 5 }, () => ({ type: pick(pool), sold: false }));
   renderShop();
 }
 
 const ownedCount = (type, level = 1) => playerUnits().filter(u => u.type === type && u.level === level).length;
+const rerollCost = () => (has('reroll') && !freeRerollUsed ? 0 : REROLL_COST);
 
 function renderShop() {
   updateTopbar();
@@ -625,9 +976,10 @@ function renderShop() {
   shop.forEach((item, i) => {
     const d = TYPES[item.type];
     const owned = ownedCount(item.type);
+    const fresh = d.unlock === round && round > 1;
     const el = document.createElement('div');
-    el.className = 'card' + (item.sold ? ' sold' : (gold < d.cost || phase !== 'setup' ? ' poor' : ''));
-    const badge = owned >= 2 ? '<div class="badge merge">MERGE!</div>' : owned === 1 ? '<div class="badge">1 owned</div>' : '';
+    el.className = 'card' + (item.sold ? ' sold' : (gold < d.cost || phase !== 'setup' ? ' poor' : '')) + (fresh ? ' new' : '');
+    const badge = owned >= 2 ? '<div class="badge merge">MERGE!</div>' : owned === 1 ? '<div class="badge">1 owned</div>' : fresh ? '<div class="badge fresh">NEW</div>' : '';
     el.innerHTML = `${badge}<div class="cost">${d.cost}g</div>
       ${roleIcon(d.role)}
       <div class="name">${d.name}</div><div class="role" style="color:${ROLES[d.role].color}">${d.role}</div>
@@ -640,8 +992,9 @@ function renderShop() {
   const rr = document.createElement('button');
   rr.id = 'reroll';
   rr.className = 'big blue';
-  rr.innerHTML = `${svg('reroll')}Reroll<span>${REROLL_COST} gold</span>`;
-  rr.disabled = phase !== 'setup' || gold < REROLL_COST;
+  const cost = rerollCost();
+  rr.innerHTML = `${svg('reroll')}Reroll<span>${cost ? cost + ' gold' : 'FREE'}</span>`;
+  rr.disabled = phase !== 'setup' || gold < cost;
   rr.title = 'Get 5 new geese in the shop';
   rr.onclick = reroll;
   shopEl.appendChild(rr);
@@ -649,13 +1002,17 @@ function renderShop() {
 
 function reroll() {
   if (phase !== 'setup') return;
-  if (gold < REROLL_COST) { toast('Not enough gold!'); return; }
-  gold -= REROLL_COST;
+  const cost = rerollCost();
+  if (gold < cost) { toast('Not enough gold!'); sfx('error'); return; }
+  gold -= cost;
+  if (has('reroll')) freeRerollUsed = true;
+  sfx('click');
   rollShop();
+  saveGame();
 }
 
 function freeSpotFor(type) {
-  if (boardCount() < flockCap(round)) {
+  if (boardCount() < flockCap()) {
     const prefRows = TYPES[type].range > 1 ? [0, 1, 2] : [2, 1, 0];
     const colOrder = [3, 4, 2, 5, 1, 6, 0, 7];
     for (const r of prefRows) for (const c of colOrder) if (!unitAt(c, r)) return { c, r };
@@ -668,26 +1025,28 @@ function buy(i) {
   const item = shop[i];
   if (phase !== 'setup' || item.sold) return;
   const d = TYPES[item.type];
-  if (gold < d.cost) { toast('Not enough gold!'); return; }
+  if (gold < d.cost) { toast('Not enough gold!'); sfx('error'); pulse('gold'); return; }
   const willMerge = ownedCount(item.type) >= 2;
   const spot = freeSpotFor(item.type) || (willMerge ? { c: -9, r: -9 } : null);
-  if (!spot) { toast('No room! Sell a goose or merge three of a kind.'); return; }
+  if (!spot) { toast('No room! Sell a goose or merge three of a kind.'); sfx('error'); return; }
   gold -= d.cost;
   item.sold = true;
+  sfx('buy');
   const u = createUnit(item.type, 'player', spot.c, spot.r);
   if (spot.r === -9) u.group.visible = false;
   u.group.position.y = 2;
   u.dropT = 0.4;
-  if (spot.r === -1 && !willMerge) { toast('Your flock is full, so it went to the bench.'); pulseFlock(); }
+  if (spot.r === -1 && !willMerge) { toast('Your flock is full, so it went to the bench.'); pulse('flock'); }
   tryMerge();
   renderShop();
+  saveGame();
 }
 
 function tryMerge() {
   let merged = true;
   while (merged) {
     merged = false;
-    for (const type of SHOP_POOL) {
+    for (const type of SHOP_TYPES) {
       for (const level of [1, 2]) {
         const group = playerUnits().filter(u => u.type === type && u.level === level);
         if (group.length < 3) continue;
@@ -695,11 +1054,16 @@ function tryMerge() {
         group.sort((a, b) => rank(a) - rank(b));
         const [keep, a, b] = group;
         removeUnit(a); removeUnit(b);
+        if (selected === a || selected === b) selected = null;
         keep.level = level + 1;
         applyStats(keep);
         keep.group.visible = true;
         keep.flapT = 0.8;
         sparkle(keep);
+        puff(keep.group.position, 0xffd23f, 10);
+        stats.merges++;
+        stats.bestLevel = Math.max(stats.bestLevel, keep.level);
+        sfx('merge');
         toast(`3 ${TYPES[type].name}s merged into a level ${level + 1} ${TYPES[type].name}!`);
         merged = true;
       }
@@ -710,27 +1074,34 @@ function tryMerge() {
 function sell(u) {
   if (phase !== 'setup' || u.team !== 'player' || u.def.hero) return;
   gold += u.def.cost * Math.pow(3, u.level - 1);
+  puff(u.group.position, 0xffffff, 5);
+  sfx('sell');
   removeUnit(u);
   renderShop();
+  saveGame();
 }
 
-// A simple AI that grows with the round: more geese, some of them leveled up.
-// From round 3 it puts tanks and sprinters in front and ranged and healers in back.
+// The rival flock grows with the round: more geese, some leveled up, smarter
+// placement from round 3, and a giant Captain Hiss in boss battles.
 function buildEnemyTeam() {
-  createUnit('hiss', 'enemy', 3 + Math.round(Math.random()), 4);
-  const count = Math.min(7, round + 1);
-  const p3 = Math.max(0, Math.min(0.5, (round - 6) * 0.15));
-  const p2 = Math.max(0, Math.min(0.8, (round - 2) * 0.15));
+  const boss = isBoss();
+  createUnit('hiss', 'enemy', 3 + Math.round(Math.random()), 4, 1, { boss });
+  const count = Math.min(7, Math.ceil(round * 0.75) + 1) + (boss ? 1 : 0);
+  const p3 = Math.max(0, Math.min(0.35, (round - 9) * 0.07));
+  const p2 = Math.max(0, Math.min(0.6, (round - 3) * 0.09));
   const smart = round >= 3;
+  const pool = unlockedTypes(round).filter(t => t !== 'golden');
+  // Every rival flock has a theme: two favorite kinds of goose it picks more often
+  const favorites = shuffle(pool).slice(0, 2);
   for (let i = 0; i < count; i++) {
-    const t = pick(SHOP_POOL);
+    const t = Math.random() < 0.6 ? pick(favorites) : pick(pool);
     const roll = Math.random();
     const level = roll < p3 ? 3 : roll < p3 + p2 ? 2 : 1;
-    const rows = smart ? (TYPES[t].range > 1 ? [5, 4, 3] : [3, 4, 5]) : [3, 4, 5].sort(() => Math.random() - 0.5);
+    const front = TYPES[t].range <= 1 && !TYPES[t].leap;
+    const rows = smart ? (front ? [3, 4, 5] : [5, 4, 3]) : shuffle([3, 4, 5]);
     let placed = false;
     for (const r of rows) {
-      const cols = [0, 1, 2, 3, 4, 5, 6, 7].sort(() => Math.random() - 0.5);
-      for (const c of cols) if (!unitAt(c, r)) { createUnit(t, 'enemy', c, r, level); placed = true; break; }
+      for (const c of shuffle([0, 1, 2, 3, 4, 5, 6, 7])) if (!unitAt(c, r)) { createUnit(t, 'enemy', c, r, level); placed = true; break; }
       if (placed) break;
     }
   }
@@ -743,12 +1114,12 @@ function clearBattleStuff() {
   effects.length = 0;
 }
 
-function startRound() {
+function startRound(restoreShop = null) {
   for (const u of units.filter(u => u.team === 'enemy')) removeUnit(u);
   clearBattleStuff();
   for (const u of playerUnits()) {
     if (u.home) { u.c = u.home.c; u.r = u.home.r; delete u.home; }
-    u.dead = false; u.deathT = 0;
+    u.dead = false; u.deathT = 0; u.leapt = false; u.dmgDone = 0; u.healDone = 0;
     u.group.visible = true;
     u.group.rotation.z = 0;
     u.facing = Math.PI; u.group.rotation.y = Math.PI;
@@ -758,46 +1129,140 @@ function startRound() {
   }
   phase = 'setup';
   selected = null;
+  freeRerollUsed = false;
   battleTime = 0; endTimer = 0;
+  Sound.setTempo('calm');
   buildEnemyTeam();
-  rollShop();
+  if (restoreShop) { shop = restoreShop; renderShop(); } else rollShop();
   fightBtn.disabled = false;
-  overlay.style.display = 'none';
+  overlay.classList.remove('show');
+  $('perkScreen').classList.remove('show');
+  const fresh = unlockedTypes(round).filter(t => TYPES[t].unlock === round && round > 1);
+  if (isFinal()) banner('FINAL BATTLE', rivalName(), 2200);
+  else if (isBoss()) banner('BOSS BATTLE', rivalName(), 2200);
+  else banner(`Round ${round}`, 'vs ' + rivalName(), 1600);
+  if (fresh.length) setTimeout(() => toast(`New goose in the shop: ${fresh.map(t => TYPES[t].name).join(', ')}!`), 1700);
+  saveGame();
+}
+
+function clearBoard() {
+  for (const u of [...units]) removeUnit(u);
+  clearBattleStuff();
 }
 
 function newGame() {
-  for (const u of [...units]) removeUnit(u);
-  gold = START_GOLD; round = 1; wins = 0; hearts = START_HEARTS;
+  Sound.init();
+  clearBoard();
+  store.del('run');
+  gold = START_GOLD; round = 1; wins = 0; losses = 0; hearts = START_HEARTS;
+  perks = []; endless = false;
+  stats = { merges: 0, goldEarned: 0, bestLevel: 1 };
   createUnit('gerald', 'player', 3, 1);
+  leaveTitle();
   startRound();
+}
+
+function saveGame() {
+  if (phase !== 'setup') return;
+  const data = {
+    v: 1, round, wins, losses, hearts, gold, perks, endless, stats, freeRerollUsed,
+    units: playerUnits().filter(u => u.r !== -9).map(u => ({ type: u.type, level: u.level, c: u.c, r: u.r })),
+    shop,
+  };
+  store.set('run', JSON.stringify(data));
+}
+function loadSave() {
+  try { const d = JSON.parse(store.get('run') || 'null'); return d && d.v === 1 ? d : null; } catch (e) { return null; }
+}
+function continueGame() {
+  const d = loadSave();
+  if (!d) { newGame(); return; }
+  Sound.init();
+  clearBoard();
+  ({ round, wins, losses, hearts, gold, perks, endless, stats } = d);
+  for (const s of d.units) createUnit(s.type, 'player', s.c, s.r, s.level);
+  if (!playerUnits().some(u => u.def.hero)) createUnit('gerald', 'player', 3, 1);
+  leaveTitle();
+  startRound(d.shop);
+  freeRerollUsed = !!d.freeRerollUsed;
+  renderShop();
+}
+
+function recordBest() {
+  const best = Number(store.get('best') || 0);
+  if (wins > best) store.set('best', String(wins));
 }
 
 fightBtn.onclick = () => {
   if (phase !== 'setup' || dragging) return;
+  Sound.init();
   phase = 'battle';
+  selected = null;
   fightBtn.disabled = true;
   renderShop();
   for (const u of playerUnits()) u.home = { c: u.c, r: u.r };
+  battleTime = -1.8; countdownStep = 0;
+  Sound.setTempo('battle');
 };
 const speedBtn = $('speedBtn');
-speedBtn.onclick = () => { gameSpeed = gameSpeed === 1 ? 2 : 1; speedBtn.textContent = 'Speed x' + gameSpeed; };
+speedBtn.onclick = () => { gameSpeed = gameSpeed === 1 ? 2 : 1; speedBtn.querySelector('b').textContent = 'x' + gameSpeed; sfx('click'); };
+$('muteBtn').onclick = () => { Sound.init(); Sound.setMuted(!Sound.muted); renderMute(); };
 
-function showOverlay(title, color, text, btn, onClick) {
+function showOverlay(title, color, text, extra, buttons) {
   $('ovTitle').textContent = title;
   $('ovTitle').style.color = color;
   $('ovText').innerHTML = text;
-  $('ovBtn').textContent = btn;
-  $('ovBtn').onclick = onClick;
-  overlay.style.display = 'flex';
+  $('ovExtra').innerHTML = extra || '';
+  const row = $('ovBtns');
+  row.innerHTML = '';
+  for (const b of buttons) {
+    const el = document.createElement('button');
+    el.className = 'big ' + (b.cls || '');
+    el.textContent = b.label;
+    el.onclick = () => { sfx('click'); b.onClick(); };
+    row.appendChild(el);
+  }
+  overlay.classList.add('show');
   showInfo(null);
+  setTimeout(() => row.firstChild && row.firstChild.focus(), 50);
 }
 
+// ---------------------------------------------------------------------------
+// Golden Feather power-ups
+// ---------------------------------------------------------------------------
+function showPerks(then) {
+  phase = 'perk';
+  overlay.classList.remove('show');
+  const options = shuffle(Object.keys(PERKS).filter(p => !has(p))).slice(0, 3);
+  if (!options.length) { then(); return; }
+  const box = $('perks');
+  box.innerHTML = '';
+  for (const p of options) {
+    const el = document.createElement('button');
+    el.className = 'perk';
+    el.innerHTML = `${svg('feather')}<h3>${PERKS[p].name}</h3><div>${PERKS[p].desc}</div>`;
+    el.onclick = () => {
+      perks.push(p);
+      sfx('perk');
+      $('perkScreen').classList.remove('show');
+      then();
+      toast(`Golden Feather: ${PERKS[p].name}!`);
+    };
+    box.appendChild(el);
+  }
+  $('perkScreen').classList.add('show');
+  sfx('perk');
+}
+
+// ---------------------------------------------------------------------------
+// Unit info panel
+// ---------------------------------------------------------------------------
 let selected = null;
 const canSell = u => phase === 'setup' && u.team === 'player' && !u.def.hero && units.includes(u);
 
 function showInfo(type, u) {
   if (!type && selected && units.includes(selected) && !selected.dead) { type = selected.type; u = selected; }
-  if (!type || phase === 'result') { infoEl.style.display = 'none'; return; }
+  if (!type || phase === 'result' || phase === 'perk' || phase === 'title') { infoEl.style.display = 'none'; return; }
   const d = TYPES[type];
   const hpText = u ? `${Math.max(0, Math.ceil(u.hp))}/${u.maxHp}` : d.hp;
   const atk = u ? Math.round(u.atk) : d.atk;
@@ -806,7 +1271,7 @@ function showInfo(type, u) {
   const sellBtn = u && u === selected && canSell(u)
     ? `<button class="big sell" id="sellBtn">Sell for ${u.def.cost * Math.pow(3, u.level - 1)} gold</button>` : '';
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
-      <div class="role" style="color:${ROLES[d.role].color}">${d.role}${lvl}${side}</div><h3>${d.name}</h3></div></div>
+      <div class="role" style="color:${ROLES[d.role].color}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
     <div class="desc">${d.desc}</div>${sellBtn}`;
   const sb = $('sellBtn');
@@ -815,8 +1280,7 @@ function showInfo(type, u) {
 }
 
 // ---------------------------------------------------------------------------
-// Input (mouse and touch): tap a goose to inspect or sell it, drag a goose to
-// move it, drag empty space to turn the camera. Right-click sells on desktop.
+// Input (mouse and touch)
 // ---------------------------------------------------------------------------
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -842,15 +1306,17 @@ function canDrop(u, t) {
   const other = unitAt(t.c, t.r);
   if (t.r === -1 && u.def.hero) return false;
   if (other && other !== u && other.def.hero && u.r === -1) return false;
-  if (t.r >= 0 && u.r === -1 && !other && boardCount() >= flockCap(round)) return false;
+  if (t.r >= 0 && u.r === -1 && !other && boardCount() >= flockCap()) return false;
   return true;
 }
 function turnCamera(dir) { camAngleGoal = Math.max(-CAM_MAX_TURN, Math.min(CAM_MAX_TURN, camAngleGoal + dir * 0.3)); }
 $('camL').onclick = () => turnCamera(-1);
 $('camR').onclick = () => turnCamera(1);
 window.addEventListener('keydown', e => {
+  if (phase === 'title') return;
   if (e.key === 'q' || e.key === 'Q' || e.key === 'ArrowLeft') turnCamera(-1);
   if (e.key === 'e' || e.key === 'E' || e.key === 'ArrowRight') turnCamera(1);
+  if ((e.key === ' ' || e.key === 'Enter') && phase === 'setup' && document.activeElement === document.body) { e.preventDefault(); fightBtn.click(); }
 });
 $('helpBtn').onclick = () => $('help').classList.toggle('open');
 $('help').onclick = () => $('help').classList.remove('open');
@@ -858,6 +1324,7 @@ $('help').onclick = () => $('help').classList.remove('open');
 const canvas = renderer.domElement;
 canvas.addEventListener('contextmenu', e => e.preventDefault());
 canvas.addEventListener('pointerdown', e => {
+  if (phase === 'title') return;
   setMouse(e);
   const u = unitUnderMouse();
   $('help').classList.remove('open');
@@ -871,6 +1338,7 @@ canvas.addEventListener('pointerdown', e => {
   canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener('pointermove', e => {
+  if (phase === 'title') return;
   setMouse(e);
   if (press && !dragging && !orbit && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) {
     const u = press.u;
@@ -900,8 +1368,8 @@ canvas.addEventListener('pointermove', e => {
 function endPointer() {
   if (orbit) { orbit = null; press = null; return; }
   if (press) {
-    // A tap: select the goose under the finger (or clear the selection)
     selected = press.u || null;
+    if (selected) sfx('click');
     press = null;
     showInfo(null);
     return;
@@ -914,17 +1382,19 @@ function endPointer() {
     const other = unitAt(t.c, t.r);
     if (other && other !== u) { other.c = u.c; other.r = u.r; snapToTile(other); }
     u.c = t.c; u.r = t.r;
+    sfx('click');
   } else if (t && t.r >= 0 && t.r < 3 && u.r === -1) {
-    toast(`Your flock is full! Only ${flockCap(round)} geese can fight this round.`);
-    pulseFlock();
+    toast(`Your flock is full! Only ${flockCap()} geese can fight this round.`);
+    pulse('flock'); sfx('error');
   } else if (t && t.r === -1 && u.def.hero) {
-    toast('Gerald never sits on the bench!');
+    toast('Gerald never sits on the bench!'); sfx('error');
   }
   snapToTile(u);
   setTileHighlight(null);
   canvas.style.cursor = 'grab';
   updateTopbar();
   showInfo(null);
+  saveGame();
 }
 canvas.addEventListener('pointerup', endPointer);
 canvas.addEventListener('pointercancel', endPointer);
@@ -950,19 +1420,30 @@ function nearest(u, list) {
 
 function damage(target, amount, opts = {}) {
   if (target.dead) return;
+  const dealt = Math.min(target.hp, amount);
   target.hp -= amount;
   target.flashT = 0.1;
-  floatText(target, '-' + Math.round(amount), opts.big ? 'big' : 'dmg');
-  if (target.hp <= 0) { target.hp = 0; target.dead = true; target.deathT = 0; }
+  if (opts.from) opts.from.dmgDone += dealt;
+  floatText(target, '-' + Math.round(amount) + (opts.crit ? '!' : ''), opts.big ? 'big' : opts.crit ? 'crit' : 'dmg');
+  if (Math.random() < 0.5) puff(target.group.position, target.def.color, 1, 0.7);
+  if (!opts.quiet) sfx('hit');
+  if (target.hp <= 0) {
+    target.hp = 0; target.dead = true; target.deathT = 0;
+    puff(target.group.position, target.def.color, target.boss ? 24 : 12, 1.2);
+    sfx('pop');
+    if (target.boss) shake = 0.5;
+  }
 }
-function heal(target, amount) {
+function heal(target, amount, from) {
   if (target.dead) return;
   const before = target.hp;
   target.hp = Math.min(target.maxHp, target.hp + amount);
+  if (from) from.healDone += target.hp - before;
   floatText(target, '+' + Math.round(target.hp - before), 'heal');
 }
 
 function floatText(u, text, cls) {
+  if (simulating) return;
   const s = project(u, 1.4);
   if (!s) return;
   const el = document.createElement('div');
@@ -984,22 +1465,36 @@ function spawnProjectile(from, to, kind) {
   let mesh;
   if (kind === 'honk') mesh = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.035, 6, 16), new THREE.MeshBasicMaterial({ color: 0xfff6c0 }));
   else if (kind === 'heal') mesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), new THREE.MeshBasicMaterial({ color: 0x6dff8a }));
+  else if (kind === 'egg') { mesh = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), toon(0xfff8e6)); mesh.scale.set(0.85, 1.15, 0.85); }
   else mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06), toon(0x9a8f80));
   mesh.position.set(from.group.position.x, 0.9 * from.scale, from.group.position.z);
   scene.add(mesh);
-  projectiles.push({ mesh, to, kind, speed: kind === 'honk' ? 7 : 6, amount: kind === 'heal' ? from.healAmt : from.atk });
+  const start = mesh.position.clone();
+  projectiles.push({
+    mesh, from, to, kind, start, t: 0, team: from.team,
+    speed: kind === 'honk' ? 7 : kind === 'egg' ? 4.5 : 6,
+    amount: kind === 'heal' ? from.healAmt : from.atk,
+  });
 }
 
-function ringEffect(u, color, radius, life = 0.5) {
+function ringEffect(pos, color, radius, life = 0.5) {
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.2, 0.32, 32), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide }));
   ring.rotation.x = -Math.PI / 2;
-  ring.position.set(u.group.position.x, 0.15, u.group.position.z);
+  ring.position.set(pos.x, 0.15, pos.z);
   scene.add(ring);
   effects.push({ mesh: ring, t: 0, life, grow: radius / 0.3 });
 }
 function sparkle(u) {
-  ringEffect(u, 0xffd23f, 1.2, 0.7);
-  ringEffect(u, 0xffffff, 0.7, 0.5);
+  ringEffect(u.group.position, 0xffd23f, 1.2, 0.7);
+  ringEffect(u.group.position, 0xffffff, 0.7, 0.5);
+}
+
+function drumBonus(u, allies) {
+  let best = 0;
+  for (const a of allies) {
+    if (a.def.aura && a !== u && dist(a, u) <= 2.2) best = Math.max(best, a.def.aura[a.level - 1]);
+  }
+  return best;
 }
 
 function updateUnitAI(u, dt) {
@@ -1007,17 +1502,37 @@ function updateUnitAI(u, dt) {
   const allies = fighters(u.team);
   if (!enemies.length) return;
   const def = u.def;
-  u.atkTimer -= dt;
+  const haste = (1 + drumBonus(u, allies)) * u.speedMult;
+  u.atkTimer -= dt * haste;
+
+  // Ninja: leap behind the enemy flock at the start of the battle
+  if (def.leap && !u.leapt) {
+    u.leapt = true;
+    const backZ = e => (u.team === 'player' ? e.group.position.z : -e.group.position.z);
+    const target = enemies.reduce((a, b) => (backZ(b) < backZ(a) ? b : a));
+    puff(u.group.position, 0x444455, 8);
+    const dir = u.team === 'player' ? -1 : 1;
+    u.group.position.set(target.group.position.x + (Math.random() - 0.5) * 0.4, 0, target.group.position.z + dir * 0.75);
+    puff(u.group.position, 0x444455, 8);
+    sfx('whoosh');
+    u.focus = target;
+  }
 
   if (def.hero) {
     u.honkTimer -= dt;
-    const close = enemies.filter(e => dist(u, e) <= HERO_HONK_RADIUS);
+    const radius = HERO_HONK_RADIUS * (u.team === 'player' && has('mighty') ? 1.35 : 1);
+    const close = enemies.filter(e => dist(u, e) <= radius);
     if (u.honkTimer <= 0 && close.length) {
       u.honkTimer = HERO_HONK_CD;
-      ringEffect(u, u.team === 'player' ? 0xffe066 : 0xc070ff, HERO_HONK_RADIUS);
+      ringEffect(u.group.position, u.team === 'player' ? 0xffe066 : 0xc070ff, radius);
       u.flapT = 0.6;
-      const dmg = HERO_HONK_DMG * (u.atk / def.atk);
-      for (const e of close) damage(e, dmg, { big: true });
+      shake = Math.max(shake, u.boss ? 0.35 : 0.18);
+      sfx('honk', true);
+      const dmg = HERO_HONK_DMG * (u.atk / def.atk) * (u.team === 'player' && has('mighty') ? 1.5 : 1);
+      for (const e of close) damage(e, dmg, { big: true, from: u, quiet: true });
+      if (u.team === 'player' && has('healing')) {
+        for (const a of allies) if (dist(u, a) <= radius) heal(a, 45, u);
+      }
       floatText(u, 'HONK!', 'big');
     }
   }
@@ -1027,6 +1542,7 @@ function updateUnitAI(u, dt) {
     const hurt = allies.filter(a => a.hp < a.maxHp - 5).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
     if (hurt.length) { target = hurt[0]; isHeal = true; }
   }
+  if (!target && u.focus && !u.focus.dead) target = u.focus;
   if (!target) target = nearest(u, enemies);
 
   const d = dist(u, target);
@@ -1036,16 +1552,23 @@ function updateUnitAI(u, dt) {
   if (target !== u) u.facing = Math.atan2(dx, dz);
 
   if (d > reach) {
-    const step = Math.min(def.speed * dt, d - reach + 0.01);
+    const step = Math.min(def.speed * u.speedMult * dt, d - reach + 0.01);
     u.group.position.x += (dx / d) * step;
     u.group.position.z += (dz / d) * step;
     u.walkT += dt * def.speed * 6;
   } else if (u.atkTimer <= 0) {
     u.atkTimer = def.cd;
-    if (isHeal) { spawnProjectile(u, target, 'heal'); u.flapT = 0.3; }
-    else if (def.projectile === 'honk') { spawnProjectile(u, target, 'honk'); u.peckT = 0.25; }
+    if (isHeal) { spawnProjectile(u, target, 'heal'); u.flapT = 0.3; sfx('heal'); }
+    else if (def.projectile === 'honk') { spawnProjectile(u, target, 'honk'); u.peckT = 0.25; sfx('honk', false); }
+    else if (def.projectile === 'egg') { spawnProjectile(u, target, 'egg'); u.flapT = 0.3; }
     else if (def.heal) { spawnProjectile(u, target, 'pebble'); u.peckT = 0.25; }
-    else { u.peckT = 0.25; damage(target, u.atk * (0.9 + Math.random() * 0.2)); }
+    else {
+      u.peckT = 0.25;
+      const crit = def.crit && Math.random() < def.crit;
+      if (crit) sfx('crit');
+      damage(target, u.atk * (0.9 + Math.random() * 0.2) * (crit ? 2 : 1), { from: u, crit });
+    }
+    if (def.aura) u.flapT = 0.25;
   }
 }
 
@@ -1075,6 +1598,30 @@ function updateProjectiles(dt) {
   for (let i = projectiles.length - 1; i >= 0; i--) {
     const p = projectiles[i];
     const tp = p.to.group.position;
+    if (p.kind === 'egg') {
+      // Lob in an arc toward where the target is now, splat on landing
+      if (!p.land) p.land = new THREE.Vector3(tp.x, 0, tp.z);
+      const total = Math.max(0.4, p.start.distanceTo(p.land) / p.speed);
+      p.t += dt;
+      const k = Math.min(1, p.t / total);
+      p.mesh.position.lerpVectors(p.start, p.land, k);
+      p.mesh.position.y = p.start.y * (1 - k) + Math.sin(k * Math.PI) * 1.4;
+      p.mesh.rotation.x += dt * 8;
+      if (k >= 1) {
+        scene.remove(p.mesh); projectiles.splice(i, 1);
+        const radius = (p.from.def.splash || 1) * T;
+        ringEffect(p.land, 0xfff2b0, radius, 0.4);
+        puff(p.land, 0xfff8e6, 6, 0.8);
+        sfx('splash');
+        const foes = fighters(p.team === 'player' ? 'enemy' : 'player');
+        for (const e of foes) {
+          if (Math.hypot(e.group.position.x - p.land.x, e.group.position.z - p.land.z) <= radius) {
+            damage(e, p.amount * (0.9 + Math.random() * 0.2), { from: p.from, quiet: true });
+          }
+        }
+      }
+      continue;
+    }
     const dir = new THREE.Vector3(tp.x, 0.6 * p.to.scale, tp.z).sub(p.mesh.position);
     const d = dir.length();
     const step = p.speed * dt;
@@ -1082,8 +1629,8 @@ function updateProjectiles(dt) {
       scene.remove(p.mesh);
       projectiles.splice(i, 1);
       if (p.to.dead) continue;
-      if (p.kind === 'heal') heal(p.to, p.amount);
-      else damage(p.to, p.amount * (0.9 + Math.random() * 0.2));
+      if (p.kind === 'heal') heal(p.to, p.amount, p.from);
+      else damage(p.to, p.amount * (0.9 + Math.random() * 0.2), { from: p.from });
       continue;
     }
     p.mesh.position.addScaledVector(dir.normalize(), step);
@@ -1092,35 +1639,125 @@ function updateProjectiles(dt) {
   }
 }
 
+function stepBattle(dt) {
+  battleTime += dt;
+  if (battleTime < 0) {
+    const n = Math.ceil(-battleTime / 0.6);
+    if (n !== countdownStep) { countdownStep = n; banner(String(n), '', 0); sfx('count'); }
+    return;
+  }
+  if (countdownStep !== -1) { countdownStep = -1; if (!simulating) { banner('HONK!', '', 700); sfx('go'); } }
+  for (const u of units) if (!u.dead && u.r !== -1) updateUnitAI(u, dt);
+  separate();
+  updateProjectiles(dt);
+  const over = !fighters('player').length || !fighters('enemy').length || battleTime > 60;
+  if (over) { endTimer += dt; if (endTimer > 1.2) endBattle(); }
+}
+
 function endBattle() {
   phase = 'result';
+  Sound.setTempo('calm');
   const p = fighters('player').length, e = fighters('enemy').length;
   let win;
   if (p && e) {
     const frac = team => fighters(team).reduce((s, u) => s + u.hp, 0) / units.filter(u => u.team === team && u.r !== -1).reduce((s, u) => s + u.maxHp, 0);
     win = frac('player') >= frac('enemy');
   } else win = p > 0;
+  if (win) wins++; else { hearts--; losses++; }
 
-  if (win) wins++; else hearts--;
+  // Gold for next round
+  const lines = [['Round pay', ROUND_GOLD]];
+  if (win) lines.push(['Victory bonus', WIN_BONUS]);
+  const interest = Math.min(3, Math.floor(gold / 5));
+  if (interest) lines.push(['Savings bonus', interest]);
+  const goldenPay = fighters('player').filter(u => u.def.goldPerWin).reduce((s, u) => s + u.def.goldPerWin[u.level - 1], 0);
+  if (goldenPay) {
+    lines.push(['Golden Geese', goldenPay]);
+    for (const u of fighters('player').filter(u => u.def.goldPerWin)) floatText(u, `+${u.def.goldPerWin[u.level - 1]} gold`, 'gold');
+    sfx('coin');
+  }
+  if (has('piggy')) lines.push(['Piggy Bank', 2]);
+  const earned = lines.reduce((s, l) => s + l[1], 0);
+  const ledger = `<div class="ledger">${lines.map(([k, v]) => `<span>${k}</span><span>+${v}</span>`).join('')}
+    <span class="tot">Gold next round</span><span class="tot">+${earned}</span></div>`;
+
+  // Most valuable goose of the battle
+  const mine = playerUnits().filter(u => u.r !== -1);
+  const mvp = mine.reduce((a, b) => (b.dmgDone + b.healDone > a.dmgDone + a.healDone ? b : a), mine[0]);
+  const mvpHtml = mvp && mvp.dmgDone + mvp.healDone > 0
+    ? `<div class="mvp">${roleIcon(mvp.def.role, 26)} MVP: ${mvp.def.name}${mvp.level > 1 ? ' (level ' + mvp.level + ')' : ''} with ${Math.round(mvp.dmgDone)} damage${mvp.healDone > 20 ? ' and ' + Math.round(mvp.healDone) + ' healing' : ''}</div>` : '';
+
   updateTopbar();
-  const earned = ROUND_GOLD + (win ? WIN_BONUS : 0);
+  recordBest();
+  const summary = `<div class="ledger"><span>Battles won</span><span>${wins}</span><span>Battles lost</span><span>${losses}</span>
+    <span>Geese merged</span><span>${stats.merges}</span><span>Highest goose level</span><span>${stats.bestLevel}</span>
+    <span>Golden Feathers</span><span>${perks.length}</span></div>`;
 
-  if (wins >= WINS_TO_WIN) {
-    showOverlay('Goose Champion!', '#d9a514', `Gerald's flock won ${WINS_TO_WIN} battles! Captain Hiss waddles away in shame.`, 'Play again', newGame);
+  if (!simulating) win ? sfx('win') : sfx('lose');
+  stats.goldEarned += earned;
+  const next = () => { round++; gold += earned; if (PERK_ROUNDS.has(round)) showPerks(() => startRound()); else startRound(); };
+
+  if (!endless && wins >= WINS_TO_WIN) {
+    store.del('run');
+    showOverlay('Goose Champion!', '#d9a514', `Gerald's flock beat Captain Hiss's Grand Armada! The whole pond is cheering.`, mvpHtml + summary, [
+      { label: 'Keep playing', cls: 'green', onClick: () => { endless = true; next(); } },
+      { label: 'New game', onClick: newGame },
+    ]);
   } else if (hearts <= 0) {
-    showOverlay('Game over', '#c0392b', `Captain Hiss wins this time. You won ${wins} ${wins === 1 ? 'battle' : 'battles'} and reached round ${round}.`, 'Try again', newGame);
+    store.del('run');
+    showOverlay('Game over', '#c0392b', `Captain Hiss wins this time. You reached round ${round}.`, mvpHtml + summary, [
+      { label: 'Try again', onClick: newGame },
+      { label: 'Title screen', cls: 'blue', onClick: showTitle },
+    ]);
   } else {
-    const next = flockCap(round + 1) > flockCap(round) ? `<br>Your flock can now have <b>${flockCap(round + 1)}</b> geese.` : '';
+    const capNext = Math.min(9, 4 + round + (has('roomy') ? 1 : 0));
+    const extras = [];
+    if (capNext > flockCap()) extras.push(`Your flock can now have <b>${capNext}</b> geese.`);
+    const fresh = SHOP_TYPES.filter(t => TYPES[t].unlock === round + 1);
+    if (fresh.length) extras.push(`New in the shop: <b>${fresh.map(t => TYPES[t].name).join(', ')}</b>`);
+    if (PERK_ROUNDS.has(round + 1)) extras.push('Gerald found a <b>Golden Feather</b>!');
     showOverlay(win ? 'Victory!' : 'Defeat...', win ? '#2f9e4a' : '#c0392b',
-      (win ? `Gerald's flock wins round ${round}!` : `Captain Hiss wins round ${round}. You lost a heart.`) +
-      `<br>You get <b>${earned} gold</b>.${next}<br>The next rival flock will be tougher!`,
-      'Next round', () => { round++; gold += earned; startRound(); });
+      (win ? `Gerald's flock beat ${rivalName()}!` : `${rivalName()} won this one. You lost a heart.`) + (extras.length ? '<br>' + extras.join('<br>') : ''),
+      mvpHtml + ledger,
+      [{ label: 'Next round', cls: 'green', onClick: next }]);
   }
 }
 
 // ---------------------------------------------------------------------------
+// Title screen
+// ---------------------------------------------------------------------------
+function showTitle() {
+  phase = 'title';
+  clearBoard();
+  document.body.classList.add('on-title');
+  overlay.classList.remove('show');
+  $('perkScreen').classList.remove('show');
+  $('titleScreen').classList.add('show');
+  // A little showcase flock on the board
+  createUnit('gerald', 'player', 3, 1);
+  createUnit('brute', 'player', 2, 2); createUnit('honker', 'player', 5, 0); createUnit('nurse', 'player', 1, 0);
+  createUnit('hiss', 'enemy', 4, 4); createUnit('ninja', 'enemy', 2, 3); createUnit('bomber', 'enemy', 6, 5);
+  const d = loadSave();
+  const cont = $('contBtn');
+  cont.hidden = !d;
+  if (d) cont.textContent = `Continue (round ${d.round}, ${d.wins} ${d.wins === 1 ? 'win' : 'wins'})`;
+  const best = Number(store.get('best') || 0);
+  $('bestLine').textContent = best ? `Best run: ${best} ${best === 1 ? 'win' : 'wins'}` : '';
+  (d ? cont : $('newBtn')).focus();
+}
+function leaveTitle() {
+  document.body.classList.remove('on-title');
+  $('titleScreen').classList.remove('show');
+  camAngleGoal = 0;
+}
+$('newBtn').onclick = () => { sfx('click'); newGame(); };
+$('contBtn').onclick = () => { sfx('click'); continueGame(); };
+$('howBtn').onclick = () => { Sound.init(); sfx('click'); $('howto').classList.toggle('open'); };
+
+// ---------------------------------------------------------------------------
 // Main loop
 // ---------------------------------------------------------------------------
+let simulating = false;
 const clock = new THREE.Clock();
 let elapsed = 0;
 function tick() {
@@ -1128,17 +1765,13 @@ function tick() {
   const dt = phase === 'battle' ? realDt * gameSpeed : realDt;
   elapsed += realDt;
 
-  camAngle += (camAngleGoal - camAngle) * Math.min(1, realDt * 6);
+  if (phase === 'title') camAngleGoal = Math.sin(elapsed * 0.25) * 0.5;
+  camAngle += (camAngleGoal - camAngle) * Math.min(1, realDt * (phase === 'title' ? 2 : 6));
+  shake = Math.max(0, shake - realDt * 1.2);
   placeCamera();
 
-  if (phase === 'battle') {
-    battleTime += dt;
-    for (const u of units) if (!u.dead && u.r !== -1) updateUnitAI(u, dt);
-    separate();
-    updateProjectiles(dt);
-    const over = !fighters('player').length || !fighters('enemy').length || battleTime > 60;
-    if (over) { endTimer += dt; if (endTimer > 1.2) endBattle(); }
-  }
+  if (phase === 'battle') stepBattle(dt);
+  updateFeathers(realDt);
 
   for (const u of [...units]) {
     const g = u.group;
@@ -1161,7 +1794,7 @@ function tick() {
       if (u.dropT <= 0) { delete u.dropT; g.position.y = 0; }
     } else if (u !== dragging) {
       g.position.y = Math.abs(Math.sin(u.walkT)) * 0.06;
-      if (phase !== 'battle') u.walkT += realDt * 1.5;
+      if (phase !== 'battle') u.walkT += realDt * (u.def.aura ? 4 : 1.5);
     }
 
     u.peckT = Math.max(0, u.peckT - dt);
@@ -1207,14 +1840,28 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Small hook for automated testing
+// Hooks for automated testing and balance simulation
 window.__game = {
   get phase() { return phase; }, get units() { return units; }, get gold() { return gold; }, set gold(v) { gold = v; renderShop(); },
   get round() { return round; }, get hearts() { return hearts; }, get wins() { return wins; }, get shop() { return shop; },
-  buy, reroll, newGame, camera, setShop(types) { shop = types.map(type => ({ type, sold: false })); renderShop(); },
+  get perks() { return perks; }, camera, buy, reroll, newGame, continueGame, showTitle, TYPES,
+  setShop(types) { shop = types.map(type => ({ type, sold: false })); renderShop(); },
+  // Run the current battle instantly (no countdown, no rendering) and return the result
+  simulate() {
+    fightBtn.click();
+    simulating = true;
+    battleTime = 0; countdownStep = -1;
+    let guard = 0;
+    while (phase === 'battle' && guard++ < 5000) {
+      stepBattle(1 / 30);
+      for (const u of units) if (u.dead && u.deathT === 0) u.deathT = 0.0001;
+    }
+    simulating = false;
+    return { wins, hearts, round, phase };
+  },
 };
 
-newGame();
+showTitle();
 tick();
 </script>
 </body>
