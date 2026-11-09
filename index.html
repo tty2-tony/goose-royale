@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gerald Royale</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,7 +17,8 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; overflow: hidden; background: #9fd8f0; }
   body { font-family: 'Fredoka', 'Trebuchet MS', sans-serif; color: var(--ink); user-select: none; }
-  canvas { display: block; }
+  canvas { display: block; touch-action: none; }
+  button { touch-action: manipulation; }
   #ui { position: fixed; inset: 0; pointer-events: none; }
   #ui > * { pointer-events: auto; }
   #ui > #hud, #ui > #toast { pointer-events: none; }
@@ -87,6 +88,8 @@
   .card .mini { font-size: 12px; margin-top: 2px; color: #5a4a35; }
   .card .badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 8px; background: #fff3c4; border: 2px solid #e2c991; white-space: nowrap; }
   .card .badge.merge { background: #ffd23f; border-color: #c4720a; color: #7a3d00; }
+  #helpBtn { display: none; }
+  #info .sell { margin-top: 8px; width: 100%; font-size: 16px; padding: 6px 10px; }
   #reroll { width: 82px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 16px; padding: 6px; }
   #reroll svg { width: 26px; height: 26px; fill: #fff; }
   #reroll span { font-size: 13px; opacity: 0.9; }
@@ -116,6 +119,60 @@
   .float.heal { color: #7dff95; }
   .float.big { font-size: 24px; color: #ffd84a; }
   @keyframes floatUp { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -40px; } }
+
+  /* Phones and small windows: compact top bar, scrolling shop, help behind a button */
+  @media (max-width: 760px), (max-height: 540px) {
+    #topbar { top: calc(6px + env(safe-area-inset-top, 0px)); left: 6px; right: 6px; transform: none; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 5px; border-radius: 14px; }
+    .pill { font-size: 14px; padding: 2px 8px; border-radius: 10px; }
+    .pill small { font-size: 10px; letter-spacing: 0.5px; }
+    #hearts svg { width: 16px; height: 16px; }
+    button.big { font-size: 15px; padding: 6px 12px; border-radius: 11px; }
+    #helpBtn { display: inline-block; min-width: 34px; padding: 6px 10px; }
+    #help { display: none; z-index: 5; left: 50%; transform: translateX(-50%); top: 90px; width: min(320px, calc(100vw - 24px)); max-height: calc(100% - 120px); overflow-y: auto; }
+    #help.open { display: block; }
+    #toast { top: auto; bottom: calc(150px + env(safe-area-inset-bottom, 0px)); width: max-content; max-width: calc(100vw - 24px); white-space: normal; text-align: center; }
+    #info { top: auto; right: 6px; left: 6px; width: auto; bottom: calc(132px + env(safe-area-inset-bottom, 0px)); padding: 8px 12px; font-size: 14px; }
+    #info .desc { font-size: 13px; }
+    #shop { left: 6px; right: 6px; transform: none; bottom: calc(6px + env(safe-area-inset-bottom, 0px)); padding: 6px; gap: 6px; overflow-x: auto; justify-content: flex-start; }
+    #shop .label { display: none; }
+    .card { flex: none; width: 86px; padding: 6px 4px 4px; border-radius: 12px; }
+    .card:hover { transform: none; }
+    .card .icon { width: 32px; height: 32px; }
+    .card .name { font-size: 14px; }
+    .card .role { font-size: 10px; }
+    .card .mini { font-size: 10px; }
+    .card .badge { top: -11px; font-size: 9px; padding: 0 5px; }
+    #reroll { flex: none; width: 70px; font-size: 14px; }
+    #camctl { bottom: auto; top: 96px; right: 6px; padding: 4px 6px; font-size: 0; }
+    #camctl button { width: 34px; height: 30px; font-size: 16px; }
+    #overlay .box { padding: 18px 20px; max-width: calc(100vw - 32px); }
+    #overlay h1 { font-size: 30px; }
+    #overlay p { font-size: 16px; }
+    .hpbar { width: 32px; height: 6px; }
+    .uhud .icon { width: 14px; height: 14px; }
+    .uhud .tag { font-size: 11px; }
+    .float { font-size: 15px; }
+    .float.big { font-size: 19px; }
+  }
+  @media (max-width: 480px) {
+    .card { flex: 1 1 0; width: auto; min-width: 0; padding: 6px 2px 4px; }
+    .card .role, .card .mini { display: none; }
+    .card .name { font-size: 12px; }
+    .card .icon { width: 30px; height: 30px; }
+    .card .cost { position: static; font-size: 12px; }
+    #reroll { flex: 0 0 58px; width: 58px; font-size: 12px; padding: 4px; }
+    #reroll svg { width: 20px; height: 20px; }
+    #reroll span { font-size: 11px; }
+    #shop { overflow-x: visible; }
+    #info { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    #toast { bottom: calc(110px + env(safe-area-inset-bottom, 0px)); }
+  }
+  @media (max-height: 540px) and (min-width: 600px) {
+    #topbar { left: 50%; right: auto; transform: translateX(-50%); flex-wrap: nowrap; }
+    #camctl { top: 60px; }
+    #info { left: auto; width: 260px; bottom: calc(126px + env(safe-area-inset-bottom, 0px)); }
+    #shop { left: 50%; right: auto; transform: translateX(-50%); max-width: calc(100vw - 12px); }
+  }
 </style>
 </head>
 <body>
@@ -129,6 +186,7 @@
     <div class="pill" id="flock"><small>Flock</small><b>1/4</b></div>
     <button class="big" id="fightBtn">FIGHT!</button>
     <button class="big blue" id="speedBtn">Speed x1</button>
+    <button class="big blue" id="helpBtn" title="How to play">?</button>
   </div>
   <div id="toast"></div>
   <div id="help" class="panel">
@@ -140,7 +198,7 @@
     </ol>
     <div class="tip">Get 3 of the same goose and they merge into a stronger one with a star! Win 10 battles before you lose all your hearts.</div>
     <div class="legend" id="legend"></div>
-    <div class="tip">Right-click a goose to sell it.</div>
+    <div class="tip">Tap or click a goose to see it and sell it. Drag empty space to turn the camera.</div>
   </div>
   <div id="info" class="panel"></div>
   <div id="shop" class="panel"></div>
@@ -237,7 +295,19 @@ scene.fog = new THREE.Fog(0x9fd8f0, 22, 45);
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 const camTarget = new THREE.Vector3(0, 0, 1.3);
 const CAM_MAX_TURN = 0.6;
-let camAngle = 0, camAngleGoal = 0, camDist = 10.2, camHeight = 8.2;
+let camAngle = 0, camAngleGoal = 0, camDist = 10.2, camHeight = 8.2, camZoom = 1;
+// Pull the camera back on narrow (portrait) screens so the whole board fits across
+function fitCamera() {
+  const aspect = window.innerWidth / window.innerHeight;
+  const portrait = aspect < 0.8;
+  camera.fov = portrait ? 46 : 45;
+  camera.aspect = aspect;
+  camera.updateProjectionMatrix();
+  const halfH = Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * aspect);
+  camDist = Math.max(10.2, (portrait ? 4.25 : 4.7) / Math.tan(halfH)) * camZoom;
+  camHeight = camDist * (portrait ? 0.68 : 0.8);
+}
+fitCamera();
 function placeCamera() {
   camera.position.set(camTarget.x + Math.sin(camAngle) * camDist, camHeight, camTarget.z + Math.cos(camAngle) * camDist);
   camera.lookAt(camTarget);
@@ -687,6 +757,7 @@ function startRound() {
     snapToTile(u);
   }
   phase = 'setup';
+  selected = null;
   battleTime = 0; endTimer = 0;
   buildEnemyTeam();
   rollShop();
@@ -721,27 +792,36 @@ function showOverlay(title, color, text, btn, onClick) {
   showInfo(null);
 }
 
+let selected = null;
+const canSell = u => phase === 'setup' && u.team === 'player' && !u.def.hero && units.includes(u);
+
 function showInfo(type, u) {
+  if (!type && selected && units.includes(selected) && !selected.dead) { type = selected.type; u = selected; }
   if (!type || phase === 'result') { infoEl.style.display = 'none'; return; }
   const d = TYPES[type];
   const hpText = u ? `${Math.max(0, Math.ceil(u.hp))}/${u.maxHp}` : d.hp;
   const atk = u ? Math.round(u.atk) : d.atk;
   const lvl = u && u.level > 1 ? ` &middot; level ${u.level}` : '';
   const side = u ? (u.team === 'player' ? (u.r === -1 ? ' &middot; on bench' : ' &middot; your flock') : ' &middot; rival flock') : '';
+  const sellBtn = u && u === selected && canSell(u)
+    ? `<button class="big sell" id="sellBtn">Sell for ${u.def.cost * Math.pow(3, u.level - 1)} gold</button>` : '';
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
       <div class="role" style="color:${ROLES[d.role].color}">${d.role}${lvl}${side}</div><h3>${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
-    <div>${d.desc}</div>`;
+    <div class="desc">${d.desc}</div>${sellBtn}`;
+  const sb = $('sellBtn');
+  if (sb) sb.onclick = () => { const v = selected; selected = null; sell(v); showInfo(null); };
   infoEl.style.display = 'block';
 }
 
 // ---------------------------------------------------------------------------
-// Input: drag geese, right-click to sell, right-drag, Q/E or buttons to turn
+// Input (mouse and touch): tap a goose to inspect or sell it, drag a goose to
+// move it, drag empty space to turn the camera. Right-click sells on desktop.
 // ---------------------------------------------------------------------------
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-let dragging = null, hoverTile = null, orbit = null;
+let dragging = null, hoverTile = null, orbit = null, press = null;
 
 function setMouse(e) {
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -772,27 +852,34 @@ window.addEventListener('keydown', e => {
   if (e.key === 'q' || e.key === 'Q' || e.key === 'ArrowLeft') turnCamera(-1);
   if (e.key === 'e' || e.key === 'E' || e.key === 'ArrowRight') turnCamera(1);
 });
+$('helpBtn').onclick = () => $('help').classList.toggle('open');
+$('help').onclick = () => $('help').classList.remove('open');
 
 const canvas = renderer.domElement;
 canvas.addEventListener('contextmenu', e => e.preventDefault());
 canvas.addEventListener('pointerdown', e => {
   setMouse(e);
   const u = unitUnderMouse();
+  $('help').classList.remove('open');
   if (e.button === 2) {
-    if (u && u.team === 'player' && phase === 'setup' && !u.def.hero) sell(u);
+    if (u && canSell(u)) { if (selected === u) selected = null; sell(u); }
     else orbit = { x: e.clientX, angle: camAngleGoal };
     return;
   }
   if (e.button !== 0) return;
-  if (u && u.team === 'player' && phase === 'setup') {
-    dragging = u;
-    canvas.setPointerCapture(e.pointerId);
-  }
+  press = { x: e.clientX, y: e.clientY, u };
+  canvas.setPointerCapture(e.pointerId);
 });
 canvas.addEventListener('pointermove', e => {
   setMouse(e);
+  if (press && !dragging && !orbit && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) {
+    const u = press.u;
+    if (u && u.team === 'player' && phase === 'setup') dragging = u;
+    else orbit = { x: press.x, angle: camAngleGoal };
+    press = null;
+  }
   if (orbit) {
-    camAngleGoal = Math.max(-CAM_MAX_TURN, Math.min(CAM_MAX_TURN, orbit.angle - (e.clientX - orbit.x) * 0.005));
+    camAngleGoal = Math.max(-CAM_MAX_TURN, Math.min(CAM_MAX_TURN, orbit.angle - (e.clientX - orbit.x) * 0.006));
     return;
   }
   if (dragging) {
@@ -805,12 +892,20 @@ canvas.addEventListener('pointermove', e => {
     canvas.style.cursor = 'grabbing';
     return;
   }
+  if (e.pointerType !== 'mouse' || press) return;
   const u = unitUnderMouse();
   canvas.style.cursor = u && u.team === 'player' && phase === 'setup' ? 'grab' : 'default';
   if (u) showInfo(u.type, u); else showInfo(null);
 });
-canvas.addEventListener('pointerup', () => {
-  if (orbit) { orbit = null; return; }
+function endPointer() {
+  if (orbit) { orbit = null; press = null; return; }
+  if (press) {
+    // A tap: select the goose under the finger (or clear the selection)
+    selected = press.u || null;
+    press = null;
+    showInfo(null);
+    return;
+  }
   if (!dragging) return;
   const u = dragging;
   dragging = null;
@@ -829,10 +924,13 @@ canvas.addEventListener('pointerup', () => {
   setTileHighlight(null);
   canvas.style.cursor = 'grab';
   updateTopbar();
-});
+  showInfo(null);
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
 canvas.addEventListener('wheel', e => {
-  camDist = Math.max(8, Math.min(15, camDist + e.deltaY * 0.01));
-  camHeight = camDist * 0.8;
+  camZoom = Math.max(0.8, Math.min(1.4, camZoom + e.deltaY * 0.001));
+  fitCamera();
 }, { passive: true });
 
 // ---------------------------------------------------------------------------
@@ -1105,8 +1203,7 @@ function tick() {
 }
 
 window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  fitCamera();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
@@ -1114,7 +1211,7 @@ window.addEventListener('resize', () => {
 window.__game = {
   get phase() { return phase; }, get units() { return units; }, get gold() { return gold; }, set gold(v) { gold = v; renderShop(); },
   get round() { return round; }, get hearts() { return hearts; }, get wins() { return wins; }, get shop() { return shop; },
-  buy, reroll, newGame, setShop(types) { shop = types.map(type => ({ type, sold: false })); renderShop(); },
+  buy, reroll, newGame, camera, setShop(types) { shop = types.map(type => ({ type, sold: false })); renderShop(); },
 };
 
 newGame();
