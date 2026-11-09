@@ -10,9 +10,13 @@ To host it: in the repository's GitHub settings, open **Pages**, choose "Deploy 
 
 ## How to play
 
-1. Buy geese from the shop (you start with 10 gold).
-2. Drag them around on your (blue) half of the board. Right-click a goose to sell it back.
-3. Press **FIGHT!** and watch the battle. Right-drag to turn the camera, scroll to zoom.
+1. Buy geese from the shop (you start with 10 gold). Reroll the shop for 1 gold.
+2. Drag them onto your (blue) half of the board. The Flock counter shows how many geese can fight this round; extras wait on the bench. Right-click a goose to sell it.
+3. Press **FIGHT!** and watch the battle.
+4. Buy 3 of the same goose and they merge into a stronger level 2 (3 level 2s make a level 3).
+5. Win 10 battles before you lose your 3 hearts. Each round gives gold, a bigger flock limit and a tougher rival flock.
+
+Turn the camera with the arrow buttons, Q/E, the arrow keys or right-drag. Scroll to zoom.
 
 ## Geese
 
@@ -27,5 +31,5 @@ To host it: in the repository's GitHub settings, open **Pages**, choose "Deploy 
 ## Roadmap
 
 - Step 1 (done): board, goose types, shop, drag-to-place, auto-battle against a simple AI team.
-- Step 2: rounds, gold income, shop rerolls, merging copies of a goose to level it up, harder AI teams.
+- Step 2 (done): rounds, hearts, gold income, shop rerolls, flock limit and bench, merging 3 copies to level up, role icons, camera turning, rival flocks that grow each round.
 - Step 3: polish, sound, title screen.
