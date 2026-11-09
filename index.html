@@ -77,7 +77,7 @@
   #banner.pop .big { animation: popIn 0.35s ease-out; }
   @keyframes popIn { from { transform: scale(1.8); } to { transform: scale(1); } }
 
-  #help { position: absolute; top: 80px; left: 14px; width: 236px; padding: 10px 14px; font-size: 15px; line-height: 1.35; max-height: calc(100% - 250px); overflow-y: auto; }
+  #help { position: absolute; top: 80px; left: 14px; width: 236px; padding: 10px 14px; font-size: 15px; line-height: 1.35; max-height: calc(100% - 330px); overflow-y: auto; }
   #help h2 { margin: 0 0 6px; font-size: 22px; }
   #help h2 span { color: var(--accent-dark); }
   #help ol { margin: 0; padding-left: 20px; }
@@ -92,6 +92,13 @@
   #info .stats { display: flex; gap: 10px; margin: 6px 0; font-weight: 600; flex-wrap: wrap; }
   #info .sell { margin-top: 8px; width: 100%; font-size: 16px; padding: 6px 10px; }
 
+  #bonds { position: absolute; left: 14px; bottom: 14px; width: 236px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+  #bonds .bh { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); }
+  .bond { display: flex; align-items: center; gap: 6px; opacity: 0.55; }
+  .bond.on { opacity: 1; font-weight: 600; }
+  .bond b { font-variant-numeric: tabular-nums; }
+  #info .bondtip { margin-top: 6px; font-size: 12px; font-weight: 600; color: #6b5a40; display: flex; gap: 5px; align-items: center; }
+  body.on-title #bonds { display: none !important; }
   .icon { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid rgba(0,0,0,0.25); flex: none; }
   .icon svg { width: 62%; height: 62%; fill: #fff; }
 
@@ -152,6 +159,30 @@
   #titleScreen .howto.open { display: block; }
   #titleScreen .howto ol { margin: 0; padding-left: 20px; }
 
+  .modes { display: flex; flex-direction: column; gap: 10px; align-items: center; width: min(560px, 100%); }
+  .modehead { color: #fff; font-size: 22px; font-weight: 700; text-shadow: 0 2px 3px rgba(0,0,0,0.5); }
+  .modelist { display: flex; gap: 10px; width: 100%; }
+  .mode { flex: 1 1 0; min-width: 0; background: #fff; border: 3px solid var(--panel-edge); border-radius: 16px; padding: 12px 10px; cursor: pointer; color: var(--ink); font-size: 14px; text-align: center; transition: transform 0.1s, border-color 0.1s; }
+  .mode:hover, .mode:focus-visible { transform: translateY(-4px); border-color: var(--accent); }
+  .mode h3 { margin: 0 0 4px; font-size: 22px; }
+  .mode .won { margin-top: 6px; font-size: 12px; font-weight: 700; color: #b8860b; min-height: 15px; }
+  #bookScreen .box { padding: 20px 22px; text-align: center; border-radius: 22px; border-width: 4px; width: min(860px, 100%); max-height: 100%; overflow-y: auto; }
+  #bookScreen h1 { margin: 0; font-size: 34px; }
+  #bookScreen p { margin: 2px 0 12px; }
+  .book { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px; text-align: left; }
+  .bookcard { background: #fff; border: 3px solid #e2c991; border-radius: 14px; padding: 10px; font-size: 13px; line-height: 1.35; }
+  .bookcard .top { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .bookcard h3 { margin: 0; font-size: 16px; }
+  .bookcard .meta { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  .bookcard .stars svg { width: 15px; height: 15px; fill: #ffd23f; stroke: #7a4a00; stroke-width: 2; }
+  .bookcard .stars svg.off { fill: #e6dccb; stroke: #c9b994; }
+  .bookcard.locked { background: #f1ece2; color: #8a7a60; }
+  .bookcard.locked .icon { background: #b9ad95 !important; }
+  #coach { position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%); width: min(420px, calc(100vw - 24px)); padding: 10px 14px; font-size: 17px; font-weight: 600; text-align: center; z-index: 3; border-color: #2f9e4a; animation: bob 1.6s ease-in-out infinite; }
+  #coach button { margin-top: 6px; background: none; border: none; color: #6b5a40; text-decoration: underline; cursor: pointer; font-size: 13px; }
+  @keyframes bob { 50% { transform: translateX(-50%) translateY(-5px); } }
+  body.on-title #coach { display: none !important; }
+
   #hud { position: absolute; inset: 0; overflow: hidden; }
   .uhud { position: absolute; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; gap: 1px; pointer-events: none; }
   .uhud .tag { font-weight: 700; font-size: 13px; color: #fff; text-shadow: 0 1px 2px #000, 0 0 3px #000; white-space: nowrap; }
@@ -171,7 +202,7 @@
   .float.big { font-size: 24px; color: #ffd84a; }
   @keyframes floatUp { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -40px; } }
   @media (prefers-reduced-motion: reduce) {
-    #fightBtn, .float, #banner.pop .big { animation: none; }
+    #fightBtn, .float, #banner.pop .big, #coach { animation: none; }
   }
 
   /* Phones and small windows: compact top bar, shrinking shop, help behind a button */
@@ -190,11 +221,14 @@
     #help { display: none; z-index: 5; left: 50%; transform: translateX(-50%); top: 100px; width: min(320px, calc(100vw - 24px)); max-height: calc(100% - 130px); }
     #help.open { display: block; }
     #rivalTag { top: calc(88px + env(safe-area-inset-top, 0px)); left: 8px; transform: none; font-size: 12px; max-width: calc(100vw - 110px); overflow: hidden; text-overflow: ellipsis; }
-    #toast { top: auto; bottom: calc(150px + env(safe-area-inset-bottom, 0px)); width: max-content; max-width: calc(100vw - 24px); white-space: normal; text-align: center; }
+    #toast { top: auto; bottom: calc(200px + env(safe-area-inset-bottom, 0px)); width: max-content; max-width: calc(100vw - 24px); white-space: normal; text-align: center; }
     #banner .big { font-size: 44px; }
     #banner .sub { font-size: 18px; }
     #info { top: auto; right: 6px; left: 6px; width: auto; bottom: calc(132px + env(safe-area-inset-bottom, 0px)); padding: 8px 12px; font-size: 14px; }
     #info .desc { font-size: 13px; }
+    #bonds { left: 6px; right: auto; width: auto; bottom: auto; top: calc(116px + env(safe-area-inset-top, 0px)); padding: 4px 6px; flex-direction: row; flex-wrap: wrap; max-width: calc(100vw - 90px); background: rgba(255, 250, 238, 0.85); }
+    #bonds .bh, #bonds .bt { display: none; }
+    .bond.on .icon { box-shadow: 0 0 0 2px #ffd23f; }
     #shop { left: 6px; right: 6px; transform: none; bottom: calc(6px + env(safe-area-inset-bottom, 0px)); padding: 6px; gap: 6px; overflow-x: auto; justify-content: flex-start; }
     #shop .label { display: none; }
     .card { flex: none; width: 86px; padding: 6px 4px 4px; border-radius: 12px; }
@@ -216,6 +250,13 @@
     .perk h3 { margin: 0; font-size: 17px; }
     #perkScreen h1 { font-size: 26px; }
     #titleScreen .logo { font-size: 56px; -webkit-text-stroke: 3px #2b2118; }
+    .modelist { flex-direction: column; }
+    .mode { padding: 8px 10px; }
+    .mode h3 { font-size: 18px; }
+    #coach { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); font-size: 15px; }
+    .book { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .bookcard { padding: 7px; font-size: 12px; }
+    .bookcard .desc { display: none; }
     #titleScreen .tagline { font-size: 18px; }
     #titleScreen .menu button { font-size: 19px; padding: 10px 16px; }
     .hpbar { width: 32px; height: 6px; }
@@ -235,17 +276,19 @@
     #reroll span { font-size: 11px; }
     #shop { overflow-x: visible; }
     #info { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
-    #toast { bottom: calc(110px + env(safe-area-inset-bottom, 0px)); }
+    #toast { bottom: calc(180px + env(safe-area-inset-bottom, 0px)); }
   }
   @media (max-height: 540px) and (min-width: 600px) {
     #topbar { left: 50%; right: auto; transform: translateX(-50%); flex-wrap: nowrap; }
     #rivalTag { top: 56px; left: 50%; transform: translateX(-50%); }
     #camctl { top: 60px; }
+    #bonds { top: 84px; }
     #info { left: auto; width: 260px; bottom: calc(126px + env(safe-area-inset-bottom, 0px)); }
     #shop { left: 50%; right: auto; transform: translateX(-50%); max-width: calc(100vw - 12px); }
     #titleScreen .logo { font-size: 44px; }
     #titleScreen { gap: 8px; }
     #titleScreen .menu { flex-direction: row; width: auto; }
+    .modelist { flex-direction: row; }
   }
 </style>
 </head>
@@ -279,17 +322,31 @@
     <div class="tip">Saving gold earns a bonus: +1 for every 5 gold you keep (up to +3). Tap or click a goose to see it and sell it. Drag empty space to turn the camera.</div>
   </div>
   <div id="info" class="panel"></div>
+  <div id="bonds" class="panel" hidden></div>
   <div id="shop" class="panel"></div>
   <div id="camctl" class="panel">Turn <button id="camL" title="Turn left (Q)">&lt;</button><button id="camR" title="Turn right (E)">&gt;</button></div>
   <div id="overlay" class="screen"><div class="box panel"><h1 id="ovTitle"></h1><p id="ovText"></p><div id="ovExtra"></div><div class="btnrow" id="ovBtns"></div></div></div>
   <div id="perkScreen" class="screen"><div class="box panel"><h1>Golden Feather!</h1><p>Gerald found a Golden Feather. Pick one power-up for your flock.</p><div class="perks" id="perks"></div></div></div>
+  <div id="bookScreen" class="screen"><div class="box panel">
+    <h1>Goose Book</h1>
+    <p id="bookCount"></p>
+    <div class="book" id="bookGrid"></div>
+    <button class="big blue" id="bookClose">Close</button>
+  </div></div>
+  <div id="coach" class="panel" hidden><div id="coachText"></div><button id="coachSkip">Skip tips</button></div>
   <div id="titleScreen" class="screen show">
     <div class="logo">Gerald<span>Royale</span></div>
     <div class="tagline">Lead your flock. Honk at your enemies.</div>
-    <div class="menu">
+    <div class="menu" id="mainMenu">
       <button class="big green" id="contBtn" hidden>Continue</button>
       <button class="big" id="newBtn">New Game</button>
+      <button class="big blue" id="bookBtn">Goose Book</button>
       <button class="big blue" id="howBtn">How to play</button>
+    </div>
+    <div class="modes" id="modeMenu" hidden>
+      <div class="modehead">Choose a difficulty</div>
+      <div class="modelist" id="modeList"></div>
+      <button class="big blue" id="modeBack">Back</button>
     </div>
     <div class="howto panel" id="howto">
       <ol>
@@ -502,12 +559,28 @@ const TYPES = {
 };
 const SHOP_TYPES = ['brute', 'honker', 'sprinter', 'nurse', 'golden', 'bomber', 'ninja', 'drummer'];
 const START_GOLD = 10, ROUND_GOLD = 6, WIN_BONUS = 2, REROLL_COST = 1;
-const START_HEARTS = 3, WINS_TO_WIN = 10;
+const WINS_TO_WIN = 10;
+const DIFFS = {
+  easy:   { name: 'Chick', desc: '5 hearts, extra gold, gentler rivals. Great for a first game.', hearts: 5, gold: 12, enemyMult: 0.9, countAdj: -1, levelAdj: -0.05 },
+  normal: { name: 'Goose', desc: '3 hearts. The way the game is meant to be played.', hearts: 3, gold: 10, enemyMult: 1, countAdj: 0, levelAdj: 0 },
+  hard:   { name: 'Swan', desc: '3 hearts and tougher rival flocks. For goose masters.', hearts: 3, gold: 10, enemyMult: 1.15, countAdj: 0, levelAdj: 0.12 },
+};
 const LEVEL_MULT = [1, 1.8, 3.2];
 const COLS = 8, ROWS = 6, T = 1; // rows 0-2 player, 3-5 enemy, row -1 is the bench
 const BENCH_Z = 4.15;
 const HERO_HONK_CD = 5, HERO_HONK_RADIUS = 1.8, HERO_HONK_DMG = 60;
 const PERK_ROUNDS = new Set([3, 6, 9, 12, 15, 18]);
+// Flock bonuses: field 2 geese of the same kind and that kind gets a bonus in battle
+const BONDS = {
+  Tank:    { plural: 'Brutes', text: '+20% health' },
+  Ranged:  { plural: 'Honkers', text: '+15% attack' },
+  Fast:    { plural: 'Sprinters', text: 'attack 20% faster' },
+  Healer:  { plural: 'Nurses', text: 'heal 30% more' },
+  Lucky:   { plural: 'Golden Geese', text: '+1 extra gold each' },
+  Splash:  { plural: 'Egg Bombers', text: '30% bigger splashes' },
+  Sneaky:  { plural: 'Ninjas', text: '+15% critical chance' },
+  Support: { plural: 'Drummers', text: 'beat reaches 1 tile farther' },
+};
 
 const PERKS = {
   thick:   { name: 'Thick Feathers', desc: 'All your geese get +15% health.' },
@@ -816,7 +889,9 @@ function makeGooseModel(type, team) {
 // Game state
 // ---------------------------------------------------------------------------
 let phase = 'title'; // title | setup | battle | result | perk
-let gold = START_GOLD, round = 1, wins = 0, losses = 0, hearts = START_HEARTS;
+let difficulty = 'normal';
+const D = () => DIFFS[difficulty] || DIFFS.normal;
+let gold = 10, round = 1, wins = 0, losses = 0, hearts = 3;
 let perks = [], endless = false, freeRerollUsed = false;
 let stats = { merges: 0, goldEarned: 0, bestLevel: 1 };
 let shop = [];
@@ -847,6 +922,7 @@ function applyStats(u) {
   } else {
     const g = 1 + 0.03 * (round - 1);
     if (!def.hero) { hpMult *= g; atkMult *= g; }
+    hpMult *= D().enemyMult; atkMult *= D().enemyMult;
     if (u.boss) { hpMult *= 1.5; atkMult *= 1.25; }
   }
   u.maxHp = Math.round(def.hp * hpMult);
@@ -856,6 +932,7 @@ function applyStats(u) {
   u.healAmt = (def.heal || 0) * LEVEL_MULT[u.level - 1] * (u.team === 'player' && has('sharp') ? 1.15 : 1);
   u.scale = def.scale * (1 + 0.14 * (u.level - 1)) * (u.boss ? 1.4 : 1);
   u.radius = 0.34 * u.scale;
+  u.splashMult = 1; u.critBonus = 0; u.auraRange = 2.2; u.luckyBonus = 0;
   u.group.scale.setScalar(u.scale);
   renderUnitHud(u);
 }
@@ -904,6 +981,40 @@ function snapToTile(u) {
 const unitAt = (c, r) => units.find(u => u.c === c && u.r === r);
 const playerUnits = () => units.filter(u => u.team === 'player');
 const boardCount = () => playerUnits().filter(u => u.r >= 0).length;
+function bondCounts(team) {
+  const counts = {};
+  for (const u of units) if (u.team === team && u.r >= 0 && !u.def.hero && BONDS[u.def.role]) counts[u.def.role] = (counts[u.def.role] || 0) + 1;
+  return counts;
+}
+function applyBonds() {
+  for (const team of ['player', 'enemy']) {
+    const counts = bondCounts(team);
+    for (const u of units) {
+      if (u.team !== team || u.r < 0 || u.def.hero || (counts[u.def.role] || 0) < 2) continue;
+      switch (u.def.role) {
+        case 'Tank': u.maxHp = Math.round(u.maxHp * 1.2); u.hp = u.maxHp; break;
+        case 'Ranged': u.atk *= 1.15; break;
+        case 'Fast': u.speedMult *= 1.2; break;
+        case 'Healer': u.healAmt *= 1.3; break;
+        case 'Lucky': u.luckyBonus = 1; break;
+        case 'Splash': u.splashMult = 1.3; break;
+        case 'Sneaky': u.critBonus = 0.15; break;
+        case 'Support': u.auraRange = 3.2; break;
+      }
+    }
+  }
+}
+function renderBonds() {
+  const el = $('bonds');
+  const counts = bondCounts('player');
+  const roles = Object.keys(counts);
+  el.hidden = !roles.length || phase === 'title';
+  el.innerHTML = '<div class="bh">Flock bonuses</div>' + roles.map(r => {
+    const on = counts[r] >= 2;
+    return `<div class="bond${on ? ' on' : ''}" title="2 ${BONDS[r].plural}: ${BONDS[r].text}">${roleIcon(r, 22)}
+      <span class="bt"><b>${Math.min(counts[r], 2)}/2</b> ${on ? BONDS[r].text : BONDS[r].plural}</span></div>`;
+  }).join('');
+}
 
 // ---------------------------------------------------------------------------
 // UI helpers
@@ -918,6 +1029,7 @@ $('legend').innerHTML = ['Tank', 'Ranged', 'Fast', 'Healer', 'Lucky', 'Splash', 
 
 let toastTimer = null;
 function toast(msg) {
+  if (phase === 'title') return;
   const t = $('toast');
   t.textContent = msg;
   t.classList.add('show');
@@ -944,7 +1056,7 @@ function updateTopbar() {
   $('round').querySelector('b').textContent = round;
   $('wins').querySelector('b').textContent = endless ? wins : `${wins}/${WINS_TO_WIN}`;
   $('gold').querySelector('b').textContent = gold;
-  $('hearts').innerHTML = Array.from({ length: START_HEARTS }, (_, i) =>
+  $('hearts').innerHTML = Array.from({ length: D().hearts }, (_, i) =>
     svg('heart', `style="fill:${i < hearts ? '#e8352e' : '#d8cfc0'}"`)).join('');
   const cap = flockCap(), n = boardCount();
   $('flock').querySelector('b').textContent = `${n}/${cap}${n >= cap ? ' FULL' : ''}`;
@@ -954,6 +1066,7 @@ function updateTopbar() {
   fe.hidden = perks.length === 0;
   fe.innerHTML = `${svg('feather')}<b>${perks.length}</b>`;
   fe.title = 'Golden Feathers: ' + perks.map(p => PERKS[p].name).join(', ');
+  renderBonds();
   const rt = $('rivalTag');
   rt.textContent = `Round ${round} vs ${rivalName()}`;
   rt.classList.toggle('boss', isBoss());
@@ -1037,8 +1150,10 @@ function buy(i) {
   u.group.position.y = 2;
   u.dropT = 0.4;
   if (spot.r === -1 && !willMerge) { toast('Your flock is full, so it went to the bench.'); pulse('flock'); }
+  noteBook(item.type, 1, true);
   tryMerge();
   renderShop();
+  tutorial('buy');
   saveGame();
 }
 
@@ -1062,6 +1177,7 @@ function tryMerge() {
         sparkle(keep);
         puff(keep.group.position, 0xffd23f, 10);
         stats.merges++;
+        noteBook(type, keep.level, true);
         stats.bestLevel = Math.max(stats.bestLevel, keep.level);
         sfx('merge');
         toast(`3 ${TYPES[type].name}s merged into a level ${level + 1} ${TYPES[type].name}!`);
@@ -1086,9 +1202,9 @@ function sell(u) {
 function buildEnemyTeam() {
   const boss = isBoss();
   createUnit('hiss', 'enemy', 3 + Math.round(Math.random()), 4, 1, { boss });
-  const count = Math.min(7, Math.ceil(round * 0.75) + 1) + (boss ? 1 : 0);
-  const p3 = Math.max(0, Math.min(0.35, (round - 9) * 0.07));
-  const p2 = Math.max(0, Math.min(0.6, (round - 3) * 0.09));
+  const count = Math.max(2, Math.min(7, Math.ceil(round * 0.75) + 1 + (round > 2 ? D().countAdj : 0))) + (boss ? 1 : 0);
+  const p3 = Math.max(0, Math.min(0.35, (round - 9) * 0.07 + (round > 6 ? D().levelAdj : 0)));
+  const p2 = Math.max(0, Math.min(0.6, (round - 3) * 0.09 + (round > 2 ? D().levelAdj : 0)));
   const smart = round >= 3;
   const pool = unlockedTypes(round).filter(t => t !== 'golden');
   // Every rival flock has a theme: two favorite kinds of goose it picks more often
@@ -1142,6 +1258,8 @@ function startRound(restoreShop = null) {
   else if (isBoss()) banner('BOSS BATTLE', rivalName(), 2200);
   else banner(`Round ${round}`, 'vs ' + rivalName(), 1600);
   if (fresh.length) setTimeout(() => toast(`New goose in the shop: ${fresh.map(t => TYPES[t].name).join(', ')}!`), 1700);
+  for (const u of units.filter(u => u.team === 'enemy')) noteBook(u.type, u.level, false);
+  tutorial('round');
   saveGame();
 }
 
@@ -1150,11 +1268,13 @@ function clearBoard() {
   clearBattleStuff();
 }
 
-function newGame() {
+function newGame(mode = difficulty) {
   Sound.init();
   clearBoard();
   store.del('run');
-  gold = START_GOLD; round = 1; wins = 0; losses = 0; hearts = START_HEARTS;
+  difficulty = mode;
+  gold = D().gold; round = 1; wins = 0; losses = 0; hearts = D().hearts;
+  tutStep = store.get('tut') === 'done' ? -1 : 0;
   perks = []; endless = false;
   stats = { merges: 0, goldEarned: 0, bestLevel: 1 };
   createUnit('gerald', 'player', 3, 1);
@@ -1165,7 +1285,7 @@ function newGame() {
 function saveGame() {
   if (phase !== 'setup') return;
   const data = {
-    v: 1, round, wins, losses, hearts, gold, perks, endless, stats, freeRerollUsed,
+    v: 1, difficulty, round, wins, losses, hearts, gold, perks, endless, stats, freeRerollUsed,
     units: playerUnits().filter(u => u.r !== -9).map(u => ({ type: u.type, level: u.level, c: u.c, r: u.r })),
     shop,
   };
@@ -1180,6 +1300,8 @@ function continueGame() {
   Sound.init();
   clearBoard();
   ({ round, wins, losses, hearts, gold, perks, endless, stats } = d);
+  difficulty = d.difficulty || 'normal';
+  tutStep = -1;
   for (const s of d.units) createUnit(s.type, 'player', s.c, s.r, s.level);
   if (!playerUnits().some(u => u.def.hero)) createUnit('gerald', 'player', 3, 1);
   leaveTitle();
@@ -1191,6 +1313,11 @@ function continueGame() {
 function recordBest() {
   const best = Number(store.get('best') || 0);
   if (wins > best) store.set('best', String(wins));
+  if (!endless && wins >= WINS_TO_WIN) {
+    const champs = JSON.parse(store.get('champs') || '{}');
+    champs[difficulty] = (champs[difficulty] || 0) + 1;
+    store.set('champs', JSON.stringify(champs));
+  }
 }
 
 fightBtn.onclick = () => {
@@ -1201,8 +1328,10 @@ fightBtn.onclick = () => {
   fightBtn.disabled = true;
   renderShop();
   for (const u of playerUnits()) u.home = { c: u.c, r: u.r };
+  applyBonds();
   battleTime = -1.8; countdownStep = 0;
   Sound.setTempo('battle');
+  tutorial('fight');
 };
 const speedBtn = $('speedBtn');
 speedBtn.onclick = () => { gameSpeed = gameSpeed === 1 ? 2 : 1; speedBtn.querySelector('b').textContent = 'x' + gameSpeed; sfx('click'); };
@@ -1273,7 +1402,7 @@ function showInfo(type, u) {
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
       <div class="role" style="color:${ROLES[d.role].color}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
-    <div class="desc">${d.desc}</div>${sellBtn}`;
+    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}</div>` : ''}${sellBtn}`;
   const sb = $('sellBtn');
   if (sb) sb.onclick = () => { const v = selected; selected = null; sell(v); showInfo(null); };
   infoEl.style.display = 'block';
@@ -1492,7 +1621,7 @@ function sparkle(u) {
 function drumBonus(u, allies) {
   let best = 0;
   for (const a of allies) {
-    if (a.def.aura && a !== u && dist(a, u) <= 2.2) best = Math.max(best, a.def.aura[a.level - 1]);
+    if (a.def.aura && a !== u && dist(a, u) <= a.auraRange) best = Math.max(best, a.def.aura[a.level - 1]);
   }
   return best;
 }
@@ -1564,7 +1693,7 @@ function updateUnitAI(u, dt) {
     else if (def.heal) { spawnProjectile(u, target, 'pebble'); u.peckT = 0.25; }
     else {
       u.peckT = 0.25;
-      const crit = def.crit && Math.random() < def.crit;
+      const crit = def.crit && Math.random() < def.crit + (u.critBonus || 0);
       if (crit) sfx('crit');
       damage(target, u.atk * (0.9 + Math.random() * 0.2) * (crit ? 2 : 1), { from: u, crit });
     }
@@ -1609,7 +1738,7 @@ function updateProjectiles(dt) {
       p.mesh.rotation.x += dt * 8;
       if (k >= 1) {
         scene.remove(p.mesh); projectiles.splice(i, 1);
-        const radius = (p.from.def.splash || 1) * T;
+        const radius = (p.from.def.splash || 1) * (p.from.splashMult || 1) * T;
         ringEffect(p.land, 0xfff2b0, radius, 0.4);
         puff(p.land, 0xfff8e6, 6, 0.8);
         sfx('splash');
@@ -1664,16 +1793,18 @@ function endBattle() {
     win = frac('player') >= frac('enemy');
   } else win = p > 0;
   if (win) wins++; else { hearts--; losses++; }
+  if (win) { const b = loadBook(); if (!b.hissMet) { b.hissMet = 1; store.set('book', JSON.stringify(b)); } }
 
   // Gold for next round
   const lines = [['Round pay', ROUND_GOLD]];
   if (win) lines.push(['Victory bonus', WIN_BONUS]);
   const interest = Math.min(3, Math.floor(gold / 5));
   if (interest) lines.push(['Savings bonus', interest]);
-  const goldenPay = fighters('player').filter(u => u.def.goldPerWin).reduce((s, u) => s + u.def.goldPerWin[u.level - 1], 0);
+  const payOf = u => u.def.goldPerWin[u.level - 1] + (u.luckyBonus || 0);
+  const goldenPay = fighters('player').filter(u => u.def.goldPerWin).reduce((s, u) => s + payOf(u), 0);
   if (goldenPay) {
     lines.push(['Golden Geese', goldenPay]);
-    for (const u of fighters('player').filter(u => u.def.goldPerWin)) floatText(u, `+${u.def.goldPerWin[u.level - 1]} gold`, 'gold');
+    for (const u of fighters('player').filter(u => u.def.goldPerWin)) floatText(u, `+${payOf(u)} gold`, 'gold');
     sfx('coin');
   }
   if (has('piggy')) lines.push(['Piggy Bank', 2]);
@@ -1699,14 +1830,14 @@ function endBattle() {
 
   if (!endless && wins >= WINS_TO_WIN) {
     store.del('run');
-    showOverlay('Goose Champion!', '#d9a514', `Gerald's flock beat Captain Hiss's Grand Armada! The whole pond is cheering.`, mvpHtml + summary, [
+    showOverlay('Goose Champion!', '#d9a514', `Gerald's flock beat Captain Hiss's Grand Armada on ${D().name} difficulty! The whole pond is cheering.`, mvpHtml + summary, [
       { label: 'Keep playing', cls: 'green', onClick: () => { endless = true; next(); } },
-      { label: 'New game', onClick: newGame },
+      { label: 'Title screen', cls: 'blue', onClick: showTitle },
     ]);
   } else if (hearts <= 0) {
     store.del('run');
     showOverlay('Game over', '#c0392b', `Captain Hiss wins this time. You reached round ${round}.`, mvpHtml + summary, [
-      { label: 'Try again', onClick: newGame },
+      { label: 'Try again', onClick: () => newGame(difficulty) },
       { label: 'Title screen', cls: 'blue', onClick: showTitle },
     ]);
   } else {
@@ -1737,10 +1868,13 @@ function showTitle() {
   createUnit('gerald', 'player', 3, 1);
   createUnit('brute', 'player', 2, 2); createUnit('honker', 'player', 5, 0); createUnit('nurse', 'player', 1, 0);
   createUnit('hiss', 'enemy', 4, 4); createUnit('ninja', 'enemy', 2, 3); createUnit('bomber', 'enemy', 6, 5);
+  $('mainMenu').hidden = false; $('modeMenu').hidden = true; $('bookScreen').classList.remove('show');
+  coach(null);
+  $('toast').classList.remove('show');
   const d = loadSave();
   const cont = $('contBtn');
   cont.hidden = !d;
-  if (d) cont.textContent = `Continue (round ${d.round}, ${d.wins} ${d.wins === 1 ? 'win' : 'wins'})`;
+  if (d) cont.textContent = `Continue (${(DIFFS[d.difficulty] || DIFFS.normal).name}, round ${d.round})`;
   const best = Number(store.get('best') || 0);
   $('bestLine').textContent = best ? `Best run: ${best} ${best === 1 ? 'win' : 'wins'}` : '';
   (d ? cont : $('newBtn')).focus();
@@ -1750,7 +1884,85 @@ function leaveTitle() {
   $('titleScreen').classList.remove('show');
   camAngleGoal = 0;
 }
-$('newBtn').onclick = () => { sfx('click'); newGame(); };
+$('newBtn').onclick = () => {
+  Sound.init(); sfx('click');
+  const champs = JSON.parse(store.get('champs') || '{}');
+  const list = $('modeList');
+  list.innerHTML = '';
+  for (const [key, m] of Object.entries(DIFFS)) {
+    const el = document.createElement('button');
+    el.className = 'mode';
+    el.innerHTML = `<h3>${m.name}</h3><div>${m.desc}</div><div class="won">${champs[key] ? 'Champion x' + champs[key] : ''}</div>`;
+    el.onclick = () => { sfx('click'); newGame(key); };
+    list.appendChild(el);
+  }
+  $('mainMenu').hidden = true; $('howto').classList.remove('open'); $('modeMenu').hidden = false;
+  list.children[store.get('tut') === 'done' ? 1 : 0].focus();
+};
+$('modeBack').onclick = () => { sfx('click'); $('modeMenu').hidden = true; $('mainMenu').hidden = false; };
+$('bookBtn').onclick = () => { Sound.init(); sfx('click'); showBook(); };
+$('bookClose').onclick = () => { sfx('click'); $('bookScreen').classList.remove('show'); $('titleScreen').classList.add('show'); };
+
+// ---------------------------------------------------------------------------
+// Goose Book: every goose you have owned (with the best level) or met in battle
+// ---------------------------------------------------------------------------
+function loadBook() { try { return JSON.parse(store.get('book') || '{}'); } catch (e) { return {}; } }
+function noteBook(type, level, owned) {
+  if (TYPES[type].hero) return;
+  const b = loadBook();
+  const cur = b[type] || 0;
+  const val = owned ? Math.max(cur, level) : Math.max(cur, 0.5);
+  if (val !== cur) { b[type] = val; store.set('book', JSON.stringify(b)); }
+}
+function showBook() {
+  const b = loadBook();
+  const grid = $('bookGrid');
+  const list = [...SHOP_TYPES, 'hiss'];
+  let found = 0;
+  grid.innerHTML = list.map(t => {
+    const d = TYPES[t];
+    const v = t === 'hiss' ? (b.hissMet ? 1 : 0) : (b[t] || 0);
+    if (v) found++;
+    if (!v) {
+      return `<div class="bookcard locked"><div class="top">${roleIcon(d.role, 34)}<div><h3>???</h3>
+        <div class="meta">Not found yet</div></div></div><div class="desc">${t === 'hiss' ? 'Win a battle to meet the boss.' : `Shows up in the shop from round ${d.unlock}.`}</div></div>`;
+    }
+    const lvl = t === 'hiss' ? 0 : Math.floor(v);
+    const stars = t === 'hiss' ? '' : `<div class="stars" title="Best level">${[1, 2, 3].map(i => svg('star', i <= lvl ? '' : 'class="off"')).join('')}</div>`;
+    return `<div class="bookcard"><div class="top">${roleIcon(d.role, 34)}<div><h3>${d.name}</h3>
+      <div class="meta" style="color:${ROLES[d.role].color}">${d.role}${d.cost ? ' &middot; ' + d.cost + ' gold' : ''}</div></div></div>
+      ${stars}<div class="desc">${lvl === 0 && t !== 'hiss' ? 'Met in battle. Buy one to add it to your flock!' : d.desc}</div></div>`;
+  }).join('');
+  $('bookCount').textContent = `You have found ${found} of ${list.length} geese. Merge geese to earn stars.`;
+  $('titleScreen').classList.remove('show');
+  $('bookScreen').classList.add('show');
+  $('bookClose').focus();
+}
+
+// ---------------------------------------------------------------------------
+// First-game tips
+// ---------------------------------------------------------------------------
+let tutStep = -1, tutBuys = 0;
+function coach(text) {
+  const c = $('coach');
+  if (!text) { c.hidden = true; return; }
+  $('coachText').textContent = text;
+  c.hidden = false;
+}
+function finishTutorial() { tutStep = -1; store.set('tut', 'done'); coach(null); }
+$('coachSkip').onclick = finishTutorial;
+function tutorial(event) {
+  if (tutStep < 0) return;
+  if (event === 'round' && round === 1 && tutStep === 0) { tutBuys = 0; coach(`Tap a goose in the shop to buy it. You have ${gold} gold.`); }
+  else if (event === 'buy' && tutStep <= 1) {
+    tutBuys++;
+    if (tutBuys === 1) { tutStep = 1; coach('Nice! Drag geese to move them. Tough geese go in front, ranged geese in the back.'); }
+    else if (tutBuys >= 2 || gold < 2) { tutStep = 2; coach('When your flock is ready, press FIGHT!'); }
+  }
+  else if (event === 'fight' && tutStep <= 2) { tutStep = 3; coach(null); }
+  else if (event === 'round' && tutStep === 3 && round === 2) { tutStep = 4; coach('You earn gold every round. Buy 3 of the same goose to merge them into a stronger one!'); }
+  else if ((event === 'buy' || event === 'fight') && tutStep === 4) finishTutorial();
+}
 $('contBtn').onclick = () => { sfx('click'); continueGame(); };
 $('howBtn').onclick = () => { Sound.init(); sfx('click'); $('howto').classList.toggle('open'); };
 

@@ -16,6 +16,12 @@ To host it: in the repository's GitHub settings, open **Pages**, choose "Deploy 
 4. Buy 3 of the same goose to merge them into a stronger one (3 level 2s make a level 3).
 5. Win 10 battles before you lose your 3 hearts. The 10th win is a final boss battle against Captain Hiss's Grand Armada. Round 5 is a boss battle too.
 
+Choose a difficulty when you start: Chick (5 hearts, gentler rivals), Goose (normal) or Swan (hard). A first game shows short tips.
+
+Flock bonuses: put 2 geese of the same kind in your fighting flock and that kind gets a bonus (for example 2 Brutes get +20% health). Rival flocks get bonuses too.
+
+The Goose Book on the title screen collects every goose you have owned or met, with stars for the best level you reached.
+
 Every 3 rounds Gerald finds a Golden Feather: pick one of three power-ups. Saving gold earns a bonus of +1 per 5 gold kept (up to +3). Progress saves automatically in the browser.
 
 Controls: drag geese to move them, tap or click a goose to see it and sell it, drag empty space (or use the arrow buttons, Q/E, arrow keys) to turn the camera, scroll to zoom. Works on phones in portrait and landscape.
