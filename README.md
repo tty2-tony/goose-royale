@@ -18,7 +18,9 @@ To host it: in the repository's GitHub settings, open **Pages**, choose "Deploy 
 
 Choose a difficulty when you start: Chick (5 hearts, gentler rivals), Goose (normal) or Swan (hard). A first game shows short tips.
 
-Flock bonuses: put 2 geese of the same kind in your fighting flock and that kind gets a bonus (for example 2 Brutes get +20% health). Rival flocks get bonuses too.
+Flock bonuses: put 2 geese of the same role in your fighting flock and that role gets a bonus (for example 2 Tanks, any mix of Brutes and Guard Geese, get +20% health). 4 of a role give a stronger bonus (+45% health). Rival flocks get bonuses too.
+
+Rival flocks: every round you meet a different flock with its own favorite geese, a dressed-up Captain Hiss and one simple battle rule, shown under the top bar (for example the Frost Flock makes your geese slower for the first 4 seconds, and 2 of the Reed Rascals hide behind your flock). Boss rounds and the final battle bring a giant Captain Hiss. After round 10 the rivals rotate and their flocks keep getting bigger and stronger.
 
 The Goose Book on the title screen collects every goose you have owned or met, with stars for the best level you reached.
 
@@ -39,5 +41,10 @@ Controls: drag geese to move them, tap or click a goose to see it and sell it, d
 | Egg Bomber | 4 | round 3 | Lobs eggs that splash an area. |
 | Ninja | 4 | round 4 | Leaps behind the enemy at the start; critical pecks. |
 | Drummer | 4 | round 5 | Nearby allies attack faster. |
+| Guard Goose | 3 | round 2 | Tank. Takes part of the hits aimed at friends next to her; her shield blocks some of it. |
+| Snow Goose | 3 | round 3 | Ranged. Snowballs make enemies move and attack slower for a moment. |
+| Mother Goose | 4 | round 5 | Family. When first hurt below half health, goslings hatch and fight for that battle. |
+| Trumpeter | 4 | round 6 | Loud. Every few seconds a blast makes nearby enemies dizzy (they stop for a moment). |
+| Gobbler | 4 | round 8 | Hungry. Gets stronger and heals each time an enemy goose is knocked out. |
 
 Sound effects and music are synthesized in the browser (no audio files). The mute button is in the top bar.

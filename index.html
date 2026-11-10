@@ -503,6 +503,9 @@ const SVG = {
   feather: '<path d="M21 2C14 2 7.5 6 6.3 13.4L3 21l1.6.6 2.6-5.6C14 15 19.6 9.7 21 2z"/>',
   reroll: '<path d="M12 4a8 8 0 017.7 6h-2.1A6 6 0 006.3 8.5L9 11H3V5l1.9 1.9A8 8 0 0112 4zm-7.7 10h2.1a6 6 0 0011.3 1.5L15 13h6v6l-1.9-1.9A8 8 0 014.3 14z"/>',
   soundOn: '<path d="M3 9h4l5-4v14l-5-4H3z"/><path d="M15 8.5a5 5 0 010 7l-1.4-1.4a3 3 0 000-4.2zM17.8 5.7a9 9 0 010 12.6l-1.4-1.4a7 7 0 000-9.8z"/>',
+  nest: '<path d="M12 3c3 0 5 4 5 7a5 5 0 01-10 0c0-3 2-7 5-7z"/><path d="M2 13h3a7 7 0 0014 0h3c0 5-4.5 9-10 9S2 18 2 13z"/>',
+  horn: '<path d="M2 10h4l12-7v18L6 14H2z"/><path d="M19 9h3v6h-3z"/>',
+  bread: '<path d="M4 9a8 5 0 0116 0c0 1.5-1 2.3-2 2.6V20H6v-8.4C5 11.3 4 10.5 4 9z"/>',
   soundOff: '<path d="M3 9h4l5-4v14l-5-4H3z"/><path d="M15 9.4l1.4-1.4 2.1 2.1 2.1-2.1L22 9.4l-2.1 2.1 2.1 2.1-1.4 1.4-2.1-2.1-2.1 2.1-1.4-1.4 2.1-2.1z"/>',
 };
 const svg = (name, attrs = '') => `<svg viewBox="0 0 24 24" aria-hidden="true" ${attrs}>${SVG[name]}</svg>`;
@@ -517,6 +520,9 @@ const ROLES = {
   Splash:  { color: '#c0392b', icon: 'egg' },
   Sneaky:  { color: '#34495e', icon: 'shuriken' },
   Support: { color: '#16a085', icon: 'note' },
+  Family:  { color: '#d9608f', icon: 'nest' },
+  Loud:    { color: '#7e57c2', icon: 'horn' },
+  Hungry:  { color: '#a0632d', icon: 'bread' },
 };
 const roleIcon = (role, size) => `<span class="icon" style="background:${ROLES[role].color};${size ? `width:${size}px;height:${size}px` : ''}">${svg(ROLES[role].icon)}</span>`;
 
@@ -572,8 +578,38 @@ const TYPES = {
     color: 0xf4f1e8, aura: [0.25, 0.4, 0.6],
     desc: 'Plays a marching beat. Friendly geese near her attack faster (even faster at higher levels).',
   },
+  guard: {
+    name: 'Guard Goose', role: 'Tank', hp: 520, atk: 24, range: 1, cd: 1.1, speed: 1.2, cost: 3, scale: 1.1, unlock: 2,
+    color: 0xd8d2c4, guard: [0.3, 0.4, 0.5],
+    desc: 'Carries a big shield. She takes part of every hit aimed at friends right next to her, and her shield blocks some of it.',
+  },
+  snow: {
+    name: 'Snow Goose', role: 'Ranged', hp: 270, atk: 30, range: 3.4, cd: 1.2, speed: 1.3, cost: 3, scale: 0.95, unlock: 3,
+    color: 0xf8fbff, projectile: 'snow', attack: 'snow', chill: [1.5, 2, 2.5],
+    desc: 'Throws snowballs from far away. A goose hit by a snowball moves and attacks slower for a moment.',
+  },
+  mother: {
+    name: 'Mother Goose', role: 'Family', hp: 480, atk: 24, range: 1, cd: 1.1, speed: 1.2, cost: 4, scale: 1.1, unlock: 5,
+    color: 0xf2e6d0, goslings: [1, 2, 3],
+    desc: 'The first time she drops below half health, her eggs hatch and little goslings jump in to help (more at higher levels).',
+  },
+  trumpeter: {
+    name: 'Trumpeter', role: 'Loud', hp: 360, atk: 24, range: 1, cd: 1.0, speed: 1.4, cost: 4, scale: 1.0, unlock: 6,
+    color: 0xece6f6, blast: [0.8, 1.1, 1.4],
+    desc: 'Every few seconds she plays a super loud blast that makes nearby enemies too dizzy to move for a moment.',
+  },
+  gobbler: {
+    name: 'Gobbler', role: 'Hungry', hp: 420, atk: 30, range: 1, cd: 0.9, speed: 1.6, cost: 4, scale: 1.05, unlock: 8,
+    color: 0x9a7350, grow: 0.12,
+    desc: 'Always hungry! Every time an enemy goose is knocked out, he gets stronger and heals a little.',
+  },
+  gosling: {
+    name: 'Gosling', role: 'Family', hp: 120, atk: 12, range: 1, cd: 0.7, speed: 2.2, cost: 0, scale: 0.55,
+    color: 0xffe066, summon: true,
+    desc: 'A brave little gosling hatched by Mother Goose. It only stays for one battle.',
+  },
 };
-const SHOP_TYPES = ['brute', 'honker', 'sprinter', 'nurse', 'golden', 'bomber', 'ninja', 'drummer'];
+const SHOP_TYPES = ['brute', 'honker', 'sprinter', 'nurse', 'golden', 'bomber', 'ninja', 'drummer', 'guard', 'snow', 'mother', 'trumpeter', 'gobbler'];
 const START_GOLD = 10, ROUND_GOLD = 6, WIN_BONUS = 2, REROLL_COST = 1;
 const WINS_TO_WIN = 10;
 const DIFFS = {
@@ -586,17 +622,29 @@ const COLS = 8, ROWS = 6, T = 1; // rows 0-2 player, 3-5 enemy, row -1 is the be
 const BENCH_Z = 4.15;
 const HERO_HONK_CD = 5, HERO_HONK_RADIUS = 1.8, HERO_HONK_DMG = 60;
 const PERK_ROUNDS = new Set([3, 6, 9, 12, 15, 18]);
-// Flock bonuses: field 2 geese of the same kind and that kind gets a bonus in battle
+// Flock bonuses are per role: every goose of that role counts (a Brute and a Guard Goose are both Tanks).
+// 2 of a role turns the bonus on, 4 turns on the stronger tier. `text` is the 2-goose bonus, `text4` the 4-goose one,
+// and `plural` names the geese that count (computed from TYPES, so it stays right when goose types are added).
 const BONDS = {
-  Tank:    { plural: 'Brutes', text: '+20% health' },
-  Ranged:  { plural: 'Honkers', text: '+15% attack' },
-  Fast:    { plural: 'Sprinters', text: 'attack 20% faster' },
-  Healer:  { plural: 'Nurses', text: 'heal 30% more' },
-  Lucky:   { plural: 'Golden Geese', text: '+1 extra gold each' },
-  Splash:  { plural: 'Egg Bombers', text: '30% bigger splashes' },
-  Sneaky:  { plural: 'Ninjas', text: '+15% critical chance' },
-  Support: { plural: 'Drummers', text: 'beat reaches 1 tile farther' },
+  Tank:    { text: '+20% health', text4: '+45% health', apply(u, t) { u.maxHp = Math.round(u.maxHp * (t > 1 ? 1.45 : 1.2)); u.hp = u.maxHp; } },
+  Ranged:  { text: '+15% attack', text4: '+35% attack', apply(u, t) { u.atk *= t > 1 ? 1.35 : 1.15; } },
+  Fast:    { text: 'attack 20% faster', text4: 'attack 45% faster', apply(u, t) { u.speedMult *= t > 1 ? 1.45 : 1.2; } },
+  Healer:  { text: 'heal 30% more', text4: 'heal 70% more', apply(u, t) { u.healAmt *= t > 1 ? 1.7 : 1.3; } },
+  Lucky:   { text: '+1 extra gold each', text4: '+2 extra gold each', apply(u, t) { u.luckyBonus = t; } },
+  Splash:  { text: '30% bigger splashes', text4: '60% bigger splashes', apply(u, t) { u.splashMult = t > 1 ? 1.6 : 1.3; } },
+  Sneaky:  { text: '+15% critical chance', text4: '+35% critical chance', apply(u, t) { u.critBonus = t > 1 ? 0.35 : 0.15; } },
+  Support: { text: 'beat reaches 1 tile farther', text4: 'beat reaches 2 tiles farther', apply(u, t) { u.auraRange = t > 1 ? 4.2 : 3.2; } },
+  Family:  { text: '+1 gosling each', text4: '+2 goslings each', apply(u, t) { u.goslingBonus = t; } },
+  Loud:    { text: 'dizzy 50% longer', text4: 'dizzy twice as long', apply(u, t) { u.stunMult = t > 1 ? 2 : 1.5; } },
+  Hungry:  { text: 'grow twice as fast', text4: 'grow 3 times as fast', apply(u, t) { u.growMult = t > 1 ? 3 : 2; } },
 };
+const pluralName = n => (/Goose$/.test(n) ? n.replace(/Goose$/, 'Geese') : n + 's');
+for (const [role, b] of Object.entries(BONDS)) {
+  Object.defineProperty(b, 'plural', { enumerable: true, get() {
+    const kinds = SHOP_TYPES.filter(t => TYPES[t].role === role).map(t => TYPES[t].name);
+    return kinds.length > 1 ? `${role} geese (${kinds.join(', ')})` : pluralName(kinds[0] || role);
+  } });
+}
 
 const PERKS = {
   thick:   { name: 'Thick Feathers', desc: 'All your geese get +15% health.' },
@@ -610,8 +658,42 @@ const PERKS = {
   reroll:  { name: 'Lucky Clover', desc: 'Your first shop reroll each round is free.' },
 };
 
-const RIVALS = ['The Puddle Pals', 'Mud Marsh Gang', 'The Reed Rascals', 'The Pond Pirates', "Hiss's Royal Guard",
-  'Lily Pad Bandits', 'The Thunder Ducks', 'The Frost Flock', 'The Swamp Kings', "Hiss's Grand Armada"];
+// Rival flocks. Entries 0-9 are rounds 1-10 in order; the rest join the rotation after round 10 (see rivalFor).
+// Each has two favorite geese, a look for its leader Captain Hiss (scarf color + one item), and one simple
+// battle rule: `rule` is the short text shown to the player, `fx` names the effect (handled in WORKSTREAM A).
+// Boss rivals keep the plain Captain Hiss and the giant-boss rule.
+const RIVALS = [
+  { name: 'The Puddle Pals', desc: 'Splashy pond friends who love a good nap.', favorites: ['sprinter', 'honker'],
+    look: { color: 0x4fa8d8, item: 'bobble' }, fx: 'sleepy', rule: 'Sleepy: they nap for the first 2 seconds.' },
+  { name: 'Mud Marsh Gang', desc: 'Big muddy geese from the marsh.', favorites: ['brute', 'sprinter'],
+    look: { color: 0x7a5230, item: 'band' }, fx: 'mud', rule: 'Sticky mud: your geese walk 25% slower.' },
+  { name: 'The Reed Rascals', desc: 'Tricky geese who hide in the tall reeds.', favorites: ['sprinter', 'snow'],
+    look: { color: 0x6aa84f, item: 'plume' }, fx: 'hidden', rule: 'Sneaky: 2 of them hide behind your flock.' },
+  { name: 'The Pond Pirates', desc: 'They sail the pond looking for shiny gold.', favorites: ['bomber', 'honker'],
+    look: { color: 0xc0392b, item: 'patch' }, fx: 'pirates', rule: 'Gold thieves: if they win, you lose 1 extra gold.' },
+  { name: "Hiss's Royal Guard", desc: "Captain Hiss's own bodyguards.", favorites: ['guard', 'sprinter'], boss: true,
+    fx: 'boss', rule: 'Boss battle: a giant Captain Hiss leads them.' },
+  { name: 'Lily Pad Bandits', desc: 'They stick together no matter what.', favorites: ['nurse', 'mother'],
+    look: { color: 0x3aa856, item: 'pad' }, fx: 'regroup', rule: 'Team spirit: when one falls, the others heal.' },
+  { name: 'The Thunder Ducks', desc: 'Loud, fast and full of energy.', favorites: ['ninja', 'trumpeter'],
+    look: { color: 0xffd23f, item: 'bolt' }, fx: 'thunder', rule: 'Super quick: they attack 15% faster.' },
+  { name: 'The Frost Flock', desc: 'Chilly geese from the frozen north pond.', favorites: ['snow', 'brute'],
+    look: { color: 0x9fd8f0, item: 'bobble' }, fx: 'frost', rule: 'Brrr: your geese are slower for the first 4 seconds.' },
+  { name: 'The Swamp Kings', desc: 'Old, grumpy rulers of the swamp.', favorites: ['mother', 'gobbler'],
+    look: { color: 0x2e7d4f, item: 'crown' }, fx: 'swamp', rule: 'Swamp magic: they slowly heal during the battle.' },
+  { name: "Hiss's Grand Armada", desc: "Captain Hiss's biggest flock ever.", favorites: ['brute', 'bomber'], boss: true, final: true,
+    fx: 'boss', rule: 'Final battle: a giant Captain Hiss and his biggest flock!' },
+  { name: "Hiss's Elite Guard", desc: "Captain Hiss's toughest geese.", favorites: ['guard', 'bomber'], boss: true, elite: true,
+    fx: 'boss', rule: 'Boss battle: a giant Captain Hiss leads them.' },
+  { name: 'The Gale Gaggle', desc: 'They fly in with the wind.', favorites: ['sprinter', 'ninja'],
+    look: { color: 0xb0bec5, item: 'band' }, fx: 'gale', rule: 'Windy: their geese move 30% faster.' },
+  { name: 'The Earplug Gang', desc: 'Nothing scares them, not even a honk.', favorites: ['trumpeter', 'honker'],
+    look: { color: 0xff8a3d, item: 'bobble' }, fx: 'earplugs', rule: "Earplugs: Gerald's Mighty Honk does half damage to them." },
+  { name: 'The Cattail Clan', desc: 'They hide behind thick cattail shields.', favorites: ['guard', 'bomber'],
+    look: { color: 0x8d6e63, item: 'plume' }, fx: 'cattail', rule: 'Cattail shields: the first hit on each of them is blocked.' },
+  { name: 'The Breadcrumb Bunch', desc: 'Picnic thieves with pockets full of crumbs.', favorites: ['nurse', 'gobbler'],
+    look: { color: 0xe0b060, item: 'pad' }, fx: 'crumbs', rule: 'Crumbs: beat them and you get 2 extra gold.' },
+];
 
 // ---------------------------------------------------------------------------
 // Scene
@@ -854,6 +936,47 @@ const MODEL_EXTRAS = {
     mesh(new THREE.CylinderGeometry(0.1, 0.11, 0.18, 12), mat(0x2a4fb0), neck, [0, 0.64, 0.03]);
     mesh(new THREE.SphereGeometry(0.04, 8, 6), mat(0xffd23f), neck, [0, 0.75, 0.03]);
   },
+  guard({ g, neck, mat, mesh, headTop }) {
+    const blue = mat(0x2f5fb8), rim = mat(0xffc93c);
+    mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.05, 18), blue, g, [0.34, 0.42, 0.08], [0, 0, Math.PI / 2]);
+    mesh(new THREE.TorusGeometry(0.24, 0.025, 6, 20), rim, g, [0.37, 0.42, 0.08], [0, Math.PI / 2, 0]);
+    mesh(new THREE.SphereGeometry(0.05, 8, 6), rim, g, [0.38, 0.42, 0.08]);
+    mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.05, 14), blue, neck, [0, 0.56, 0.03]);
+  },
+  snow({ g, neck, mat, mesh, headTop }) {
+    const blue = mat(0x3d8fd8);
+    mesh(new THREE.SphereGeometry(0.135, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), blue, neck, [0, 0.52, 0.03]);
+    mesh(new THREE.TorusGeometry(0.13, 0.025, 6, 16), mat(0xffffff), neck, [0, 0.53, 0.03], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.SphereGeometry(0.05, 8, 6), mat(0xffffff), neck, headTop.map((v, i) => v + (i === 1 ? 0.1 : 0)));
+    mesh(new THREE.TorusGeometry(0.13, 0.03, 6, 16), blue, neck, [0, 0.27, 0.02], [Math.PI / 2 - 0.2, 0, 0]);
+  },
+  mother({ g, neck, mat, mesh, headTop }) {
+    const pink = mat(0xe57fa8);
+    const bonnet = mesh(new THREE.SphereGeometry(0.16, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), pink, neck, [0, 0.49, -0.02], [-0.7, 0, 0]);
+    bonnet.scale.set(1, 1, 0.9);
+    mesh(new THREE.TorusGeometry(0.05, 0.02, 6, 10), pink, neck, [0.1, 0.4, 0.06], [0, Math.PI / 2, 0]);
+    mesh(new THREE.TorusGeometry(0.05, 0.02, 6, 10), pink, neck, [-0.1, 0.4, 0.06], [0, Math.PI / 2, 0]);
+    for (const x of [-0.08, 0.08]) {
+      const egg = mesh(new THREE.SphereGeometry(0.07, 8, 6), mat(0xfff3d6), g, [x, 0.66, -0.22]);
+      egg.scale.set(0.85, 1.15, 0.85);
+    }
+  },
+  trumpeter({ g, neck, mat, mesh, headTop }) {
+    const brass = mat(0xffc93c, { emissive: 0x442200 });
+    mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.24, 8), brass, neck, [0, 0.43, 0.3], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.ConeGeometry(0.09, 0.14, 12, 1, true), mat(0xffc93c, { emissive: 0x442200, side: THREE.DoubleSide }), neck, [0, 0.43, 0.46], [-Math.PI / 2, 0, 0]);
+    mesh(new THREE.CylinderGeometry(0.11, 0.12, 0.08, 14), mat(0x7e57c2), neck, [0, 0.6, 0.03]);
+    mesh(new THREE.BoxGeometry(0.2, 0.015, 0.1), mat(0x222222), neck, [0, 0.57, 0.12]);
+  },
+  gobbler({ g, neck, mat, mesh, headTop }) {
+    mesh(new THREE.BoxGeometry(0.2, 0.22, 0.02), mat(0xffffff), neck, [0, 0.2, 0.09], [-0.2, 0, 0]);
+    mesh(new THREE.BoxGeometry(0.06, 0.06, 0.025), mat(0xe8352e), neck, [0, 0.24, 0.1], [-0.2, 0, 0]);
+    const loaf = mesh(new THREE.CapsuleGeometry(0.08, 0.16, 4, 8), mat(0xd9a05b), g, [0, 0.68, -0.08], [0, 0, Math.PI / 2]);
+    loaf.scale.set(1, 1, 0.8);
+  },
+  gosling({ g, neck, mat, mesh, headTop }) {
+    mesh(new THREE.SphereGeometry(0.14, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2.4), mat(0xfff8e6), neck, [0, 0.52, 0.03]);
+  },
 };
 
 function makeGooseModel(type, team) {
@@ -933,7 +1056,7 @@ const flockCapFor = r => Math.min(9, 3 + r + (has('roomy') ? 1 : 0)); // include
 const flockCap = () => flockCapFor(round);
 const isFinal = () => !endless && wins === WINS_TO_WIN - 1;
 const isBoss = () => isFinal() || round % 5 === 0;
-const rivalName = () => isFinal() ? "Hiss's Grand Armada" : (RIVALS[round - 1] === "Hiss's Grand Armada" ? "Hiss's Elite Guard" : RIVALS[round - 1]) || `Rival Flock #${round}`;
+const rivalName = () => rivalFor(round).name;
 const unlockedTypes = r => SHOP_TYPES.filter(t => TYPES[t].unlock <= r);
 
 // ---------------------------------------------------------------------------
@@ -946,14 +1069,14 @@ const hud = document.getElementById('hud');
 function applyStats(u) {
   const def = u.def;
   let hpMult = LEVEL_MULT[u.level - 1], atkMult = hpMult, speedMult = 1;
-  if (def.hero) { const g = 1 + (u.team === 'player' ? 0.08 : 0.1) * (round - 1); hpMult *= g; atkMult *= g; }
+  if (def.hero) { const g = 1 + (u.team === 'player' ? 0.08 : 0.1) * (round - 1) - (u.team === 'player' ? 0 : 0.04 * lateRounds()); hpMult *= g; atkMult *= g; }
   if (u.team === 'player') {
     if (has('thick')) hpMult *= 1.15;
     if (has('sharp')) atkMult *= 1.15;
     if (has('quick')) speedMult *= 1.12;
     if (def.hero && has('cape')) hpMult *= 1.4;
   } else {
-    const g = 1 + 0.03 * (round - 1);
+    const g = 1 + 0.02 * (round - 1) + 0.015 * lateRounds(); // grows faster in endless
     if (!def.hero) { hpMult *= g; atkMult *= g; }
     hpMult *= D().enemyMult; atkMult *= D().enemyMult;
     if (u.boss) { hpMult *= 1.5; atkMult *= 1.25; }
@@ -966,6 +1089,7 @@ function applyStats(u) {
   u.scale = def.scale * (1 + 0.14 * (u.level - 1)) * (u.boss ? 1.4 : 1);
   u.radius = 0.34 * u.scale;
   u.splashMult = 1; u.critBonus = 0; u.auraRange = 2.2; u.luckyBonus = 0;
+  resetCombat(u);
   u.group.scale.setScalar(u.scale);
   renderUnitHud(u);
 }
@@ -1024,36 +1148,35 @@ const playerUnits = () => units.filter(u => u.team === 'player');
 const boardCount = () => playerUnits().filter(u => u.r >= 0).length;
 function bondCounts(team) {
   const counts = {};
-  for (const u of units) if (u.team === team && u.r >= 0 && !u.def.hero && BONDS[u.def.role]) counts[u.def.role] = (counts[u.def.role] || 0) + 1;
+  for (const u of units) if (u.team === team && u.r >= 0 && !u.def.hero && !u.def.summon && BONDS[u.def.role]) counts[u.def.role] = (counts[u.def.role] || 0) + 1;
   return counts;
 }
+const bondTier = n => (n >= 4 ? 2 : n >= 2 ? 1 : 0);
+// Recomputes every goose from its base stats first, so bonuses never stack. Runs at battle start, and during
+// setup (from renderBonds) so the info panel shows HP/ATK with the active bonuses.
 function applyBonds() {
+  for (const u of units) if (!u.def.summon) applyStats(u);
   for (const team of ['player', 'enemy']) {
     const counts = bondCounts(team);
     for (const u of units) {
-      if (u.team !== team || u.r < 0 || u.def.hero || (counts[u.def.role] || 0) < 2) continue;
-      switch (u.def.role) {
-        case 'Tank': u.maxHp = Math.round(u.maxHp * 1.2); u.hp = u.maxHp; break;
-        case 'Ranged': u.atk *= 1.15; break;
-        case 'Fast': u.speedMult *= 1.2; break;
-        case 'Healer': u.healAmt *= 1.3; break;
-        case 'Lucky': u.luckyBonus = 1; break;
-        case 'Splash': u.splashMult = 1.3; break;
-        case 'Sneaky': u.critBonus = 0.15; break;
-        case 'Support': u.auraRange = 3.2; break;
-      }
+      if (u.team !== team || u.r < 0 || u.def.hero || u.def.summon) continue;
+      // Rival flocks only reach the 4-goose tier in endless (after round 10)
+      const tier = Math.min(bondTier(counts[u.def.role] || 0), team === 'enemy' && !lateRounds() ? 1 : 2);
+      if (tier) BONDS[u.def.role].apply(u, tier);
     }
   }
 }
 function renderBonds() {
   const el = $('bonds');
+  if (phase === 'setup') applyBonds();
   const counts = bondCounts('player');
   const roles = Object.keys(counts);
   el.hidden = !roles.length || phase === 'title';
   el.innerHTML = '<div class="bh">Flock bonuses</div>' + roles.map(r => {
-    const on = counts[r] >= 2;
-    return `<div class="bond${on ? ' on' : ''}" title="2 ${BONDS[r].plural}: ${BONDS[r].text}">${roleIcon(r, 22)}
-      <span class="bt"><b>${Math.min(counts[r], 2)}/2</b> ${on ? BONDS[r].text : BONDS[r].plural}</span></div>`;
+    const b = BONDS[r], n = counts[r], tier = bondTier(n), goal = n >= 2 ? 4 : 2;
+    const kinds = SHOP_TYPES.filter(t => TYPES[t].role === r).map(t => pluralName(TYPES[t].name)).join(' or ');
+    return `<div class="bond${tier ? ' on' : ''}" title="2 ${b.plural}: ${b.text}. 4 of them: ${b.text4}.">${roleIcon(r, 22)}
+      <span class="bt"><b>${Math.min(n, goal)}/${goal}</b> ${tier ? (tier > 1 ? b.text4 : b.text) : kinds}</span></div>`;
   }).join('');
 }
 
@@ -1065,7 +1188,7 @@ const fightBtn = $('fightBtn'), shopEl = $('shop'), infoEl = $('info'), overlay 
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-$('legend').innerHTML = ['Tank', 'Ranged', 'Fast', 'Healer', 'Lucky', 'Splash', 'Sneaky', 'Support', 'Hero', 'Boss']
+$('legend').innerHTML = ['Tank', 'Ranged', 'Fast', 'Healer', 'Lucky', 'Splash', 'Sneaky', 'Support', 'Family', 'Loud', 'Hungry', 'Hero', 'Boss']
   .map(r => `<div>${roleIcon(r, 18)}${r}</div>`).join('');
 
 let toastTimer = null;
@@ -1109,7 +1232,7 @@ function updateTopbar() {
   fe.title = 'Golden Feathers: ' + perks.map(p => PERKS[p].name).join(', ');
   renderBonds();
   const rt = $('rivalTag');
-  rt.textContent = `Round ${round} vs ${rivalName()}`;
+  rt.textContent = `Round ${round} vs ${rivalName()}: ${rivalFor(round).rule}`; rt.title = rt.textContent;
   rt.classList.toggle('boss', isBoss());
 }
 $('feathers').onclick = () => toast(perks.map(p => PERKS[p].name).join(' + ') || 'No Golden Feathers yet');
@@ -1239,17 +1362,25 @@ function sell(u) {
 }
 
 // The rival flock grows with the round: more geese, some leveled up, smarter
-// placement from round 3, and a giant Captain Hiss in boss battles.
+// placement from round 3, and a giant Captain Hiss in boss battles. In endless after round 10
+// teams get bigger and level 3 geese get common.
 function buildEnemyTeam() {
   const boss = isBoss();
-  createUnit('hiss', 'enemy', 3 + Math.round(Math.random()), 4, 1, { boss });
-  const count = Math.max(2, Math.min(7, Math.ceil(round * 0.75) + 1 + (round > 2 ? D().countAdj : 0))) + (boss ? 1 : 0);
-  const p3 = Math.max(0, Math.min(0.35, (round - 9) * 0.07 + (round > 6 ? D().levelAdj : 0)));
-  const p2 = Math.max(0, Math.min(0.6, (round - 3) * 0.09 + (round > 2 ? D().levelAdj : 0)));
+  rivalCache = null;
+  const rival = rivalFor(round);
+  rivalCache = { round, rival };
+  const hiss = createUnit('hiss', 'enemy', 3 + Math.round(Math.random()), 4, 1, { boss });
+  if (rival.look && !boss) dressLeader(hiss, rival.look);
+  const late = lateRounds();
+  const maxCount = 7 + (late >= 4 ? 1 : 0); // 8 rival geese plus Hiss, like a full flock of yours
+  const count = Math.max(2, Math.min(maxCount, Math.ceil(round * 0.75) + 1 + (round > 2 ? D().countAdj : 0))) + (boss ? 1 + Math.min(0, D().countAdj) : 0); // no extra boss goose on Chick
+  const p3 = Math.max(0, Math.min(0.35 + late * 0.02, 0.8, (round - 9) * 0.07 + (round > 6 ? D().levelAdj : 0)));
+  const p2 = Math.max(0, Math.min(0.6, 1 - p3, (round - 3) * 0.08 + (round > 2 ? D().levelAdj : 0)));
   const smart = round >= 3;
   const pool = unlockedTypes(round).filter(t => t !== 'golden');
-  // Every rival flock has a theme: two favorite kinds of goose it picks more often
-  const favorites = shuffle(pool).slice(0, 2);
+  // Every rival flock has two favorite kinds of goose it picks more often
+  const favorites = (rival.favorites || []).filter(t => pool.includes(t));
+  for (const t of shuffle(pool)) if (favorites.length < 2 && !favorites.includes(t)) favorites.push(t);
   for (let i = 0; i < count; i++) {
     const t = Math.random() < 0.6 ? pick(favorites) : pick(pool);
     const roll = Math.random();
@@ -1261,6 +1392,10 @@ function buildEnemyTeam() {
       for (const c of shuffle([0, 1, 2, 3, 4, 5, 6, 7])) if (!unitAt(c, r)) { createUnit(t, 'enemy', c, r, level); placed = true; break; }
       if (placed) break;
     }
+  }
+  if (rival.fx === 'hidden') {
+    const sneaks = units.filter(u => u.team === 'enemy' && !u.def.hero).sort((a, b) => a.def.range - b.def.range).slice(0, 2);
+    for (const u of sneaks) { u.hiddenSneak = true; u.group.visible = false; }
   }
 }
 
@@ -1613,6 +1748,8 @@ function nearest(u, list) {
 
 function damage(target, amount, opts = {}) {
   if (target.dead) return;
+  amount = shieldDamage(target, amount, opts); // guard shields and rival rules
+  if (amount <= 0) return;
   const dealt = Math.min(target.hp, amount);
   target.hp -= amount;
   target.flashT = 0.1;
@@ -1620,6 +1757,7 @@ function damage(target, amount, opts = {}) {
   floatText(target, '-' + Math.round(amount) + (opts.crit ? '!' : ''), opts.big ? 'big' : opts.crit ? 'crit' : 'dmg');
   if (Math.random() < 0.5) puff(target.group.position, target.def.color, 1, 0.7);
   if (!opts.quiet) sfx('hit');
+  afterHurt(target);
   if (target.hp <= 0) {
     target.hp = 0; target.dead = true; target.deathT = 0;
     puff(target.group.position, target.def.color, target.boss ? 24 : 12, 1.2);
@@ -1659,6 +1797,7 @@ function spawnProjectile(from, to, kind) {
   let mesh;
   if (kind === 'honk') mesh = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.035, 6, 16), new THREE.MeshBasicMaterial({ color: 0xfff6c0 }));
   else if (kind === 'heal') mesh = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), new THREE.MeshBasicMaterial({ color: 0x6dff8a }));
+  else if (kind === 'snow') mesh = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), toon(0xffffff));
   else if (kind === 'egg') { mesh = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), toon(0xfff8e6)); mesh.scale.set(0.85, 1.15, 0.85); }
   else mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06), toon(0x9a8f80));
   mesh.position.set(from.group.position.x, 0.9 * from.scale, from.group.position.z);
@@ -1696,6 +1835,7 @@ const ATTACKS = {
   heal(u, target) { spawnProjectile(u, target, 'heal'); u.flapT = 0.3; sfx('heal'); },
   honk(u, target) { spawnProjectile(u, target, 'honk'); u.peckT = 0.25; sfx('honk', false); },
   egg(u, target) { spawnProjectile(u, target, 'egg'); u.flapT = 0.3; },
+  snow(u, target) { spawnProjectile(u, target, 'snow'); u.flapT = 0.3; },
   pebble(u, target) { spawnProjectile(u, target, 'pebble'); u.peckT = 0.25; },
   peck(u, target) {
     u.peckT = 0.25;
@@ -1710,7 +1850,8 @@ function updateUnitAI(u, dt) {
   const allies = fighters(u.team);
   if (!enemies.length) return;
   const def = u.def;
-  const haste = (1 + drumBonus(u, allies)) * u.speedMult;
+  if (!combatStep(u, dt, enemies, allies)) return; // dizzy, slow, rival rules, special abilities
+  const haste = (1 + drumBonus(u, allies)) * u.speedMult * u.hasteMult;
   u.atkTimer -= dt * haste;
 
   // Ninja: leap behind the enemy flock at the start of the battle
@@ -1760,7 +1901,7 @@ function updateUnitAI(u, dt) {
   if (target !== u) u.facing = Math.atan2(dx, dz);
 
   if (d > reach) {
-    const step = Math.min(def.speed * u.speedMult * dt, d - reach + 0.01);
+    const step = Math.min(def.speed * u.speedMult * u.moveMult * dt, d - reach + 0.01);
     u.group.position.x += (dx / d) * step;
     u.group.position.z += (dz / d) * step;
     u.walkT += dt * def.speed * 6;
@@ -1831,6 +1972,7 @@ function updateProjectiles(dt) {
       if (p.to.dead) continue;
       if (p.kind === 'heal') heal(p.to, p.amount, p.from);
       else damage(p.to, p.amount * (0.9 + Math.random() * 0.2), { from: p.from });
+      if (p.kind === 'snow') chill(p.to, p.from);
       continue;
     }
     p.mesh.position.addScaledVector(dir.normalize(), step);
@@ -2127,6 +2269,208 @@ window.addEventListener('resize', () => {
 
 // ===== WORKSTREAM A (content & combat) additions go here =====
 
+// --- Rivals -----------------------------------------------------------------
+// rivalFor(round) returns the RIVALS entry for a round. Rounds 1-9 follow the list, every 5th round is a
+// boss (round 5 Royal Guard, later Elite Guard), the final battle is the Grand Armada, and after round 10
+// the regular rivals rotate. The current round's rival is cached when its team is built, so the name
+// stays the same after the battle (when `wins` has already changed).
+let rivalCache = null;
+function rivalFor(r = round) {
+  if (rivalCache && rivalCache.round === r) return rivalCache.rival;
+  if (r === round && isFinal()) return RIVALS.find(x => x.final);
+  if (r % 5 === 0) return RIVALS.find(x => x.boss && !x.final && (r === 5 ? !x.elite : x.elite));
+  if (r >= 1 && r <= 9) return RIVALS[r - 1];
+  const regular = RIVALS.filter(x => !x.boss);
+  return regular[(r * 5 + 1) % regular.length]; // round 11 starts with the rivals you have not met yet
+}
+const rivalFx = () => rivalFor(round).fx;
+// Rounds past 10 in endless mode: rival flocks get bigger, stronger and more often level 3
+const lateRounds = () => (endless ? Math.max(0, round - 10) : 0);
+
+// Captain Hiss dresses up for his flock: a scarf and hat band in the flock color, plus one item.
+function dressLeader(u, look) {
+  const add = (geo, color, pos, rot) => {
+    const m = toon(color); u.mats.push(m);
+    const o = new THREE.Mesh(geo, m);
+    o.position.set(...pos); if (rot) o.rotation.set(...rot);
+    o.castShadow = true; o.userData.unit = u;
+    u.neck.add(o);
+    return o;
+  };
+  const c = look.color;
+  add(new THREE.TorusGeometry(0.13, 0.035, 6, 16), c, [0, 0.27, 0.02], [Math.PI / 2 - 0.2, 0, 0]);
+  add(new THREE.BoxGeometry(0.07, 0.16, 0.03), c, [0.07, 0.2, -0.1], [0.2, 0, 0.2]);
+  add(new THREE.CylinderGeometry(0.112, 0.118, 0.035, 14), c, [0, 0.6, 0.03]);
+  const it = look.item;
+  if (it === 'bobble') add(new THREE.SphereGeometry(0.055, 8, 6), 0xffffff, [0, 0.74, 0.03]);
+  else if (it === 'plume') add(new THREE.ConeGeometry(0.03, 0.34, 6), c, [0.07, 0.84, 0.0], [0, 0, -0.35]);
+  else if (it === 'patch') add(new THREE.BoxGeometry(0.07, 0.07, 0.02), 0x111111, [0.085, 0.51, 0.115], [0, 0.6, 0]);
+  else if (it === 'pad') add(new THREE.CylinderGeometry(0.2, 0.2, 0.02, 16, 1, false, 0.3, Math.PI * 2 - 0.6), c, [0, 0.715, 0.03]);
+  else if (it === 'bolt') add(new THREE.ConeGeometry(0.04, 0.26, 4), 0xffd23f, [0.13, 0.68, 0.03], [0, 0, -0.8]);
+  else if (it === 'crown') {
+    const gold = 0xffc93c;
+    add(new THREE.CylinderGeometry(0.09, 0.09, 0.04, 12), gold, [0, 0.73, 0.03]);
+    for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2; add(new THREE.ConeGeometry(0.025, 0.07, 5), gold, [Math.sin(a) * 0.08, 0.78, 0.03 + Math.cos(a) * 0.08]); }
+  }
+}
+
+// --- Combat status and abilities -----------------------------------------------
+const SNOW_SLOW = 0.65;           // a chilled goose moves and attacks at 65% speed
+const BLAST_CD = 4.5, BLAST_RADIUS = 1.7, BLAST_DMG = 0.6;
+const GUARD_RANGE = 1.45, GUARD_BLOCK = 0.3; // the shield blocks 30% of the damage the Guard takes for a friend
+const GOSLING_HP = 0.28, GOSLING_ATK = 0.45, GOSLING_MAX = 8; // at most 8 goslings per team in one battle
+const GROW_HEAL = 0.15, GROW_MAX = 8;
+
+// Called from applyStats: resets the per-battle combat fields.
+function resetCombat(u) {
+  u.hasteMult = 1; u.moveMult = 1; u.stunT = 0; u.slowT = 0;
+  u.guardShare = u.def.guard ? u.def.guard[u.level - 1] : 0;
+  u.goslingBonus = 0; u.stunMult = 1; u.growMult = 1; u.stacks = 0; u.hatched = false;
+  u.blastT = 2.5; u.blocks = 0;
+}
+
+// Runs every battle step for each goose before it acts. Returns false while the goose is dizzy.
+function combatStep(u, dt, enemies, allies) {
+  const fx = rivalFx(), mine = u.team === 'player';
+  u.hasteMult = 1; u.moveMult = 1;
+  if (u.slowT > 0) { u.slowT -= dt; u.hasteMult *= SNOW_SLOW; u.moveMult *= SNOW_SLOW; }
+  if (mine && fx === 'mud') u.moveMult *= 0.75;
+  if (mine && fx === 'frost' && battleTime < 4) { u.hasteMult *= 0.7; u.moveMult *= 0.7; }
+  if (!mine && fx === 'thunder') u.hasteMult *= 1.15;
+  if (!mine && fx === 'gale') u.moveMult *= 1.3;
+  if (!mine && fx === 'swamp') u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.008 * dt);
+  if (u.stunT > 0) { u.stunT -= dt; return false; }
+  if (u.def.blast) trumpetBlast(u, dt, enemies);
+  return true;
+}
+
+function trumpetBlast(u, dt, enemies) {
+  u.blastT -= dt;
+  if (u.blastT > 0) return;
+  const close = enemies.filter(e => dist(u, e) <= BLAST_RADIUS);
+  if (!close.length) return;
+  u.blastT = BLAST_CD;
+  const t = u.def.blast[u.level - 1] * u.stunMult;
+  for (const e of close) {
+    e.stunT = Math.max(e.stunT, e.def.hero ? t * 0.5 : t);
+    damage(e, u.atk * BLAST_DMG, { from: u, quiet: true });
+  }
+  if (!simulating) ringEffect(u.group.position, 0xb388ff, BLAST_RADIUS);
+  u.flapT = 0.5;
+  sfx('honk', false);
+  floatText(u, 'TOOT!', 'big');
+}
+
+function chill(target, from) {
+  if (target.dead || !from.def.chill) return;
+  if (target.slowT <= 0) floatText(target, 'Brrr', 'crit');
+  target.slowT = Math.max(target.slowT, from.def.chill[from.level - 1]);
+}
+
+// Called from damage() before a hit lands: returns the damage that goes through.
+function shieldDamage(target, amount, opts) {
+  if (target.blocks > 0) { target.blocks--; floatText(target, 'Blocked', 'heal'); return 0; }
+  if (target.team === 'enemy' && rivalFx() === 'earplugs' && opts.big && opts.from && opts.from.def.hero) amount *= 0.5;
+  if (!opts.guarded && !target.guardShare && phase === 'battle') {
+    let guard = null;
+    for (const a of units) {
+      if (a.team === target.team && a.guardShare > 0 && !a.dead && a.r !== -1 && dist(a, target) <= GUARD_RANGE &&
+        (!guard || a.guardShare > guard.guardShare)) guard = a;
+    }
+    if (guard) {
+      const share = amount * guard.guardShare;
+      damage(guard, share * (1 - GUARD_BLOCK), { from: opts.from, guarded: true, quiet: true });
+      amount -= share;
+    }
+  }
+  return amount;
+}
+
+// Called from damage() after a hit: Mother Goose hatches goslings the first time she drops below half health.
+function afterHurt(target) {
+  if (!target.def.goslings || target.hatched || target.hp >= target.maxHp / 2 || phase !== 'battle') return;
+  target.hatched = true;
+  const have = units.filter(u => u.def.summon && u.team === target.team).length;
+  const n = Math.min(target.def.goslings[target.level - 1] + (target.goslingBonus || 0), GOSLING_MAX - have);
+  for (let i = 0; i < n; i++) {
+    const g = createUnit('gosling', target.team, target.c, target.r);
+    const a = (i / n) * Math.PI * 2 + 0.5;
+    g.group.position.set(target.group.position.x + Math.sin(a) * 0.45, 0, target.group.position.z + Math.cos(a) * 0.45);
+    g.maxHp = g.hp = Math.round(target.maxHp * GOSLING_HP);
+    g.atk = target.atk * GOSLING_ATK;
+    g.mother = target;
+    g.facing = target.facing; g.group.rotation.y = g.facing;
+    g.atkTimer = 0.4;
+    if (!simulating) { g.dropT = 0.25; puff(g.group.position, 0xfff3d6, 4, 0.8); }
+  }
+  floatText(target, 'Hatch!', 'big');
+}
+
+on('unitDied', dead => {
+  if (phase !== 'battle') return;
+  // Gobbler grows each time an enemy goose is knocked out
+  for (const u of units) {
+    if (!u.def.grow || u.dead || u.team === dead.team || u.r === -1 || u.stacks >= GROW_MAX) continue;
+    u.stacks++;
+    u.atk *= 1 + u.def.grow * u.growMult;
+    heal(u, u.maxHp * GROW_HEAL * u.growMult, u);
+    floatText(u, 'Yum!', 'gold');
+  }
+  // Lily Pad Bandits: when one falls, the others heal 10%
+  if (dead.team === 'enemy' && rivalFx() === 'regroup') {
+    for (const e of fighters('enemy')) heal(e, e.maxHp * 0.1);
+  }
+});
+
+// Rival rules that act at the start of a battle
+on('battleStart', () => {
+  const fx = rivalFx();
+  const foes = units.filter(u => u.team === 'enemy');
+  if (fx === 'sleepy') for (const e of foes) { e.stunT = 2; floatText(e, 'Zzz', 'crit'); }
+  if (fx === 'cattail') for (const e of foes) if (!e.def.hero) e.blocks = 1;
+  for (const e of foes) {
+    if (!e.hiddenSneak) continue;
+    e.hiddenSneak = false;
+    const free = shuffle([0, 1, 2, 3, 4, 5, 6, 7]).find(c => !playerUnits().some(p => p.r === 0 && p.c === c)) ?? Math.floor(Math.random() * COLS);
+    const p = posOf(free, 0);
+    e.group.position.set(p.x, 0, p.z - 0.3);
+    e.group.visible = true;
+    if (!simulating) puff(e.group.position, 0x6aa84f, 10);
+    floatText(e, 'Surprise!', 'big');
+  }
+});
+
+// Pond Pirates and Breadcrumb Bunch change your gold. It is paid at the start of the next round so it
+// always counts, even when you spent everything.
+let rivalGold = null;
+on('battleEnd', ({ win }) => {
+  // Goslings only stay for one battle; their damage counts for their mother
+  for (const g of units.filter(u => u.def.summon && u.team === 'player')) {
+    if (g.mother) g.mother.dmgDone += g.dmgDone;
+    removeUnit(g);
+  }
+  const fx = rivalFx();
+  rivalGold = null;
+  if (hearts <= 0) return;
+  if (fx === 'pirates' && !win) rivalGold = { round: round + 1, amount: -1, text: 'The Pond Pirates took 1 gold!' };
+  if (fx === 'crumbs' && win) rivalGold = { round: round + 1, amount: 2, text: 'You found 2 gold in the Breadcrumb Bunch picnic!' };
+});
+// At round start: pay rival gold, then show the rival's rule as a toast (after the new-goose toast, if any).
+on('roundStart', () => {
+  const msgs = [];
+  if (rivalGold && rivalGold.round === round) {
+    gold = Math.max(0, gold + rivalGold.amount);
+    msgs.push(rivalGold.text);
+    renderShop();
+  }
+  rivalGold = null;
+  const r = rivalFor(round);
+  msgs.push(`${r.name}: ${r.rule}`);
+  const fresh = SHOP_TYPES.some(t => TYPES[t].unlock === round && round > 1);
+  const thisRound = round;
+  msgs.forEach((m, i) => setTimeout(() => { if (phase === 'setup' && round === thisRound) toast(m); }, (fresh ? 3700 : 400) + i * 2100));
+});
+
 // ===== WORKSTREAM B (meta & playtime) additions go here =====
 
 // ===== WORKSTREAM C (polish & feel) additions go here =====
@@ -2136,6 +2480,7 @@ window.__game = {
   get phase() { return phase; }, get units() { return units; }, get gold() { return gold; }, set gold(v) { gold = v; renderShop(); },
   get round() { return round; }, get hearts() { return hearts; }, get wins() { return wins; }, get shop() { return shop; },
   get perks() { return perks; }, camera, buy, reroll, newGame, continueGame, showTitle, TYPES,
+  rivalFor, RIVALS,
   setShop(types) { shop = types.map(type => ({ type, sold: false })); renderShop(); },
   // Run the current battle instantly (no countdown, no rendering) and return the result
   simulate() {
