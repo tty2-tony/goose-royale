@@ -36,6 +36,21 @@ Every 3 rounds Gerald finds a Golden Feather: pick one of three power-ups. Savin
 
 Controls: drag geese to move them, tap or click a goose to see it and sell it, drag empty space (or use the arrow buttons, Q/E, arrow keys) to turn the camera, scroll to zoom. Works on phones in portrait and landscape. On a touch screen, tap a shop card once to see it and a second time to buy it. Selling a level 2 or 3 goose needs a second click or tap. The ? button brings back the help panel, which folds away after your first battle. Merged geese get a gold ring (level 2) or a rainbow ring and glow (level 3).
 
+## Pond maps
+
+From round 3 the battle moves to a new pond every two rounds. There are six layouts besides the Open Meadow (Rocky Pass, Twin Ponds, Muddy Middle, Nest Hill, Lookout Ridge, The Crossing), each mirrored so both sides get the same tiles.
+
+- **Rocks** and **deep water** block tiles. Geese cannot stand there and walk around them (shots fly over).
+- **Mud** halves walking speed.
+- **Cozy nest**: a goose that starts the battle on it gets +25% health.
+- **Lookout stump**: a goose that starts on it gets +20% attack, and ranged geese reach farther.
+
+Tap or click a special tile to see what it does.
+
+## Saves
+
+The game saves itself in the browser (localStorage) after every round and every change to the flock. The Saves screen on the title menu shows what is stored and can download a backup file, copy a save code, load either one back, erase the current run, or erase everything. The menu button in the top bar saves and returns to the title screen.
+
 ## Geese
 
 | Goose | Cost | Unlocks | Role |

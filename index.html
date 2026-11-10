@@ -566,6 +566,45 @@
     .screen.show > .box, .screen.show > .panel, #titleScreen .logo, #titleScreen .menu > button { animation: none; }
     #toast { transition: opacity 0.2s; }
   }
+  /* ===== MAPS AND SAVES CSS ===== */
+  #mapKey { position: absolute; right: 14px; bottom: 76px; width: 236px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  #mapKey .bh { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); }
+  #mapKey .mk { display: flex; align-items: center; gap: 7px; line-height: 1.2; }
+  #mapKey .mk i { width: 16px; height: 16px; border-radius: 5px; border: 2px solid rgba(0, 0, 0, 0.35); flex: none; }
+  body.on-title #mapKey { display: none !important; }
+  #rivalTag .mrule { display: none; }
+  #info .bondtip svg { width: 14px; height: 14px; fill: #c98f00; flex: none; }
+  #saveScreen, #pauseScreen { z-index: 9; }
+  #saveScreen .box { padding: 18px 22px; border-radius: 22px; border-width: 4px; width: min(560px, 100%); max-height: 100%; overflow-y: auto; text-align: center; }
+  #saveScreen h1, #pauseScreen h1 { margin: 0 0 4px; font-size: 32px; }
+  #saveNote { margin: 0 0 10px; font-size: 15px; line-height: 1.35; }
+  .saverows { display: grid; grid-template-columns: auto 1fr; gap: 3px 14px; text-align: left; background: #fff; border: 2px solid var(--panel-edge); border-radius: 12px; padding: 8px 12px; font-size: 15px; margin-bottom: 12px; }
+  .saverows b { text-align: right; }
+  .savebtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .savebtns button, #saveLoadCode { font-size: 15px; padding: 8px 8px; }
+  #saveScreen h2 { margin: 8px 0 6px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-dark); }
+  #saveCode { width: 100%; height: 76px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; border: 2px solid var(--panel-edge); border-radius: 10px; padding: 6px; resize: none; color: var(--ink); background: #fff; user-select: text; -webkit-user-select: text; word-break: break-all; }
+  #saveCodeBox { margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  #saveMsg { min-height: 20px; font-weight: 600; font-size: 14px; color: #1d6a31; margin: 4px 0 8px; }
+  #saveMsg.bad { color: #a32619; }
+  button.ghost { background: #fff; background-image: none; color: #8f2219; text-shadow: none; border: 2px solid #d9a59f; box-shadow: 0 3px 0 #e3c4bf; }
+  button.ghost:active { box-shadow: 0 1px 0 #e3c4bf; }
+  #pauseScreen .box { padding: 22px 28px; border-radius: 22px; border-width: 4px; max-width: 420px; text-align: center; }
+  #pauseScreen p { margin: 0 0 14px; font-size: 17px; line-height: 1.4; }
+  #menuBtn svg { width: 20px; height: 20px; }
+  @media (max-width: 1100px) { #mapKey { display: none !important; } #rivalTag .mrule { display: inline; font-weight: 600; color: #bfe6ff; } #rivalTag .mrule::before { content: " \00b7 "; } }
+  @media (max-width: 760px) {
+    #rivalTag .mrule { display: block; } #rivalTag .mrule::before { content: none; }
+    #saveScreen .box { padding: 12px 12px; }
+    #saveScreen h1, #pauseScreen h1 { font-size: 26px; }
+    .saverows, #saveNote { font-size: 14px; }
+    #menuBtn svg { width: 17px; height: 17px; }
+  }
+  .pausebtns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pausebtns button { font-size: 16px; padding: 9px 8px; }
+  .pausebtns #pauseResume { grid-column: span 2; font-size: 20px; }
+  .pausebtns #pauseQuit, .pausebtns #pauseHelp { grid-column: span 2; }
+  @media (max-width: 480px) { #menuBtn { order: 3; } #topbar #muteBtn, #topbar #musicBtn, #topbar #helpBtn { display: none; } }
 </style>
 </head>
 <body class="on-title">
@@ -598,10 +637,12 @@
     <div class="legend" id="legend"></div>
     <div class="tip">Saving gold earns a bonus: +1 for every 5 gold you keep (up to +3). Tap or click a goose to see it and sell it. Drag empty space to turn the camera.</div>
     <div class="tip">Between rounds you may get a pond event: pick one of the cards. Badges you earn unlock new looks for Gerald in the Wardrobe on the title screen.</div>
+    <div class="tip">From round 3 the pond changes every two rounds. Rocks and deep water block the way, mud slows walkers, and a goose that starts on a nest or a stump gets a boost. Tap a special tile to see what it does.</div>
   </div>
   <div id="info" class="panel"></div>
   <div id="bonds" class="panel" hidden></div>
   <div id="shop" class="panel"></div>
+  <div id="mapKey" class="panel" hidden></div>
   <div id="camctl" class="panel">Turn <button id="camL" title="Turn left (Q)">&lt;</button><button id="camR" title="Turn right (E)">&gt;</button></div>
   <div id="overlay" class="screen"><div class="box panel"><h1 id="ovTitle"></h1><p id="ovText"></p><div id="ovExtra"></div><div class="btnrow" id="ovBtns"></div></div></div>
   <div id="perkScreen" class="screen"><div class="box panel"><h1>Golden Feather!</h1><p>Gerald found a Golden Feather. Pick one power-up for your flock.</p><div class="perks" id="perks"></div></div></div>
@@ -632,6 +673,7 @@
         <li>Press FIGHT! Your geese battle on their own.</li>
         <li>Buy 3 of the same goose to merge them into a stronger one.</li>
         <li>Win 10 battles before you lose your 3 hearts. Watch out for boss battles!</li>
+        <li>Ponds change as you go: walk around rocks and water, and start geese on nests and stumps for a boost.</li>
         <li>Earn badges to dress up Gerald in the Wardrobe. Win a run to unlock Endless, and try the Daily Pond and Pond Rules for new twists.</li>
       </ol>
     </div>
@@ -639,6 +681,45 @@
   </div>
 </div>
 
+<div id="mUi" style="position:fixed;inset:0;pointer-events:none;z-index:9">
+  <div id="saveScreen" class="screen" style="pointer-events:auto"><div class="box panel">
+    <h1>Saves</h1>
+    <p id="saveNote"></p>
+    <div class="saverows" id="saveRows"></div>
+    <h2>Back up</h2>
+    <div class="savebtns">
+      <button class="big blue" id="saveDownload">Download backup file</button>
+      <button class="big blue" id="saveShowCode">Copy a save code</button>
+    </div>
+    <h2>Bring a backup back</h2>
+    <div class="savebtns">
+      <button class="big blue" id="saveUpload">Load backup file</button>
+      <button class="big blue" id="savePaste">Paste a save code</button>
+    </div>
+    <input type="file" id="saveFile" accept=".json,application/json,text/plain" hidden>
+    <div id="saveCodeBox" hidden>
+      <textarea id="saveCode" spellcheck="false" aria-label="Save code"></textarea>
+      <button class="big green" id="saveLoadCode">Load this code</button>
+    </div>
+    <div id="saveMsg" role="status"></div>
+    <div class="savebtns">
+      <button class="big ghost" id="saveEraseRun">Erase current run</button>
+      <button class="big ghost" id="saveEraseAll">Erase everything</button>
+    </div>
+    <button class="big blue" id="saveClose">Close</button>
+  </div></div>
+  <div id="pauseScreen" class="screen" style="pointer-events:auto"><div class="box panel">
+    <h1>Game menu</h1>
+    <p id="pauseText"></p>
+    <div class="pausebtns">
+      <button class="big green" id="pauseResume">Keep playing</button>
+      <button class="big blue" id="pauseSound"></button>
+      <button class="big blue" id="pauseMusic"></button>
+      <button class="big blue" id="pauseHelp">How to play</button>
+      <button class="big blue" id="pauseQuit">Save and quit</button>
+    </div>
+  </div></div>
+</div>
 <!-- ===== WORKSTREAM A HTML ===== -->
 <!-- ===== WORKSTREAM B HTML ===== -->
 <div id="bUi">
@@ -1562,7 +1643,7 @@ function updateTopbar() {
   renderBonds();
   const rt = $('rivalTag');
   const prule = typeof rulePill !== 'undefined' && !rulePill.hidden ? rulePill.textContent.replace(/\s+/g, ' ').trim() : '';
-  rt.innerHTML = `<b>Round ${round} vs ${rivalName()}</b><span class="rrule">${rivalFor(round).rule}</span>${prule ? `<span class="prule">Pond rule: ${prule}</span>` : ''}`;
+  rt.innerHTML = `<b>Round ${round} vs ${rivalName()}</b><span class="rrule">${rivalFor(round).rule}</span>${prule ? `<span class="prule">Pond rule: ${prule}</span>` : ''}${mapId !== 'meadow' ? `<span class="mrule">Map: ${MAPS[mapId].name}</span>` : ''}`;
   rt.title = rt.textContent;
   rt.classList.toggle('boss', isBoss());
 }
@@ -1631,7 +1712,9 @@ function freeSpotFor(type) {
   if (boardCount() < flockCap()) {
     const prefRows = TYPES[type].range > 1 ? [0, 1, 2] : [2, 1, 0];
     const colOrder = [3, 4, 2, 5, 1, 6, 0, 7];
-    for (const r of prefRows) for (const c of colOrder) if (!unitAt(c, r)) return { c, r };
+    const want = TYPES[type].range > 1 ? 'perch' : 'nest'; // new geese hop onto a helpful tile when one is free
+    for (let r = 0; r < 3; r++) for (const c of colOrder) if (featAt(c, r) === want && !unitAt(c, r)) return { c, r };
+    for (const r of prefRows) for (const c of colOrder) if (!unitAt(c, r) && !blocked(c, r)) return { c, r };
   }
   for (let c = 0; c < COLS; c++) if (!unitAt(c, -1)) return { c, r: -1 };
   return null;
@@ -1729,7 +1812,7 @@ function buildEnemyTeam() {
     const rows = smart ? (front ? [3, 4, 5] : [5, 4, 3]) : shuffle([3, 4, 5]);
     let placed = false;
     for (const r of rows) {
-      for (const c of shuffle([0, 1, 2, 3, 4, 5, 6, 7])) if (!unitAt(c, r)) { createUnit(t, 'enemy', c, r, level); placed = true; break; }
+      for (const c of shuffle([0, 1, 2, 3, 4, 5, 6, 7])) if (!unitAt(c, r) && !blocked(c, r)) { createUnit(t, 'enemy', c, r, level); placed = true; break; }
       if (placed) break;
     }
   }
@@ -1764,6 +1847,7 @@ function startRound(restoreShop = null) {
   freeRerollUsed = false;
   battleTime = 0; endTimer = 0;
   Sound.setTempo('calm');
+  setupMap();
   seeded('rival', buildEnemyTeam);
   if (restoreShop) { shop = restoreShop; renderShop(); } else rollShop();
   fightBtn.disabled = false;
@@ -1942,7 +2026,7 @@ function showInfo(type, u) {
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
       <div class="role" style="color:${roleInk(d.role)}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
-    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}. 4 = ${BONDS[d.role].text4}.</div>` : ''}${boostNote(u)}${sellBtn}`;
+    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}. 4 = ${BONDS[d.role].text4}.</div>` : ''}${boostNote(u)}${tileNote(u)}${sellBtn}`;
   const sb = $('sellBtn');
   if (sb) sb.onclick = () => { const v = selected; if (!confirmSell(v, sb)) return; selected = null; sell(v); showInfo(null); };
   infoEl.style.display = 'block';
@@ -1972,6 +2056,7 @@ function setTileHighlight(t, ok = true) {
 }
 function canDrop(u, t) {
   if (!t || t.r >= 3) return false;
+  if (t.r >= 0 && blocked(t.c, t.r)) return false;
   const other = unitAt(t.c, t.r);
   if (t.r === -1 && u.def.hero) return false;
   if (other && other !== u && other.def.hero && u.r === -1) return false;
@@ -2038,6 +2123,7 @@ function endPointer() {
   if (orbit) { orbit = null; press = null; return; }
   if (press) {
     selected = press.u || null;
+    if (!press.u) mapTileTip();
     if (selected) sfx('click');
     press = null;
     showInfo(null);
@@ -2241,15 +2327,16 @@ function updateUnitAI(u, dt) {
   if (!target) target = nearest(u, enemies);
 
   const d = dist(u, target);
-  const reach = def.range * T + (def.range > 1 ? 0 : u.radius * 0.5);
+  const reach = def.range * T + (def.range > 1 ? (u.reachBonus || 0) : u.radius * 0.5);
   const dx = target.group.position.x - u.group.position.x;
   const dz = target.group.position.z - u.group.position.z;
   if (target !== u) u.facing = Math.atan2(dx, dz);
 
   if (d > reach) {
-    const step = Math.min(def.speed * u.speedMult * u.moveMult * dt, d - reach + 0.01);
-    u.group.position.x += (dx / d) * step;
-    u.group.position.z += (dz / d) * step;
+    const step = Math.min(def.speed * u.speedMult * u.moveMult * dt, d - reach + 0.01) * mapSpeed(u);
+    const dir = mapSteer(u, target, dx / d, dz / d); // walks around rocks and deep water
+    u.group.position.x += dir[0] * step;
+    u.group.position.z += dir[1] * step;
     u.walkT += dt * def.speed * 6;
   } else if (u.atkTimer <= 0) {
     u.atkTimer = def.cd;
@@ -2279,6 +2366,7 @@ function separate() {
     u.group.position.x = Math.max(-hx, Math.min(hx, u.group.position.x));
     u.group.position.z = Math.max(-hz, Math.min(hz, u.group.position.z));
   }
+  mapPushOut(live);
 }
 
 function updateProjectiles(dt) {
@@ -2434,6 +2522,7 @@ function endBattle() {
 function showTitle() {
   phase = 'title';
   clearBoard();
+  applyMap('meadow');
   document.body.classList.add('on-title');
   overlay.classList.remove('show');
   $('perkScreen').classList.remove('show');
@@ -2822,7 +2911,7 @@ const RULES = {
 for (const k in RULES) RULES[k] = Object.assign({}, RULE_BASE, RULES[k]);
 
 // Extra run state owned by workstream B. Saved with the run as `x` (save version 2).
-const freshRunx = () => ({ rule: 'classic', daily: null, startEndless: false, events: 0, lastEvent: 0, prevEvent: '', buff: null, rolls: 0, rollRound: 0, usedBrute: false });
+const freshRunx = () => ({ map: 'meadow', mapRound: 0, rule: 'classic', daily: null, startEndless: false, events: 0, lastEvent: 0, prevEvent: '', buff: null, rolls: 0, rollRound: 0, usedBrute: false });
 let runx = freshRunx();
 const RULE = () => RULES[runx.rule] || RULES.classic;
 const isPerkRound = r => PERK_ROUNDS.has(r) || (endless && r % 3 === 0);
@@ -3952,6 +4041,349 @@ $('helpBtn').onclick = () => {
 };
 
 
+// ===== MAPS AND SAVES =====
+// --- Pond maps: every two rounds (from round 3) the battle moves to a new pond with special tiles.
+// Layouts list tiles on the player's half; the rival half is the same layout turned around, so maps are fair.
+const FEATURES = {
+  rock:  { name: 'Rocks', block: true, color: 0x8d948c, short: 'Rocks block the way', tip: 'Rocks! No goose can stand here, and walkers must go around.' },
+  water: { name: 'Deep water', block: true, color: 0x3f9bd0, short: 'Deep water blocks walkers', tip: 'Deep water! Geese walk around it, but honks and eggs fly over.' },
+  mud:   { name: 'Mud', color: 0x8a6a45, short: 'Mud slows walkers', tip: 'Mud! Geese wading through it walk at half speed.' },
+  nest:  { name: 'Cozy nest', color: 0xe6cf7a, short: 'Nest: start here for +25% health', tip: 'Cozy nest! A goose that starts the battle here gets +25% health.' },
+  perch: { name: 'Lookout stump', color: 0xb98a5a, short: 'Stump: start here for +20% attack', tip: 'Lookout stump! A goose that starts here gets +20% attack, and ranged geese reach farther.' },
+};
+const MAPS = {
+  meadow:   { name: 'Open Meadow', f: [] },
+  pass:     { name: 'Rocky Pass', f: [['rock', 1, 2], ['rock', 2, 2], ['rock', 5, 2], ['nest', 0, 1]] },
+  ponds:    { name: 'Twin Ponds', f: [['water', 2, 1], ['water', 2, 2], ['water', 5, 2], ['perch', 4, 0]] },
+  mud:      { name: 'Muddy Middle', f: [['mud', 2, 2], ['mud', 3, 2], ['mud', 4, 2], ['mud', 5, 2], ['nest', 1, 1], ['perch', 6, 0]] },
+  hill:     { name: 'Nest Hill', f: [['nest', 3, 1], ['nest', 4, 1], ['rock', 0, 2], ['rock', 7, 2]] },
+  ridge:    { name: 'Lookout Ridge', f: [['perch', 1, 0], ['perch', 6, 0], ['rock', 3, 2], ['mud', 0, 2], ['mud', 7, 2]] },
+  crossing: { name: 'The Crossing', f: [['water', 3, 2], ['water', 4, 2], ['mud', 0, 2], ['nest', 7, 1]] },
+};
+let mapId = 'meadow', mapFeat = {}, blockList = [], mapMoved = false;
+const mapGroup = new THREE.Group();
+scene.add(mapGroup);
+const featAt = (c, r) => mapFeat[c + ',' + r] || null;
+const blocked = (c, r) => { const f = featAt(c, r); return !!f && !!FEATURES[f].block; };
+const noRay = m => { m.raycast = () => {}; return m; };
+function featureMesh(kind) {
+  const g = new THREE.Group();
+  if (kind === 'rock') {
+    for (const [x, z, s] of [[-0.14, 0.08, 0.36], [0.2, -0.1, 0.27], [0.1, 0.24, 0.2]]) {
+      const m = noRay(new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), toon(0x9aa19a)));
+      m.position.set(x, s * 0.7, z); m.rotation.set(x * 3, z * 5, 0.4); m.castShadow = true; g.add(m);
+    }
+  } else if (kind === 'water') {
+    const pad = noRay(new THREE.Mesh(new THREE.CircleGeometry(0.2, 12, 0.5, Math.PI * 1.7), toon(0x3f9d4f)));
+    pad.rotation.x = -Math.PI / 2; pad.position.set(0.14, 0.02, -0.1); g.add(pad);
+    const ring = noRay(new THREE.Mesh(new THREE.RingGeometry(0.16, 0.2, 20), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45 })));
+    ring.rotation.x = -Math.PI / 2; ring.position.set(-0.16, 0.02, 0.14); g.add(ring);
+  } else if (kind === 'mud') {
+    for (const [x, z, s] of [[-0.1, 0.05, 0.3], [0.2, -0.14, 0.18], [0.16, 0.22, 0.13]]) {
+      const m = noRay(new THREE.Mesh(new THREE.CircleGeometry(s, 14), toon(0x6b4f33)));
+      m.rotation.x = -Math.PI / 2; m.position.set(x, 0.02, z); g.add(m);
+    }
+  } else if (kind === 'nest') {
+    const twigs = noRay(new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.07, 6, 14), toon(0xa9773f)));
+    twigs.rotation.x = -Math.PI / 2; twigs.position.y = 0.06; g.add(twigs);
+    const straw = noRay(new THREE.Mesh(new THREE.CircleGeometry(0.3, 14), toon(0xf3dd8a)));
+    straw.rotation.x = -Math.PI / 2; straw.position.y = 0.02; g.add(straw);
+  } else if (kind === 'perch') {
+    const stump = noRay(new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.4, 0.08, 10), toon(0x8a5a32)));
+    stump.position.y = 0.05; g.add(stump);
+    const top = noRay(new THREE.Mesh(new THREE.CircleGeometry(0.31, 10), toon(0xe2bd86)));
+    top.rotation.x = -Math.PI / 2; top.position.y = 0.095; g.add(top);
+    const ring = noRay(new THREE.Mesh(new THREE.RingGeometry(0.14, 0.17, 10), toon(0xb98a5a)));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.1; g.add(ring);
+  }
+  return g;
+}
+function applyMap(id) {
+  mapId = MAPS[id] ? id : 'meadow';
+  mapFeat = {};
+  for (const [kind, c, r] of MAPS[mapId].f) { mapFeat[c + ',' + r] = kind; mapFeat[(COLS - 1 - c) + ',' + (ROWS - 1 - r)] = kind; }
+  for (const ch of [...mapGroup.children]) { mapGroup.remove(ch); disposeObject(ch); }
+  blockList = [];
+  for (const t of tiles) {
+    const { c, r } = t.userData;
+    if (!t.userData.base0) t.userData.base0 = t.userData.base.clone();
+    const kind = r >= 0 ? featAt(c, r) : null;
+    t.userData.base = kind ? new THREE.Color(FEATURES[kind].color) : t.userData.base0;
+    t.material.color.copy(t.userData.base);
+    t.position.y = kind === 'water' ? -0.075 : -0.04;
+    if (!kind) continue;
+    const p = posOf(c, r), m = featureMesh(kind);
+    m.position.set(p.x, 0, p.z); m.rotation.y = ((c * 7 + r * 3) % 4) * Math.PI / 2;
+    mapGroup.add(m);
+    if (FEATURES[kind].block) blockList.push({ x: p.x, z: p.z });
+  }
+  renderMapKey();
+}
+// Called by startRound before the rival flock is placed
+function setupMap() {
+  let id = runx.map;
+  mapMoved = false;
+  if (round < 3) id = 'meadow';
+  else if (!MAPS[id] || id === 'meadow' || !(round < runx.mapRound + 2)) {
+    id = seeded('map', () => pick(Object.keys(MAPS).filter(k => k !== 'meadow' && k !== runx.map)));
+    runx.mapRound = round;
+    mapMoved = true;
+  }
+  runx.map = id;
+  applyMap(id);
+  // geese standing where a rock or deep water now is hop to the nearest free tile
+  let hopped = false;
+  for (const u of playerUnits()) {
+    if (u.r < 0 || !blocked(u.c, u.r)) continue;
+    let best = null, bd = 99;
+    for (let r = 0; r < 3; r++) for (let c = 0; c < COLS; c++) {
+      if (blocked(c, r) || unitAt(c, r)) continue;
+      const d = Math.abs(c - u.c) + Math.abs(r - u.r);
+      if (d < bd) { bd = d; best = { c, r }; }
+    }
+    if (!best) for (let c = 0; c < COLS; c++) if (!unitAt(c, -1)) { best = { c, r: -1 }; break; }
+    if (best) { u.c = best.c; u.r = best.r; snapToTile(u); hopped = true; }
+  }
+  if (mapMoved && !simulating) setTimeout(() => { if (phase === 'setup') toast(`New pond: ${MAPS[id].name}!${hopped ? ' Some geese had to move.' : ' Tap a special tile to see what it does.'}`); }, 3300);
+}
+function renderMapKey() {
+  const el = $('mapKey');
+  if (!el) return;
+  const kinds = [...new Set(MAPS[mapId].f.map(f => f[0]))];
+  el.hidden = !kinds.length;
+  el.innerHTML = `<div class="bh">${MAPS[mapId].name}</div>` + kinds.map(k => `<div class="mk"><i style="background:#${FEATURES[k].color.toString(16).padStart(6, '0')}"></i>${FEATURES[k].short}</div>`).join('');
+}
+function mapTileTip() {
+  if (phase !== 'setup' && phase !== 'battle') return;
+  const p = new THREE.Vector3();
+  if (!raycaster.ray.intersectPlane(groundPlane, p)) return;
+  const t = worldToTile(p.x, p.z);
+  const kind = t && t.r >= 0 ? featAt(t.c, t.r) : null;
+  if (kind) toast(FEATURES[kind].tip);
+}
+function tileNote(u) {
+  if (!u || phase !== 'setup' || u.r < 0) return '';
+  const kind = featAt(u.c, u.r);
+  if (kind === 'nest') return `<div class="bondtip">${svg('star')} Cozy nest: +25% health in battle</div>`;
+  if (kind === 'perch') return `<div class="bondtip">${svg('star')} Lookout stump: +20% attack${u.def.range > 1 ? ' and longer reach' : ''} in battle</div>`;
+  return '';
+}
+on('roundStart', () => { for (const u of units) u.reachBonus = 0; });
+on('battleStart', () => {
+  for (const u of units) {
+    if (u.r < 0 || u.dead) continue;
+    const kind = featAt(u.c, u.r);
+    if (kind === 'nest') { u.maxHp *= 1.25; u.hp = u.maxHp; floatText(u, '+25% health', 'heal'); }
+    else if (kind === 'perch') { u.atk *= 1.2; if (u.def.range > 1) u.reachBonus = 0.8; floatText(u, '+20% attack', 'gold'); }
+  }
+});
+// Walking: mud halves the pace, and geese path around rocks and deep water
+const cellOfPos = (x, z) => ({ c: Math.max(0, Math.min(COLS - 1, Math.round(x / T + (COLS - 1) / 2))), r: Math.max(0, Math.min(ROWS - 1, Math.round((ROWS - 1) / 2 - z / T))) });
+function mapSpeed(u) {
+  if (mapId === 'meadow') return 1;
+  const t = cellOfPos(u.group.position.x, u.group.position.z);
+  return featAt(t.c, t.r) === 'mud' ? 0.5 : 1;
+}
+const BLOCK_PAD = 0.26;
+function lineClear(x0, z0, x1, z1) {
+  const n = Math.ceil(Math.hypot(x1 - x0, z1 - z0) / 0.2);
+  for (let i = 1; i < n; i++) {
+    const x = x0 + (x1 - x0) * i / n, z = z0 + (z1 - z0) * i / n;
+    for (const b of blockList) if (Math.abs(x - b.x) < 0.5 + BLOCK_PAD - 0.04 && Math.abs(z - b.z) < 0.5 + BLOCK_PAD - 0.04) return false;
+  }
+  return true;
+}
+const flood = new Int16Array(COLS * ROWS);
+function mapSteer(u, target, ux, uz) {
+  if (!blockList.length) return [ux, uz];
+  const p = u.group.position, q = target.group.position;
+  if (lineClear(p.x, p.z, q.x, q.z)) return [ux, uz];
+  const s = cellOfPos(p.x, p.z), g = cellOfPos(q.x, q.z);
+  flood.fill(-1);
+  const queue = [g.c + g.r * COLS];
+  flood[queue[0]] = 0;
+  for (let i = 0; i < queue.length; i++) {
+    const k = queue[i], c = k % COLS, r = (k - c) / COLS;
+    for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nc = c + dc, nr = r + dr;
+      if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS || blocked(nc, nr)) continue;
+      const nk = nc + nr * COLS;
+      if (flood[nk] === -1) { flood[nk] = flood[k] + 1; queue.push(nk); }
+    }
+  }
+  // follow the flood downhill from our tile; aim at the farthest tile on the way that we can walk straight to
+  let c = s.c, r = s.r, aim = null;
+  for (let hop = 0; hop < 14; hop++) {
+    let best = null, bv = flood[c + r * COLS] === -1 ? 999 : flood[c + r * COLS];
+    for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nc = c + dc, nr = r + dr;
+      if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
+      const v = flood[nc + nr * COLS];
+      if (v !== -1 && v < bv) { bv = v; best = [nc, nr]; }
+    }
+    if (!best) break;
+    [c, r] = best;
+    const w = posOf(c, r);
+    if (!aim || lineClear(p.x, p.z, w.x, w.z)) aim = w; else break;
+    if (bv === 0) break;
+  }
+  if (!aim) return [ux, uz];
+  const ax = aim.x - p.x, az = aim.z - p.z, al = Math.hypot(ax, az);
+  if (al < 0.05) return [ux, uz];
+  u.facing = Math.atan2(ax, az);
+  return [ax / al, az / al];
+}
+function mapPushOut(live) {
+  if (!blockList.length) return;
+  const m = 0.5 + BLOCK_PAD;
+  for (const u of live) {
+    const p = u.group.position;
+    for (const b of blockList) {
+      const dx = p.x - b.x, dz = p.z - b.z;
+      if (Math.abs(dx) >= m || Math.abs(dz) >= m) continue;
+      if (m - Math.abs(dx) < m - Math.abs(dz)) p.x = b.x + (dx < 0 ? -m : m); else p.z = b.z + (dz < 0 ? -m : m);
+    }
+  }
+}
+
+// --- Saves: the game saves itself in this browser. This screen shows what is saved and lets the
+// player back it up (file or code), bring a backup back, or start over.
+const SAVE_PREFIX = 'geraldRoyale.';
+function allSaveData() {
+  const data = {};
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(SAVE_PREFIX)) data[k.slice(SAVE_PREFIX.length)] = localStorage.getItem(k); } } catch (e) { /* storage blocked */ }
+  return data;
+}
+const storageWorks = () => { try { localStorage.setItem(SAVE_PREFIX + 'probe', '1'); localStorage.removeItem(SAVE_PREFIX + 'probe'); return true; } catch (e) { return false; } };
+const makeBackup = () => JSON.stringify({ game: 'gerald-royale', backup: 1, saved: new Date().toISOString(), data: allSaveData() });
+const toCode = text => btoa(unescape(encodeURIComponent(text)));
+const fromCode = code => decodeURIComponent(escape(atob(code.replace(/\s+/g, ''))));
+function restoreBackup(text) {
+  let obj = null;
+  text = String(text || '').trim();
+  try { obj = JSON.parse(text.startsWith('{') ? text : fromCode(text)); } catch (e) { return 'That does not look like a Gerald Royale backup.'; }
+  if (!obj || obj.game !== 'gerald-royale' || !obj.data || typeof obj.data !== 'object') return 'That does not look like a Gerald Royale backup.';
+  const entries = Object.entries(obj.data).filter(([k, v]) => /^[A-Za-z0-9]{1,24}$/.test(k) && typeof v === 'string' && v.length < 200000);
+  if (!entries.length) return 'That backup is empty.';
+  for (const k of Object.keys(allSaveData())) store.del(k);
+  for (const [k, v] of entries) store.set(k, v);
+  if (store.get('run') && !loadSave()) store.del('run'); // a run this version cannot read
+  return '';
+}
+function saveMsg(text, bad) { const m = $('saveMsg'); m.textContent = text; m.classList.toggle('bad', !!bad); }
+function showSaves() {
+  const d = loadSave(), meta = loadMeta(), book = readJSON('book', {});
+  const found = SHOP_TYPES.filter(t => book[t]).length;
+  const badges = typeof BADGES !== 'undefined' ? BADGES.filter(b => readJSON('badges', {})[b.id]).length : 0;
+  const rows = [
+    ['Current run', d ? `${(DIFFS[d.difficulty] || DIFFS.normal).name}, round ${d.round}, ${d.wins} wins, ${d.hearts} hearts` : 'No run in progress'],
+    ['Badges', typeof BADGES !== 'undefined' ? `${badges} of ${BADGES.length}` : '-'],
+    ['Goose Book', `${found} of ${SHOP_TYPES.length} geese found`],
+    ['Battles fought', String(meta.battles || 0)],
+    ['Best Endless round', meta.endlessBest ? String(meta.endlessBest) : '-'],
+  ];
+  $('saveRows').innerHTML = rows.map(([a, b]) => `<div>${a}</div><b>${b}</b>`).join('');
+  $('saveNote').textContent = storageWorks()
+    ? 'Your game saves by itself in this browser after every round and every change to your flock. A backup lets you keep it safe or move it to another computer.'
+    : 'This browser is not letting the game save. Use a backup code to keep your progress.';
+  $('saveCode').value = '';
+  $('saveCodeBox').hidden = true;
+  saveMsg('');
+  $('titleScreen').classList.remove('show');
+  $('saveScreen').classList.add('show');
+  $('saveClose').focus();
+}
+function closeSaves() { $('saveScreen').classList.remove('show'); showTitle(); }
+let eraseArmed = 0;
+function initSaves() {
+  const saveBtn = document.createElement('button');
+  saveBtn.id = 'saveBtn'; saveBtn.className = 'big blue half'; saveBtn.textContent = 'Saves';
+  $('howBtn').classList.add('half');
+  $('howBtn').after(saveBtn);
+  saveBtn.onclick = () => { Sound.init(); sfx('click'); showSaves(); };
+  $('saveClose').onclick = () => { sfx('click'); closeSaves(); };
+  $('saveDownload').onclick = () => {
+    sfx('click');
+    try {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([makeBackup()], { type: 'application/json' }));
+      a.download = `gerald-royale-save-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      saveMsg('Backup file made. Look in your Downloads folder. If nothing was downloaded, use a save code.');
+    } catch (e) { saveMsg('This browser blocked the download. Use a save code.', true); }
+  };
+  $('saveShowCode').onclick = () => {
+    sfx('click');
+    $('saveCodeBox').hidden = false;
+    $('saveCode').value = toCode(makeBackup());
+    $('saveCode').focus(); $('saveCode').select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch (e) { /* ignore */ }
+    saveMsg(copied ? 'Save code copied. Paste it somewhere safe, like a note or an email to yourself.' : 'Here is your save code. Select it all and copy it somewhere safe.');
+  };
+  $('savePaste').onclick = () => {
+    sfx('click');
+    $('saveCodeBox').hidden = false;
+    $('saveCode').value = '';
+    $('saveCode').focus();
+    saveMsg('Paste a save code in the box, then press Load this code.');
+  };
+  $('saveLoadCode').onclick = () => {
+    const err = restoreBackup($('saveCode').value);
+    if (err) { sfx('error'); saveMsg(err, true); return; }
+    sfx('click'); showSaves(); saveMsg('Backup loaded. Welcome back!');
+  };
+  $('saveFile').onchange = e => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { const err = restoreBackup(reader.result); if (err) { sfx('error'); saveMsg(err, true); } else { showSaves(); saveMsg('Backup loaded. Welcome back!'); } };
+    reader.onerror = () => saveMsg('That file could not be read.', true);
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+  $('saveUpload').onclick = () => { sfx('click'); $('saveFile').click(); };
+  $('saveEraseRun').onclick = () => {
+    if (!loadSave()) { saveMsg('There is no run in progress.'); return; }
+    if (eraseArmed !== 1) { eraseArmed = 1; sfx('error'); saveMsg('Press again to erase your current run. Badges and the Goose Book are kept.', true); return; }
+    eraseArmed = 0; store.del('run'); showSaves(); saveMsg('Current run erased.');
+  };
+  $('saveEraseAll').onclick = () => {
+    if (eraseArmed !== 2) { eraseArmed = 2; sfx('error'); saveMsg('Press again to erase EVERYTHING: your run, badges, wardrobe and Goose Book. This cannot be undone.', true); return; }
+    eraseArmed = 0;
+    for (const k of Object.keys(allSaveData())) if (k !== 'muted' && k !== 'music') store.del(k);
+    showSaves(); saveMsg('Everything erased. A fresh start!');
+  };
+  // In-game menu: save and go back to the title screen
+  const mb = document.createElement('button');
+  mb.id = 'menuBtn'; mb.className = 'big blue icon-btn'; mb.title = 'Game menu'; mb.innerHTML = svg('menu');
+  $('helpBtn').after(mb);
+  mb.onclick = () => {
+    sfx('click');
+    const inSetup = phase === 'setup';
+    $('pauseText').textContent = inSetup
+      ? `Round ${round}, ${wins} wins. Your game is saved. You can stop now and pick Continue on the title screen later.`
+      : 'A battle is going on. Your game is saved when the battle ends.';
+    $('pauseQuit').disabled = !inSetup;
+    pauseLabels();
+    $('pauseScreen').classList.add('show');
+    $('pauseResume').focus();
+  };
+  const pauseLabels = () => {
+    $('pauseSound').textContent = 'Sound: ' + (Sound.muted ? 'off' : 'on');
+    $('pauseMusic').textContent = 'Music: ' + ($('musicBtn').classList.contains('off') ? 'off' : 'on');
+  };
+  $('pauseSound').onclick = () => { $('muteBtn').click(); pauseLabels(); };
+  $('pauseMusic').onclick = () => { $('musicBtn').click(); pauseLabels(); };
+  $('pauseHelp').onclick = () => { sfx('click'); $('pauseScreen').classList.remove('show'); $('help').classList.add('open'); };
+  $('pauseResume').onclick = () => { sfx('click'); $('pauseScreen').classList.remove('show'); };
+  $('pauseQuit').onclick = () => { if (phase !== 'setup') return; sfx('click'); saveGame(); $('pauseScreen').classList.remove('show'); showTitle(); };
+}
+SVG.menu = '<path d="M3 5.5h18v2.8H3zm0 5.1h18v2.8H3zm0 5.1h18v2.8H3z"/>';
+initSaves();
+
+
 // Hooks for automated testing and balance simulation
 window.__game = {
   get phase() { return phase; }, get units() { return units; }, get gold() { return gold; }, set gold(v) { gold = v; renderShop(); },
@@ -3960,6 +4392,7 @@ window.__game = {
   rivalFor, RIVALS,
   get endless() { return endless; }, get runx() { return runx; }, RULES, BADGES, grantBadge, checkBadges, startDaily, showWardrobe,
   pickRule(r) { selRule = RULES[r] ? r : 'classic'; }, // then click a difficulty card
+  get map() { return mapId; }, get battleTime() { return battleTime; }, MAPS, applyMap, blocked, featAt, makeBackup, restoreBackup,
   setShop(types) { previewIdx = -1; shop = types.map(type => ({ type, sold: false })); renderShop(); },
   // Run the current battle instantly (no countdown, no rendering) and return the result
   simulate() {
