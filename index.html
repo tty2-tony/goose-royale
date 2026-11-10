@@ -1196,7 +1196,8 @@ function rollShop() {
   const pool = shopPool();
   if (runx.rollRound !== round) { runx.rollRound = round; runx.rolls = 0; }
   runx.rolls++;
-  shop = seeded('shop' + runx.rolls, () => Array.from({ length: 5 }, () => ({ type: pick(pool), sold: false })));
+  const mine = RULE().ownedChance ? [...new Set(playerUnits().filter(u => !u.def.hero).map(u => u.type))] : [];
+  shop = seeded('shop' + runx.rolls, () => Array.from({ length: 5 }, () => ({ type: mine.length && Math.random() < RULE().ownedChance ? pick(mine) : pick(pool), sold: false })));
   renderShop();
 }
 
@@ -1997,7 +1998,7 @@ function endBattle() {
     ]);
   } else if (hearts <= 0) {
     store.del('run');
-    showOverlay('Game over', '#c0392b', endless ? `What a run! You reached round ${round} in Endless. Your best is round ${Math.max(round, loadMeta().endlessBest)}.` : `Captain Hiss wins this time. You reached round ${round}.`, mvpHtml + summary, [
+    showOverlay('Game over', '#c0392b', endless ? `What a run! You reached round ${round} in Endless. Your best is round ${Math.max(round, loadMeta().endlessBest)}.` : `Captain Hiss wins this time. You reached round ${round}.` + (runx.daily ? ` Your best in today's Daily Pond: ${Math.max(wins, loadDaily().best)} wins.` : ''), mvpHtml + summary, [
       { label: 'Try again', onClick: retry },
       { label: 'Title screen', cls: 'blue', onClick: showTitle },
     ]);
@@ -2206,15 +2207,15 @@ window.addEventListener('resize', () => {
 // Pond Rules: optional twists for a run. Each rule is a row of modifiers that
 // flockCapFor, isBoss, rollShop, endBattle and the hooks below read through RULE().
 // ---------------------------------------------------------------------------
-const RULE_BASE = { capAdj: 0, geeseMult: 1, startGold: 0, payAdj: 0, enemyMult: 1, wild: false, bossEvery: 5, bossGold: 0, speed: 1, mirror: false };
+const RULE_BASE = { capAdj: 0, geeseMult: 1, startGold: 0, payAdj: 0, enemyMult: 1, wild: false, bossEvery: 5, bossGold: 0, speed: 1, mirror: false, ownedChance: 0 };
 const RULES = {
   classic: { name: 'Classic', short: 'Classic', desc: 'The normal game. No twists.' },
   tiny:    { name: 'Tiny Flock', short: 'Tiny', desc: 'Your flock is 2 geese smaller, but all your geese are 40% stronger.', capAdj: -2, geeseMult: 1.4 },
   rich:    { name: 'Rich Pond', short: 'Rich', desc: 'Start with 5 extra gold and get 4 more every round. Rival flocks are 15% stronger.', startGold: 5, payAdj: 4, enemyMult: 1.15 },
-  wild:    { name: 'Wild Shop', short: 'Wild', desc: 'Every kind of goose can show up in the shop from round 1.', wild: true },
+  wild:    { name: 'Wild Shop', short: 'Wild', desc: 'Every kind of goose can show up from round 1, and the shop often has geese you already own.', wild: true, ownedChance: 0.3 },
   giant:   { name: 'Giant Hiss', short: 'Giant', desc: 'A boss battle every 3 rounds. Beating a boss pays 4 bonus gold.', bossEvery: 3, bossGold: 4 },
   speedy:  { name: 'Speedy Pond', short: 'Speedy', desc: 'Battles zoom by at double speed. Good for a quick game.', speed: 2 },
-  mirror:  { name: 'Mirror Match', short: 'Mirror', desc: 'Captain Hiss copies your flock! Every rival goose is a copy of one of yours.', mirror: true },
+  mirror:  { name: 'Mirror Match', short: 'Mirror', desc: 'Captain Hiss copies your flock! Every rival goose is a slightly weaker copy of one of yours.', mirror: true, enemyMult: 0.95 },
 };
 for (const k in RULES) RULES[k] = Object.assign({}, RULE_BASE, RULES[k]);
 
@@ -2656,7 +2657,7 @@ function showGifts(then) {
 // ---------------------------------------------------------------------------
 // Hooks: rule effects, next-battle buffs, badge checks
 // ---------------------------------------------------------------------------
-let battleInfo = { n: 99 };
+let battleInfo = { n: 99 }, lastHonk = 99;
 // Mirror Match: Hiss stands alone while you build, then copies your flock when the fight starts
 function buildMirror(mine) {
   const hiss = units.find(u => u.team === 'enemy' && u.def.hero);
@@ -2672,6 +2673,7 @@ on('battleStart', () => {
   const R = RULE();
   const mine = playerUnits().filter(u => u.r >= 0);
   battleInfo = { n: mine.length };
+  lastHonk = 99;
   if (mine.some(u => u.type === 'brute')) runx.usedBrute = true;
   if (R.mirror) buildMirror(mine);
   const buff = runx.buff && runx.buff.round === round ? runx.buff.kind : null;
@@ -2712,7 +2714,6 @@ on('roundStart', () => {
   else if (buff === 'crown') setTimeout(() => toast('Gerald is extra brave this battle.'), 1800);
   checkBadges();
 });
-let lastHonk = 0;
 on('tick', dt => {
   // Speedy Pond: run extra battle steps (simulate() does not come through here)
   if (phase === 'battle' && !simulating && RULE().speed > 1) stepBattle(dt * (RULE().speed - 1));
