@@ -24,7 +24,7 @@ The Goose Book on the title screen collects every goose you have owned or met, w
 
 Every 3 rounds Gerald finds a Golden Feather: pick one of three power-ups. Saving gold earns a bonus of +1 per 5 gold kept (up to +3). Progress saves automatically in the browser.
 
-Controls: drag geese to move them, tap or click a goose to see it and sell it, drag empty space (or use the arrow buttons, Q/E, arrow keys) to turn the camera, scroll to zoom. Works on phones in portrait and landscape.
+Controls: drag geese to move them, tap or click a goose to see it and sell it, drag empty space (or use the arrow buttons, Q/E, arrow keys) to turn the camera, scroll to zoom. Works on phones in portrait and landscape. On a touch screen, tap a shop card once to see it and a second time to buy it. Selling a level 2 or 3 goose needs a second click or tap. The ? button brings back the help panel, which folds away after your first battle. Merged geese get a gold ring (level 2) or a rainbow ring and glow (level 3).
 
 ## Geese
 
@@ -40,4 +40,4 @@ Controls: drag geese to move them, tap or click a goose to see it and sell it, d
 | Ninja | 4 | round 4 | Leaps behind the enemy at the start; critical pecks. |
 | Drummer | 4 | round 5 | Nearby allies attack faster. |
 
-Sound effects and music are synthesized in the browser (no audio files). The mute button is in the top bar.
+Sound effects and music are synthesized in the browser (no audio files). The top bar has separate buttons for sound effects and for music, and the music pauses when the tab is hidden.

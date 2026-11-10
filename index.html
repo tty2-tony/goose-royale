@@ -184,7 +184,7 @@
   body.on-title #coach { display: none !important; }
 
   #hud { position: absolute; inset: 0; overflow: hidden; }
-  .uhud { position: absolute; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; gap: 1px; pointer-events: none; }
+  .uhud { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); will-change: transform; display: flex; flex-direction: column; align-items: center; gap: 1px; pointer-events: none; }
   .uhud .tag { font-weight: 700; font-size: 13px; color: #fff; text-shadow: 0 1px 2px #000, 0 0 3px #000; white-space: nowrap; }
   .uhud .stars { display: flex; gap: 1px; height: 13px; }
   .uhud .stars svg { width: 13px; height: 13px; fill: #ffd23f; stroke: #7a4a00; stroke-width: 2; }
@@ -194,13 +194,13 @@
   .hpbar i { display: block; height: 100%; border-radius: 4px; transition: width 0.15s; }
   .player .hpbar i { background: #4fd16b; }
   .enemy .hpbar i { background: #ff5b4a; }
-  .float { position: absolute; transform: translate(-50%, -50%); font-weight: 700; font-size: 18px; pointer-events: none; text-shadow: 0 2px 0 rgba(0,0,0,0.45); animation: floatUp 0.9s ease-out forwards; white-space: nowrap; }
+  .float { position: absolute; left: 0; top: 0; transform: translate(var(--fx, 0), var(--fy, 0)) translate(-50%, -50%); font-weight: 700; font-size: 18px; pointer-events: none; text-shadow: 0 2px 0 rgba(0,0,0,0.45); animation: floatUp 0.9s ease-out forwards; white-space: nowrap; }
   .float.dmg { color: #fff; }
   .float.crit { color: #ff8a3d; font-size: 22px; }
   .float.heal { color: #7dff95; }
   .float.gold { color: #ffd23f; font-size: 20px; }
   .float.big { font-size: 24px; color: #ffd84a; }
-  @keyframes floatUp { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -40px; } }
+  @keyframes floatUp { from { opacity: 1; translate: 0 0; } to { opacity: 0; translate: 0 -40px; } }
   @media (prefers-reduced-motion: reduce) {
     #fightBtn, .float, #banner.pop .big, #coach { animation: none; }
   }
@@ -295,6 +295,56 @@
   /* ===== WORKSTREAM B CSS ===== */
 
   /* ===== WORKSTREAM C CSS ===== */
+  /* Bigger small text */
+  .pill small { font-size: 13px; }
+  .card .role, .card .mini { font-size: 13px; }
+  .card .badge { font-size: 12px; }
+  .uhud .tag { font-size: 14px; }
+  #info .role, #info .bondtip, #bonds .bh, #bonds { font-size: 13px; }
+  #help .tip, .legend { font-size: 14px; }
+  .bookcard .meta, .mode .won { font-size: 13px; }
+  #camctl { font-size: 14px; }
+  #reroll span { font-size: 14px; }
+  /* Help panel folds away after the first game; the ? button brings it back */
+  #helpBtn { display: inline-block; min-width: 34px; padding: 6px 10px; }
+  body.help-min #help { display: none; }
+  body.help-min #help.open { display: block; z-index: 5; }
+  /* Music button */
+  #musicBtn { position: relative; }
+  #musicBtn.off { opacity: 0.7; }
+  #musicBtn.off::after { content: ""; position: absolute; left: 20%; right: 20%; top: 50%; height: 3px; background: #fff; border-radius: 2px; transform: rotate(-35deg); box-shadow: 0 0 0 1px rgba(0,0,0,0.35); }
+  /* Shop cards */
+  .card.sold { visibility: visible; opacity: 1; cursor: default; transform: none; width: 52px; padding: 0; display: flex; align-items: center; justify-content: center; border: 3px dashed #d9c49a; background: rgba(255, 255, 255, 0.35); color: #8a7350; font-weight: 700; font-size: 14px; }
+  .card.sold span { writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 2px; text-transform: uppercase; }
+  .card.poor { opacity: 1; cursor: pointer; border-color: #d9c49a; }
+  .card.poor .cost { color: #b0452f; opacity: 0.55; }
+  .card.wait { opacity: 0.45; cursor: default; transform: none; }
+  .card.preview { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 0 0 3px rgba(242, 156, 31, 0.4); }
+  @media (hover: hover) { .card.poor:hover { transform: translateY(-4px); border-color: var(--accent); } }
+  /* Banner and merge stars */
+  #banner.defeat .big { color: #ffd0c8; }
+  .stampstars { position: absolute; left: 0; top: 0; transform: translate(var(--fx, 0), var(--fy, 0)) translate(-50%, -50%); display: flex; gap: 2px; pointer-events: none; animation: stampFade 0.4s 1.3s forwards; }
+  .stampstars svg { width: 30px; height: 30px; fill: #ffd23f; stroke: #7a4a00; stroke-width: 1.5; animation: stamp 0.35s cubic-bezier(0.2, 1.6, 0.4, 1) backwards; animation-delay: calc(var(--i) * 0.2s); }
+  @keyframes stamp { from { transform: scale(3.4) rotate(-25deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+  @keyframes stampFade { to { opacity: 0; } }
+  @media (max-width: 760px), (max-height: 540px) {
+    .pill small { font-size: 12px; }
+    .card .role, .card .mini { font-size: 12px; }
+    .card .badge { font-size: 11px; }
+    .uhud .tag { font-size: 12px; }
+    #info .desc { font-size: 14px; }
+    #bonds { font-size: 13px; }
+  }
+  @media (max-width: 480px) {
+    .card.sold { flex: 0 0 38px; width: 38px; }
+    #topbar { gap: 4px; padding: 5px 4px; }
+    #topbar button.big { padding: 5px 8px; }
+    #topbar button.icon-btn { padding: 5px 6px; }
+    #topbar .pill { padding: 2px 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stampstars svg, .stampstars { animation: none; }
+  }
 </style>
 </head>
 <body class="on-title">
@@ -309,7 +359,8 @@
     <div class="pill" id="feathers" title="Golden Feathers" hidden></div>
     <button class="big" id="fightBtn">FIGHT!</button>
     <button class="big blue" id="speedBtn"><span class="lbl">Speed </span><b>x1</b></button>
-    <button class="big blue icon-btn" id="muteBtn" title="Sound on or off"></button>
+    <button class="big blue icon-btn" id="muteBtn" title="Sound effects on or off"></button>
+    <button class="big blue icon-btn" id="musicBtn" title="Music on or off"></button>
     <button class="big blue" id="helpBtn" title="How to play">?</button>
   </div>
   <div id="rivalTag"></div>
@@ -389,15 +440,18 @@ const store = {
 // Sound: everything is synthesized with WebAudio, no audio files
 // ---------------------------------------------------------------------------
 const Sound = (() => {
-  let ctx = null, master = null, musicGain = null, noiseBuf = null;
-  let muted = store.get('muted') === '1';
-  let lastHit = 0, musicTimer = null, step = 0, tempo = 'calm';
+  let ctx = null, master = null, sfxBus = null, musicGain = null, noiseBuf = null;
+  let muted = store.get('muted') === '1'; // sound effects off
+  let musicOn = store.get('music') ? store.get('music') === '1' : !muted; // players who muted everything before keep the music off
+  let lastHit = 0, musicTimer = null, step = 0, tempo = 'calm', nextNote = 0;
+  const honkTimes = [];
   function init() {
-    if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+    if (ctx) { if (ctx.state === 'suspended' && !document.hidden) ctx.resume(); return; }
     try {
       ctx = new (window.AudioContext || window.webkitAudioContext)();
-      master = ctx.createGain(); master.gain.value = muted ? 0 : 0.55; master.connect(ctx.destination);
-      musicGain = ctx.createGain(); musicGain.gain.value = 0.35; musicGain.connect(master);
+      master = ctx.createGain(); master.gain.value = 0.55; master.connect(ctx.destination);
+      sfxBus = ctx.createGain(); sfxBus.gain.value = muted ? 0 : 1; sfxBus.connect(master);
+      musicGain = ctx.createGain(); musicGain.gain.value = musicOn ? 0.35 : 0; musicGain.connect(master);
       noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
       const d = noiseBuf.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -416,26 +470,35 @@ const Sound = (() => {
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     let node = o;
     if (filter) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = filter; o.connect(f); node = f; }
-    node.connect(g); g.connect(out || master);
+    node.connect(g); g.connect(out || sfxBus);
     o.start(t); o.stop(t + dur + 0.03);
   }
-  function noise(dur, vol, freq, delay = 0) {
+  function noise(dur, vol, freq, delay = 0, out = null) {
     if (!ctx) return;
     const t = ctx.currentTime + delay;
     const src = ctx.createBufferSource(); src.buffer = noiseBuf;
     const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 1.2;
     const g = ctx.createGain();
     g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(f); f.connect(g); g.connect(master);
+    src.connect(f); f.connect(g); g.connect(out || sfxBus);
     src.start(t); src.stop(t + dur + 0.02);
   }
   const fx = {
     honk(deep) {
-      const f = deep ? 200 : 330;
-      tone(f, deep ? 0.38 : 0.2, { type: 'sawtooth', vol: 0.12, slide: f * 0.78, filter: 1400 });
-      tone(f * 1.01, deep ? 0.38 : 0.2, { type: 'square', vol: 0.05, slide: f * 0.8, filter: 1000 });
+      // Many Honkers can fire in the same moment: keep at most 3 honks per 300ms and make a crowd quieter
+      const now = performance.now();
+      while (honkTimes.length && now - honkTimes[0] > 300) honkTimes.shift();
+      if (honkTimes.length >= 3) return;
+      const crowd = honkTimes.length; honkTimes.push(now);
+      const f = (deep ? 200 : 330) * (0.94 + Math.random() * 0.12), v = 1 / (1 + crowd * 0.7);
+      tone(f, deep ? 0.38 : 0.2, { type: 'sawtooth', vol: 0.12 * v, slide: f * 0.78, filter: 1400 });
+      tone(f * 1.01, deep ? 0.38 : 0.2, { type: 'square', vol: 0.05 * v, slide: f * 0.8, filter: 1000 });
     },
-    hit() { const n = performance.now(); if (n - lastHit < 45) return; lastHit = n; noise(0.07, 0.18, 1500 + Math.random() * 800); },
+    hit() {
+      const n = performance.now(); if (n - lastHit < 45) return; lastHit = n;
+      noise(0.07, 0.18, 1500 + Math.random() * 800);
+      tone(150 + Math.random() * 70, 0.07, { type: 'triangle', vol: 0.09, slide: 80 }); // small thump, different pitch each time
+    },
     crit() { noise(0.12, 0.25, 2600); tone(880, 0.1, { type: 'square', vol: 0.05 }); },
     splash() { noise(0.3, 0.3, 380); tone(140, 0.25, { vol: 0.15, slide: 60 }); },
     whoosh() { noise(0.25, 0.15, 900); },
@@ -454,26 +517,42 @@ const Sound = (() => {
     lose() { [392, 349, 311, 262].forEach((f, i) => tone(f, 0.3, { type: 'triangle', vol: 0.13, delay: i * 0.16 })); },
   };
   // A small pentatonic loop. Calm while building, faster in battle.
+  // Notes are scheduled a little ahead on the audio clock, so the beat stays steady even when the page is busy.
   const BASS = [130.8, 0, 196, 0, 174.6, 0, 196, 0, 146.8, 0, 196, 0, 130.8, 0, 98, 0];
   const MEL = [523, 0, 587, 659, 0, 784, 659, 0, 587, 0, 523, 440, 0, 523, 0, 0, 659, 0, 784, 880, 0, 784, 659, 0, 587, 0, 659, 523, 0, 440, 0, 0];
   function startMusic() {
-    clearTimeout(musicTimer);
-    const tick = () => {
-      if (ctx && !muted) {
-        const b = BASS[step % 16], m = MEL[step % 32];
-        if (b) tone(b, 0.22, { type: 'triangle', vol: 0.18, out: musicGain });
-        if (m && (tempo === 'battle' || step % 2 === 0)) tone(m, 0.16, { type: 'sine', vol: 0.09, out: musicGain });
-        if (tempo === 'battle' && step % 4 === 0) noise(0.05, 0.06, 4000);
+    clearInterval(musicTimer);
+    nextNote = ctx.currentTime + 0.05;
+    const schedule = () => {
+      if (!ctx || ctx.state !== 'running') return;
+      const now = ctx.currentTime;
+      if (nextNote < now - 0.3) nextNote = now + 0.02; // fell behind (for example after a pause): do not play a burst
+      while (nextNote < now + 0.2) {
+        if (musicOn) {
+          const delay = Math.max(0, nextNote - now);
+          const b = BASS[step % 16], m = MEL[step % 32];
+          if (b) tone(b, 0.22, { type: 'triangle', vol: 0.18, out: musicGain, delay });
+          if (m && (tempo === 'battle' || step % 2 === 0)) tone(m, 0.16, { type: 'sine', vol: 0.09, out: musicGain, delay });
+          if (tempo === 'battle' && step % 4 === 0) noise(0.05, 0.06, 4000, delay, musicGain);
+        }
+        step++;
+        nextNote += tempo === 'battle' ? 0.15 : 0.21;
       }
-      step++;
-      musicTimer = setTimeout(tick, tempo === 'battle' ? 150 : 210);
     };
-    tick();
+    musicTimer = setInterval(schedule, 50);
+    schedule();
   }
+  // Pause everything while the tab is hidden
+  document.addEventListener('visibilitychange', () => {
+    if (!ctx) return;
+    if (document.hidden) ctx.suspend(); else ctx.resume();
+  });
   return {
     init, fx,
     get muted() { return muted; },
-    setMuted(m) { muted = m; store.set('muted', m ? '1' : '0'); if (master) master.gain.value = m ? 0 : 0.55; },
+    get musicOn() { return musicOn; },
+    setMuted(m) { muted = m; store.set('muted', m ? '1' : '0'); if (sfxBus) sfxBus.gain.value = m ? 0 : 1; },
+    setMusic(on) { musicOn = on; store.set('music', on ? '1' : '0'); if (musicGain) musicGain.gain.value = on ? 0.35 : 0; },
     setTempo(t) { tempo = t; },
   };
 })();
@@ -638,12 +717,12 @@ function fitCamera() {
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
   const halfH = Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * aspect);
-  camDist = Math.max(10.2, (portrait ? 4.25 : 4.7) / Math.tan(halfH)) * camZoom;
-  camHeight = camDist * (portrait ? 0.68 : 0.8);
+  camDist = (portrait ? (4.25 / Math.tan(halfH)) * 0.556 : Math.max(10.2, 4.7 / Math.tan(halfH))) * camZoom;
+  camHeight = camDist * (portrait ? 2 : 0.8); // portrait phones look down from higher up so the board fills the tall screen
 }
 fitCamera();
 function placeCamera() {
-  const sx = shake ? (Math.random() - 0.5) * shake : 0, sy = shake ? (Math.random() - 0.5) * shake : 0;
+  const sx = shake && !reducedMotion() ? (Math.random() - 0.5) * shake : 0, sy = shake && !reducedMotion() ? (Math.random() - 0.5) * shake : 0;
   camera.position.set(camTarget.x + Math.sin(camAngle) * camDist + sx, camHeight + sy, camTarget.z + Math.cos(camAngle) * camDist);
   camera.lookAt(camTarget);
 }
@@ -712,6 +791,7 @@ for (const [z, col] of [[3.15, 0x3d7be0], [-3.15, 0xe04a3d]]) {
   s.position.set(0, 0.0, z); scene.add(s);
 }
 
+const envPads = [], envTrees = [];
 function tree(x, z, s = 1) {
   const g = new THREE.Group();
   const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 0.8, 6), toon(0x8a5a32));
@@ -723,7 +803,7 @@ function tree(x, z, s = 1) {
   g.add(trunk, top1, top2);
   g.traverse(m => { if (m.isMesh) m.castShadow = true; });
   g.position.set(x, -0.3, z); g.scale.setScalar(s);
-  scene.add(g);
+  scene.add(g); envTrees.push({ g, ph: x * 0.7 + z });
 }
 [[-11, -6, 1.3], [-12, 1, 1], [-10.5, 7, 1.2], [11, -5, 1.1], [12, 2, 1.4], [10, 8, 0.9], [-4, -11, 1.2], [3, -12, 1.5], [8, -10, 1]]
   .forEach(([x, z, s]) => tree(x, z, s));
@@ -732,7 +812,7 @@ for (let i = 0; i < 9; i++) {
   const pad = new THREE.Mesh(new THREE.CircleGeometry(0.35, 12, 0.3, Math.PI * 1.8), toon(0x5fbf5f));
   pad.rotation.x = -Math.PI / 2; pad.rotation.z = a;
   pad.position.set(Math.cos(a) * 7.6, -0.23, Math.sin(a) * 6.3);
-  scene.add(pad);
+  scene.add(pad); envPads.push({ pad, ph: i * 1.7 });
 }
 const clouds = [];
 for (let i = 0; i < 6; i++) {
@@ -760,8 +840,8 @@ function puff(pos, color, n = 4, power = 1) {
   if (simulating) return;
   for (let i = 0; i < n; i++) {
     let f = feathers.length >= 160 ? feathers.shift() : null;
-    if (!f) { f = { mesh: new THREE.Mesh(featherGeo, featherMat(color)) }; scene.add(f.mesh); }
-    f.mesh.material = featherMat(color);
+    if (!f) { f = { mesh: new THREE.Mesh(featherGeo, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true })) }; scene.add(f.mesh); }
+    f.mesh.material.color.set(color); f.mesh.material.opacity = 1;
     f.mesh.visible = true;
     f.mesh.position.set(pos.x + (Math.random() - 0.5) * 0.3, 0.6 + Math.random() * 0.4, pos.z + (Math.random() - 0.5) * 0.3);
     f.vel = new THREE.Vector3((Math.random() - 0.5) * 2.5 * power, (1.5 + Math.random() * 2) * power, (Math.random() - 0.5) * 2.5 * power);
@@ -779,6 +859,7 @@ function updateFeathers(dt) {
     f.mesh.position.addScaledVector(f.vel, dt);
     if (f.mesh.position.y < 0.02) { f.mesh.position.y = 0.02; f.vel.set(0, 0, 0); }
     f.mesh.rotation.x += f.spin.x * dt; f.mesh.rotation.y += f.spin.y * dt;
+    f.mesh.material.opacity = Math.max(0, Math.min(1, (f.life - f.t) / 0.4));
     if (f.t > f.life) f.mesh.visible = false;
   }
 }
@@ -856,9 +937,14 @@ const MODEL_EXTRAS = {
   },
 };
 
+const EYE_WHITE_GEO = new THREE.SphereGeometry(0.047, 10, 8);
+const EYE_PUPIL_GEO = new THREE.SphereGeometry(0.026, 8, 6);
+const EYE_WHITE_MAT = new THREE.MeshBasicMaterial({ color: 0xffffff });
 function makeGooseModel(type, team) {
   const def = TYPES[type];
-  const g = new THREE.Group();
+  const root = new THREE.Group();
+  const g = new THREE.Group(); // the goose itself; `root` also holds the ground ring so the body can lunge and squash
+  root.add(g);
   const mats = [];
   const mat = (c, extra) => { const m = toon(c, extra); mats.push(m); return m; };
   const mesh = (geo, m, parent, pos, rot) => {
@@ -884,8 +970,17 @@ function makeGooseModel(type, team) {
   mesh(new THREE.CylinderGeometry(0.075, 0.09, 0.45, 10), bodyM, neck, [0, 0.22, 0]);
   mesh(new THREE.SphereGeometry(0.13, 14, 10), bodyM, neck, [0, 0.47, 0.03]);
   mesh(new THREE.ConeGeometry(0.05, 0.17, 8), orange, neck, [0, 0.45, 0.2], [Math.PI / 2, 0, 0]);
-  mesh(new THREE.SphereGeometry(0.026, 6, 6), black, neck, [0.085, 0.51, 0.1]);
-  mesh(new THREE.SphereGeometry(0.026, 6, 6), black, neck, [-0.085, 0.51, 0.1]);
+  const eyes = [];
+  for (const side of [1, -1]) {
+    const eye = new THREE.Group();
+    eye.position.set(side * 0.082, 0.51, 0.095);
+    neck.add(eye);
+    const white = new THREE.Mesh(EYE_WHITE_GEO, EYE_WHITE_MAT);
+    const pupil = new THREE.Mesh(EYE_PUPIL_GEO, black);
+    pupil.position.set(side * 0.006, 0.004, 0.034);
+    eye.add(white, pupil);
+    eyes.push(eye);
+  }
 
   const wings = [];
   for (const side of [1, -1]) {
@@ -909,12 +1004,12 @@ function makeGooseModel(type, team) {
     new THREE.MeshBasicMaterial({ color: team === 'player' ? 0x3d7be0 : 0xe04a3d, side: THREE.DoubleSide })
   );
   ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02;
-  g.add(ring);
+  root.add(ring);
   const roleDisc = new THREE.Mesh(new THREE.CircleGeometry(0.34, 24), new THREE.MeshBasicMaterial({ color: ROLES[def.role].color, transparent: true, opacity: 0.45 }));
   roleDisc.rotation.x = -Math.PI / 2; roleDisc.position.y = 0.015;
-  g.add(roleDisc);
+  root.add(roleDisc);
 
-  return { group: g, neck, wings, mats };
+  return { group: root, inner: g, neck, wings, mats, eyes };
 }
 
 // ---------------------------------------------------------------------------
@@ -1132,13 +1227,17 @@ function renderShop() {
     const owned = ownedCount(item.type);
     const fresh = d.unlock === round && round > 1;
     const el = document.createElement('div');
-    el.className = 'card' + (item.sold ? ' sold' : (gold < d.cost || phase !== 'setup' ? ' poor' : '')) + (fresh ? ' new' : '');
+    if (item.sold) { el.className = 'card sold'; el.innerHTML = '<span>Sold</span>'; shopEl.appendChild(el); return; }
+    el.className = 'card' + (gold < d.cost ? ' poor' : '') + (phase !== 'setup' ? ' wait' : '') + (fresh ? ' new' : '') + (previewIdx === i ? ' preview' : '');
     const badge = owned >= 2 ? '<div class="badge merge">MERGE!</div>' : owned === 1 ? '<div class="badge">1 owned</div>' : fresh ? '<div class="badge fresh">NEW</div>' : '';
     el.innerHTML = `${badge}<div class="cost">${d.cost}g</div>
       ${roleIcon(d.role)}
-      <div class="name">${d.name}</div><div class="role" style="color:${ROLES[d.role].color}">${d.role}</div>
+      <div class="name">${d.name}</div><div class="role" style="color:${roleInk(d.role)}">${d.role}</div>
       <div class="mini">HP ${d.hp} &middot; ATK ${d.atk}</div>`;
-    el.onclick = () => buy(i);
+    el.onclick = () => {
+      if (isTouchUser() && phase === 'setup' && previewIdx !== i) { previewIdx = i; sfx('click'); renderShop(); showInfo(item.type); return; }
+      previewIdx = -1; buy(i);
+    };
     el.onmouseenter = () => showInfo(item.type);
     el.onmouseleave = () => showInfo(null);
     shopEl.appendChild(el);
@@ -1150,8 +1249,9 @@ function renderShop() {
   rr.innerHTML = `${svg('reroll')}Reroll<span>${cost ? cost + ' gold' : 'FREE'}</span>`;
   rr.disabled = phase !== 'setup' || gold < cost;
   rr.title = 'Get 5 new geese in the shop';
-  rr.onclick = reroll;
+  rr.onclick = () => { previewIdx = -1; reroll(); };
   shopEl.appendChild(rr);
+  if (previewIdx >= 0 && shop[previewIdx] && !shop[previewIdx].sold) showInfo(shop[previewIdx].type);
 }
 
 function reroll() {
@@ -1209,12 +1309,13 @@ function tryMerge() {
         const rank = u => (u.r >= 0 ? 0 : u.r === -1 ? 1 : 2);
         group.sort((a, b) => rank(a) - rank(b));
         const [keep, a, b] = group;
-        removeUnit(a); removeUnit(b);
+        mergeGhost(a, keep); mergeGhost(b, keep);
         if (selected === a || selected === b) selected = null;
         keep.level = level + 1;
         applyStats(keep);
         keep.group.visible = true;
         keep.flapT = 0.8;
+        mergeCeremony(keep);
         sparkle(keep);
         puff(keep.group.position, 0xffd23f, 10);
         stats.merges++;
@@ -1464,11 +1565,11 @@ function showInfo(type, u) {
   const sellBtn = u && u === selected && canSell(u)
     ? `<button class="big sell" id="sellBtn">Sell for ${u.def.cost * Math.pow(3, u.level - 1)} gold</button>` : '';
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
-      <div class="role" style="color:${ROLES[d.role].color}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
+      <div class="role" style="color:${roleInk(d.role)}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
     <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}</div>` : ''}${sellBtn}`;
   const sb = $('sellBtn');
-  if (sb) sb.onclick = () => { const v = selected; selected = null; sell(v); showInfo(null); };
+  if (sb) sb.onclick = () => { const v = selected; if (!confirmSell(v, sb)) return; selected = null; sell(v); showInfo(null); };
   infoEl.style.display = 'block';
 }
 
@@ -1522,7 +1623,7 @@ canvas.addEventListener('pointerdown', e => {
   const u = unitUnderMouse();
   $('help').classList.remove('open');
   if (e.button === 2) {
-    if (u && canSell(u)) { if (selected === u) selected = null; sell(u); }
+    if (u && canSell(u)) { if (!confirmSell(u)) return; if (selected === u) selected = null; sell(u); }
     else orbit = { x: e.clientX, angle: camAngleGoal };
     return;
   }
@@ -1535,7 +1636,7 @@ canvas.addEventListener('pointermove', e => {
   setMouse(e);
   if (press && !dragging && !orbit && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) {
     const u = press.u;
-    if (u && u.team === 'player' && phase === 'setup') dragging = u;
+    if (u && u.team === 'player' && phase === 'setup') { dragging = u; beginDrag(u, e); }
     else orbit = { x: press.x, angle: camAngleGoal };
     press = null;
   }
@@ -1546,8 +1647,8 @@ canvas.addEventListener('pointermove', e => {
   if (dragging) {
     const p = new THREE.Vector3();
     if (raycaster.ray.intersectPlane(groundPlane, p)) {
-      dragging.group.position.set(p.x, 0.45, p.z);
-      const t = worldToTile(p.x, p.z);
+      dragPosition(dragging, p, e);
+      const t = dragTileFor(dragging, p);
       setTileHighlight(t && t.r < 3 ? tileAt(t.c, t.r) : null, canDrop(dragging, t));
     }
     canvas.style.cursor = 'grabbing';
@@ -1570,10 +1671,10 @@ function endPointer() {
   if (!dragging) return;
   const u = dragging;
   dragging = null;
-  const t = worldToTile(u.group.position.x, u.group.position.z);
+  const t = u.dropTile || worldToTile(u.group.position.x, u.group.position.z);
   if (canDrop(u, t)) {
     const other = unitAt(t.c, t.r);
-    if (other && other !== u) { other.c = u.c; other.r = u.r; snapToTile(other); }
+    if (other && other !== u) { const from = other.group.position.clone(); other.c = u.c; other.r = u.r; snapToTile(other); glideTo(other, from); }
     u.c = t.c; u.r = t.r;
     sfx('click');
   } else if (t && t.r >= 0 && t.r < 3 && u.r === -1) {
@@ -1582,7 +1683,10 @@ function endPointer() {
   } else if (t && t.r === -1 && u.def.hero) {
     toast('Gerald never sits on the bench!'); sfx('error');
   }
+  const dropFrom = u.group.position.clone();
   snapToTile(u);
+  glideTo(u, dropFrom, true);
+  endDrag();
   setTileHighlight(null);
   canvas.style.cursor = 'grab';
   updateTopbar();
@@ -1643,10 +1747,12 @@ function floatText(u, text, cls) {
   const el = document.createElement('div');
   el.className = 'float ' + cls;
   el.textContent = text;
-  el.style.left = (s.x + (Math.random() - 0.5) * 20) + 'px';
-  el.style.top = s.y + 'px';
+  el.style.setProperty('--fx', (s.x + (Math.random() - 0.5) * 20) + 'px');
+  el.style.setProperty('--fy', s.y + 'px');
   hud.appendChild(el);
-  setTimeout(() => el.remove(), 900);
+  floats.push(el);
+  while (floats.length > MAX_FLOATS) floats.shift().remove();
+  setTimeout(() => { el.remove(); const i = floats.indexOf(el); if (i >= 0) floats.splice(i, 1); }, 900);
 }
 
 function project(u, h) {
@@ -1851,7 +1957,7 @@ function stepBattle(dt) {
   separate();
   updateProjectiles(dt);
   const over = !fighters('player').length || !fighters('enemy').length || battleTime > 60;
-  if (over) { endTimer += dt; if (endTimer > 1.2) endBattle(); }
+  if (over) { endTimer += dt; if (!simulating) startEndMoment(); if (endTimer > (simulating ? 1.2 : 1.2 + 1.5 * gameSpeed)) endBattle(); }
 }
 
 function endBattle() {
@@ -2049,7 +2155,7 @@ function tick() {
   const dt = phase === 'battle' ? realDt * gameSpeed : realDt;
   elapsed += realDt;
 
-  if (phase === 'title') camAngleGoal = Math.sin(elapsed * 0.25) * 0.5;
+  if (phase === 'title') camAngleGoal = reducedMotion() ? 0 : Math.sin(elapsed * 0.25) * 0.5;
   camAngle += (camAngleGoal - camAngle) * Math.min(1, realDt * (phase === 'title' ? 2 : 6));
   shake = Math.max(0, shake - realDt * 1.2);
   placeCamera();
@@ -2093,7 +2199,9 @@ function tick() {
       if (m.userData.baseEmissive === undefined) m.userData.baseEmissive = m.emissive.getHex();
       m.emissive.setHex(u.flashT > 0 ? 0x661a00 : m.userData.baseEmissive);
     }
+    polishUnit(u, dt, realDt);
   }
+  polishTick(realDt);
 
   for (let i = effects.length - 1; i >= 0; i--) {
     const f = effects[i];
@@ -2113,8 +2221,7 @@ function tick() {
     const s = project(u, 1.3);
     if (!s) continue;
     u.hudEl.style.display = '';
-    u.hudEl.style.left = s.x + 'px';
-    u.hudEl.style.top = s.y + 'px';
+    u.hudEl.style.transform = `translate(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px) translate(-50%, -100%)`;
     u.barFill.style.width = (100 * u.hp / u.maxHp) + '%';
   }
   requestAnimationFrame(tick);
@@ -2130,6 +2237,456 @@ window.addEventListener('resize', () => {
 // ===== WORKSTREAM B (meta & playtime) additions go here =====
 
 // ===== WORKSTREAM C (polish & feel) additions go here =====
+// Everything below is visual only. tick() calls polishUnit() for each goose and polishTick() once per frame.
+
+var rmQuery = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null; // var: placeCamera() reads it very early
+function reducedMotion() { return !!(rmQuery && rmQuery.matches); }
+
+let lastPointerType = 'mouse';
+document.addEventListener('pointerdown', e => { lastPointerType = e.pointerType; }, true);
+const isTouchUser = () => lastPointerType === 'touch';
+
+// Space (or Enter) can start the fight even after a mouse click left focus on a button
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('button'); if (b && e.detail > 0) b.blur(); });
+
+// --- Role text that is readable on white (the role colors are made for icons, not for text)
+const roleInkCache = {};
+function roleInk(role) {
+  if (roleInkCache[role]) return roleInkCache[role];
+  const n = parseInt(ROLES[role].color.slice(1), 16), ink = [0x2b, 0x21, 0x18];
+  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v, i) => Math.round(v * 0.45 + ink[i] * 0.55));
+  return (roleInkCache[role] = '#' + ch.map(v => v.toString(16).padStart(2, '0')).join(''));
+}
+
+// --- Shop: tap once to look, tap again to buy (touch only)
+let previewIdx = -1;
+
+// --- Selling a level 2 or 3 goose needs a second click or tap
+let sellArm = null;
+function confirmSell(u, btn) {
+  if (u.level < 2) return true;
+  const now = performance.now();
+  if (sellArm && sellArm.u === u && now - sellArm.t < 3500) { sellArm = null; return true; }
+  sellArm = { u, t: now };
+  const val = u.def.cost * Math.pow(3, u.level - 1);
+  toast(`This is a level ${u.level} goose! ${btn ? 'Tap' : 'Right-click'} again to sell it for ${val} gold.`);
+  sfx('click');
+  if (btn) btn.textContent = 'Sure? Tap again to sell';
+  return false;
+}
+
+// --- Floating numbers: cap how many exist at once
+const floats = [], MAX_FLOATS = 14;
+
+// --- Merge ceremony: the two extra geese slide into the keeper, which pops with a flash and stamps its stars
+const ghosts = [];
+function mergeGhost(u, keep) {
+  if (simulating) { removeUnit(u); return; }
+  units = units.filter(x => x !== u);
+  u.hudEl.remove();
+  const start = u.group.position.clone();
+  if (!u.group.visible || u.r < -1) { // the goose that was just bought and is still hidden: fall in from above
+    u.group.visible = true; u.group.rotation.set(0, 0, 0);
+    start.set(keep.group.position.x + (Math.random() - 0.5) * 1.2, 2.6, keep.group.position.z + 0.6);
+  }
+  ghosts.push({ u, start, keep, t: 0 });
+}
+function mergeCeremony(keep) {
+  if (simulating) return;
+  const oldF = 1 + 0.14 * (keep.level - 2), newF = 1 + 0.14 * (keep.level - 1);
+  keep.merge = { t: 0, from: oldF / newF, fired: false };
+}
+function stampStars(u) {
+  const s = project(u, 2.3);
+  if (!s) return;
+  const el = document.createElement('div');
+  el.className = 'stampstars';
+  el.style.setProperty('--fx', s.x + 'px'); el.style.setProperty('--fy', s.y + 'px');
+  el.innerHTML = Array.from({ length: u.level }, (_, i) => svg('star', `style="--i:${i}"`)).join('');
+  hud.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+// --- Level 2 and 3 look: a gold ring, and a spinning rainbow ring with a soft glow
+let LVL = null;
+function lvlAssets() {
+  if (LVL) return LVL;
+  const rainbowGeo = new THREE.TorusGeometry(0.56, 0.055, 6, 48);
+  const pos = rainbowGeo.attributes.position, col = new Float32Array(pos.count * 3), c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) { c.setHSL((Math.atan2(pos.getY(i), pos.getX(i)) / (Math.PI * 2) + 1) % 1, 0.9, 0.6); col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b; }
+  rainbowGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  LVL = {
+    goldGeo: new THREE.TorusGeometry(0.52, 0.05, 6, 40), goldMat: new THREE.MeshBasicMaterial({ color: 0xffc93c }),
+    rainbowGeo, rainbowMat: new THREE.MeshBasicMaterial({ vertexColors: true }),
+    glowGeo: new THREE.SphereGeometry(0.72, 14, 10),
+    glowMat: new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false }),
+  };
+  return LVL;
+}
+function buildLevelFx(u) {
+  if (u.lvlFx) u.group.remove(u.lvlFx);
+  u.lvlFx = null; u.fxLevel = u.level;
+  if (u.level < 2) return;
+  const a = lvlAssets(), grp = new THREE.Group();
+  const ring = new THREE.Mesh(u.level === 2 ? a.goldGeo : a.rainbowGeo, u.level === 2 ? a.goldMat : a.rainbowMat);
+  ring.rotation.x = Math.PI / 2; ring.position.y = 0.07;
+  grp.add(ring);
+  if (u.level >= 3) { const glow = new THREE.Mesh(a.glowGeo, a.glowMat); glow.position.y = 0.5; grp.add(glow); grp.userData.glow = glow; }
+  grp.traverse(o => { o.raycast = () => {}; }); // never block clicks on the goose
+  u.group.add(grp); u.lvlFx = grp;
+}
+
+// --- Dragging: light the legal tiles, lift the goose, glide into place
+let litTiles = [], dragTouch = false;
+function beginDrag(u, e) {
+  dragTouch = e.pointerType !== 'mouse';
+  u.glide = null; u.dropTile = null;
+  for (const t of tiles) if (t.userData.r < 3 && canDrop(u, t.userData)) litTiles.push(t);
+  sfx('click');
+}
+function endDrag() {
+  for (const t of litTiles) t.material.emissive.setHex(0);
+  litTiles = [];
+  if (dragging) dragging.dropTile = null;
+}
+function dragPosition(u, p) {
+  let ox = 0, oz = 0, y = 0.55;
+  if (dragTouch) { // on a touch screen the goose floats above the finger so the finger does not hide it
+    const dx = camTarget.x - camera.position.x, dz = camTarget.z - camera.position.z, l = Math.hypot(dx, dz) || 1;
+    ox = dx / l * 0.45; oz = dz / l * 0.45; y = 1.1;
+  }
+  u.group.position.set(p.x + ox, y, p.z + oz);
+}
+function dragTileFor(u, p) {
+  const t = worldToTile(u.group.position.x, u.group.position.z) || worldToTile(p.x, p.z);
+  u.dropTile = t;
+  return t;
+}
+function glideTo(u, from, land) {
+  if (simulating) return;
+  const to = posOf(u.c, u.r);
+  u.glide = { from: from.clone(), to: new THREE.Vector3(to.x, 0, to.z), t: 0, land: !!land };
+}
+
+// --- Win or lose moment: hold for a moment, show a banner, survivors cheer, confetti for a win
+let endFx = null;
+const CONFETTI_N = 140;
+const confetti = (() => {
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(CONFETTI_N * 3), col = new Float32Array(CONFETTI_N * 3), c = new THREE.Color();
+  const palette = [0xff5b4a, 0xffd23f, 0x4fd16b, 0x3d9be0, 0xc070ff, 0xffffff];
+  for (let i = 0; i < CONFETTI_N; i++) { c.set(palette[i % palette.length]); col.set([c.r, c.g, c.b], i * 3); pos[i * 3 + 1] = -10; }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.17, vertexColors: true }));
+  pts.frustumCulled = false; pts.visible = false;
+  scene.add(pts);
+  return { pts, vy: new Float32Array(CONFETTI_N).map(() => 1.6 + Math.random() * 2), on: false };
+})();
+function confettiRespawn(i, spread) {
+  const a = confetti.pts.geometry.attributes.position;
+  a.setXYZ(i, (Math.random() - 0.5) * 11, 4 + Math.random() * (spread ? 6 : 2), (Math.random() - 0.5) * 8);
+}
+function startEndMoment() {
+  if (endFx) return;
+  const p = fighters('player').length, e = fighters('enemy').length;
+  let win;
+  if (p && e) {
+    const frac = team => fighters(team).reduce((s, u) => s + u.hp, 0) / units.filter(u => u.team === team && u.r !== -1).reduce((s, u) => s + u.maxHp, 0);
+    win = frac('player') >= frac('enemy');
+  } else win = p > 0;
+  endFx = { win, t: 0 };
+  const b = $('banner');
+  b.classList.toggle('defeat', !win);
+  banner(win ? 'VICTORY!' : 'DEFEAT', win ? "Gerald's flock wins!" : 'Not this time...', 0);
+  if (win) {
+    sfx('honk', false); setTimeout(() => sfx('honk', false), 130); setTimeout(() => sfx('honk', true), 280);
+    if (!reducedMotion()) { confetti.on = true; confetti.pts.visible = true; for (let i = 0; i < CONFETTI_N; i++) confettiRespawn(i, true); }
+  } else sfx('error');
+}
+function clearEndMoment() {
+  endFx = null; confetti.on = false; confetti.pts.visible = false;
+  $('banner').classList.remove('defeat');
+}
+on('battleEnd', () => { $('banner').classList.remove('show'); });
+// While setting up, your geese turn a little toward the camera so you can see their faces; they face the rival when the fight starts
+const faceCamera = u => { if (u.team === 'player') { u.facing = 0.4; u.group.rotation.y = 0.4; } };
+on('unitCreated', faceCamera);
+on('roundStart', () => { clearEndMoment(); previewIdx = -1; sellArm = null; playerUnits().forEach(faceCamera); });
+on('battleStart', () => { for (const u of playerUnits()) u.facing = Math.PI; });
+
+// --- Per-goose animation (called from tick after the core animation). Only touches inner/neck/eyes and small offsets.
+function polishUnit(u, dt, realDt) {
+  const inner = u.inner, g = u.group;
+  if (!inner || simulating) return;
+  if (u.fxLevel !== u.level) buildLevelFx(u);
+  if (u.lvlFx) {
+    u.lvlFx.rotation.y += realDt * (u.level >= 3 ? 1.6 : 0.9);
+    const glow = u.lvlFx.userData.glow;
+    if (glow) glow.scale.setScalar(1 + Math.sin(elapsed * 3 + u.id) * 0.07);
+  }
+  // Blinking
+  if (u.blinkT === undefined) { u.blinkT = 1 + Math.random() * 3; u.blinkP = -1; }
+  u.blinkT -= realDt;
+  if (u.blinkT <= 0 && u.blinkP < 0) u.blinkP = 0;
+  let lid = 1;
+  if (u.blinkP >= 0) {
+    u.blinkP += realDt / 0.16;
+    lid = 1 - Math.sin(Math.min(1, u.blinkP) * Math.PI) * 0.92;
+    if (u.blinkP >= 1) { u.blinkP = -1; u.blinkT = 2 + Math.random() * 3.5; }
+  }
+  for (const e of u.eyes) e.scale.y = lid;
+  // Movement: waddle while walking
+  if (u.px === undefined) { u.px = g.position.x; u.pz = g.position.z; u.mv = 0; }
+  const moved = Math.hypot(g.position.x - u.px, g.position.z - u.pz);
+  u.px = g.position.x; u.pz = g.position.z;
+  u.mv += ((moved > 0.0007 && phase === 'battle' ? 1 : 0) - u.mv) * Math.min(1, realDt * 10);
+  let roll = Math.sin(u.walkT) * 0.17 * u.mv, yaw = Math.sin(u.walkT) * 0.06 * u.mv;
+  let ox = 0, oz = 0, sx = 1, sy = 1;
+  // Lunge on a peck
+  if (u.peckT > 0) oz += Math.sin((u.peckT / 0.25) * Math.PI) * 0.2;
+  // Squash and knockback when hit
+  if (u.lastHp !== undefined && u.hp < u.lastHp - 0.01) u.hitT = 0.3;
+  u.lastHp = u.hp;
+  if (u.hitT > 0) {
+    u.hitT = Math.max(0, u.hitT - realDt);
+    const k = Math.sin((1 - u.hitT / 0.3) * Math.PI);
+    sy -= 0.26 * k; sx += 0.16 * k; oz -= 0.14 * k;
+  }
+  // Landing squash after a drag
+  if (u.landT > 0) { u.landT = Math.max(0, u.landT - realDt); const k = Math.sin((u.landT / 0.3) * Math.PI); sy -= 0.28 * k; sx += 0.18 * k; }
+  // Glide to the tile after a drag or a swap
+  if (u.glide) {
+    const gl = u.glide;
+    gl.t += realDt;
+    const k = Math.min(1, gl.t / 0.22), e = 1 - Math.pow(1 - k, 3);
+    if (phase !== 'setup' || k >= 1) {
+      u.glide = null;
+      if (gl.land && phase === 'setup') u.landT = 0.3;
+    } else {
+      g.position.x = gl.from.x + (gl.to.x - gl.from.x) * e;
+      g.position.z = gl.from.z + (gl.to.z - gl.from.z) * e;
+      g.position.y = gl.from.y * (1 - e) + (gl.land ? 0 : Math.sin(k * Math.PI) * 0.3);
+    }
+  }
+  // Being dragged: a little wobble
+  if (u === dragging) { roll += Math.sin(elapsed * 14) * 0.12; sx *= 1.1; sy *= 1.1; }
+  // Merge: wait small, then pop big with a flash
+  let pop = 1, flash = 0;
+  if (u.merge) {
+    const m = u.merge;
+    m.t += realDt;
+    if (m.t < 0.4) pop = m.from;
+    else {
+      if (!m.fired) { m.fired = true; sparkle(u); ringEffect(g.position, 0xffffff, 1.6, 0.6); puff(g.position, 0xffd23f, 12, 1.3); stampStars(u); }
+      const k = Math.min(1, (m.t - 0.4) / 0.5), c1 = 1.7;
+      pop = m.from + (1 - m.from) * (1 + (c1 + 1) * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2));
+      flash = Math.max(0, 1 - k * 1.4);
+      if (k >= 1) u.merge = null;
+    }
+  }
+  if (flash > 0) for (const m of u.mats) m.emissive.setRGB(flash * 0.9, flash * 0.9, flash * 0.9);
+  // Idle head tilt and looking around
+  if (u.tiltT === undefined) u.tiltT = 2 + Math.random() * 5;
+  u.tiltT -= realDt;
+  let tilt = 0;
+  if (u.tiltT < 0) {
+    const k = -u.tiltT / 1.1;
+    if (k >= 1) { u.tiltT = 3 + Math.random() * 5; u.tiltDir = Math.random() < 0.5 ? 1 : -1; }
+    else tilt = Math.sin(k * Math.PI) * 0.4 * (u.tiltDir || 1);
+  }
+  u.neck.rotation.z = tilt;
+  // Victory hop, defeat droop
+  if (endFx && !u.dead) {
+    const winner = (u.team === 'player') === endFx.win;
+    if (winner && !reducedMotion()) {
+      g.position.y += Math.abs(Math.sin(elapsed * 8 + u.id * 1.3)) * 0.42;
+      u.flapT = Math.max(u.flapT, 0.2);
+      roll += Math.sin(elapsed * 8 + u.id) * 0.1;
+    } else if (!winner) { u.neck.rotation.x += 0.5; sy *= 0.94; }
+  }
+  inner.position.set(ox, 0, oz);
+  inner.rotation.z = roll; inner.rotation.y = yaw;
+  inner.scale.set(sx * pop, sy * pop, sx * pop);
+}
+
+// --- Environment: ripples, shimmer, bobbing lily pads, swaying trees, reeds, a dragonfly and a jumping fish
+const inPond = (x, z) => (x / 8.6) ** 2 + (z / 7.3) ** 2 < 1;
+const offIsland = (x, z) => !(Math.abs(x) < 5.1 && z > -3.9 && z < 5.2);
+function randomWaterSpot(margin = 1) {
+  for (let i = 0; i < 20; i++) {
+    const x = (Math.random() - 0.5) * 17, z = (Math.random() - 0.5) * 14.5;
+    if (inPond(x / margin, z / margin) && offIsland(x, z)) return { x, z };
+  }
+  return { x: 7, z: 0 };
+}
+const ripples = [];
+const rippleGeo = new THREE.RingGeometry(0.85, 1, 32);
+for (let i = 0; i < 8; i++) {
+  const m = new THREE.Mesh(rippleGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide }));
+  m.rotation.x = -Math.PI / 2; m.position.y = -0.215; m.visible = false;
+  scene.add(m); ripples.push({ mesh: m, t: 0, life: 2.2, on: false });
+}
+function spawnRipple(x, z, life = 2.2) {
+  const r = ripples.find(q => !q.on);
+  if (!r) return;
+  r.on = true; r.t = 0; r.life = life; r.mesh.position.x = x; r.mesh.position.z = z; r.mesh.visible = true;
+}
+let rippleTimer = 0;
+const shimmerMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false });
+const shimmerGeo = new THREE.PlaneGeometry(0.8, 0.07);
+const shimmers = [];
+for (let i = 0; i < 9; i++) {
+  const m = new THREE.Mesh(shimmerGeo, shimmerMat);
+  m.rotation.x = -Math.PI / 2; m.position.y = -0.21;
+  const s = randomWaterSpot(); m.position.x = s.x; m.position.z = s.z;
+  scene.add(m); shimmers.push({ mesh: m, ph: Math.random() * 6, sp: 0.5 + Math.random() * 0.8 });
+}
+const pondBase = new THREE.Color(0x4fa8d8), pondLight = new THREE.Color(0x6cc0ea);
+
+// Reeds: two instanced meshes (stalks and cattail tops) that sway together
+const reedSpots = [[-5.6, -3], [5.7, -2.5], [-5.8, 2], [5.6, 3.2], [-7.6, -5.5], [7.4, -5.8], [-8, 4.5], [8.3, 5], [0.5, -7.3], [-3.5, -7]];
+const reedData = [];
+reedSpots.forEach(([cx, cz]) => { for (let i = 0; i < 5; i++) reedData.push({ x: cx + (Math.random() - 0.5) * 0.7, z: cz + (Math.random() - 0.5) * 0.7, h: 0.6 + Math.random() * 0.5, ph: Math.random() * 6, tip: Math.random() < 0.6 }); });
+const stalkGeo = new THREE.CylinderGeometry(0.012, 0.028, 1, 4); stalkGeo.translate(0, 0.5, 0);
+const reedStalks = new THREE.InstancedMesh(stalkGeo, toon(0x5f9a3a), reedData.length);
+const tipGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.2, 6); tipGeo.translate(0, 0.1, 0);
+const reedTips = new THREE.InstancedMesh(tipGeo, toon(0x6a4326), reedData.length);
+reedStalks.frustumCulled = reedTips.frustumCulled = false;
+scene.add(reedStalks, reedTips);
+const reedM = new THREE.Matrix4(), reedQ = new THREE.Quaternion(), reedE = new THREE.Euler(), reedP = new THREE.Vector3(), reedS = new THREE.Vector3(), zeroS = new THREE.Vector3(0, 0, 0);
+function updateReeds(t) {
+  reedData.forEach((r, i) => {
+    reedE.set(Math.sin(t * 1.1 + r.ph) * 0.07, 0, Math.cos(t * 0.9 + r.ph) * 0.07);
+    reedQ.setFromEuler(reedE);
+    reedP.set(r.x, -0.27, r.z);
+    reedM.compose(reedP, reedQ, reedS.set(1, r.h, 1));
+    reedStalks.setMatrixAt(i, reedM);
+    // top of the stalk, following the lean
+    reedP.set(r.x + Math.sin(reedE.z) * -r.h, -0.27 + Math.cos(reedE.x) * r.h - 0.12, r.z + Math.sin(reedE.x) * r.h);
+    reedM.compose(reedP, reedQ, r.tip ? reedS.set(1, 1, 1) : zeroS);
+    reedTips.setMatrixAt(i, reedM);
+  });
+  reedStalks.instanceMatrix.needsUpdate = true; reedTips.instanceMatrix.needsUpdate = true;
+}
+
+// Dragonfly
+const dragonfly = new THREE.Group();
+const dfBodyMat = new THREE.MeshBasicMaterial({ color: 0x2aa6c9 }), dfWingMat = new THREE.MeshBasicMaterial({ color: 0xe8fbff, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false });
+const dfBody = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.012, 0.36, 5), dfBodyMat);
+dfBody.rotation.x = Math.PI / 2;
+const dfHead = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), dfBodyMat); dfHead.position.z = 0.19;
+dragonfly.add(dfBody, dfHead);
+const dfWings = [];
+for (const [side, z] of [[1, 0.06], [-1, 0.06], [1, -0.02], [-1, -0.02]]) {
+  const pivot = new THREE.Group(); pivot.position.set(0, 0.015, z);
+  const w = new THREE.Mesh(new THREE.PlaneGeometry(0.26, 0.06), dfWingMat);
+  w.rotation.x = -Math.PI / 2; w.position.x = side * 0.13;
+  pivot.add(w); dragonfly.add(pivot); dfWings.push({ pivot, side });
+}
+scene.add(dragonfly);
+const dfPos = t => ({ x: Math.cos(t * 0.33) * 7.2, y: 1.7 + Math.sin(t * 1.1) * 0.35, z: Math.sin(t * 0.47) * 4.6 - 1 });
+function updateDragonfly(t) {
+  const a = dfPos(t), b = dfPos(t + 0.05);
+  dragonfly.position.set(a.x, a.y, a.z);
+  dragonfly.rotation.y = Math.atan2(b.x - a.x, b.z - a.z);
+  for (const w of dfWings) w.pivot.rotation.z = w.side * Math.sin(t * 60) * 0.5;
+}
+
+// Jumping fish
+const fish = new THREE.Group();
+const fishMat = new THREE.MeshToonMaterial({ color: 0xff8a3d, gradientMap: toonGrad });
+const fishBody = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), fishMat); fishBody.scale.set(0.45, 0.55, 1.1);
+const fishTail = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.2, 4), fishMat); fishTail.rotation.x = Math.PI / 2; fishTail.position.z = -0.24;
+fish.add(fishBody, fishTail); fish.visible = false;
+scene.add(fish);
+let fishT = 0, fishWait = 3, fishFrom = null, fishDir = 0;
+function updateFish(dt) {
+  if (!fish.visible) {
+    fishWait -= dt;
+    if (fishWait > 0) return;
+    fishFrom = randomWaterSpot(0.85); fishDir = Math.random() * Math.PI * 2; fishT = 0;
+    fish.visible = true; spawnRipple(fishFrom.x, fishFrom.z, 1.4);
+    return;
+  }
+  fishT += dt;
+  const k = fishT / 0.95;
+  if (k >= 1) {
+    fish.visible = false; fishWait = 5 + Math.random() * 6;
+    spawnRipple(fish.position.x, fish.position.z, 1.8); spawnRipple(fish.position.x, fish.position.z, 2.6);
+    return;
+  }
+  fish.position.set(fishFrom.x + Math.sin(fishDir) * k * 1.5, -0.25 + Math.sin(k * Math.PI) * 1.0, fishFrom.z + Math.cos(fishDir) * k * 1.5);
+  fish.rotation.set(-Math.cos(k * Math.PI) * 1.0, fishDir, 0, 'YXZ');
+}
+
+// ----- one call per frame
+function polishTick(realDt) {
+  const t = elapsed;
+  // legal drop tiles glow while dragging
+  if (litTiles.length) {
+    const k = 0.55 + 0.45 * Math.sin(t * 6);
+    for (const tile of litTiles) tile.material.emissive.setRGB(0.04 * k, 0.3 * k, 0.05 * k);
+  }
+  // merge ghosts
+  for (let i = ghosts.length - 1; i >= 0; i--) {
+    const gh = ghosts[i], g = gh.u.group;
+    gh.t += realDt;
+    const k = Math.min(1, gh.t / 0.4), e = k * k;
+    const kp = gh.keep.group.position;
+    g.position.set(gh.start.x + (kp.x - gh.start.x) * e, gh.start.y * (1 - e) + Math.sin(k * Math.PI) * 0.5, gh.start.z + (kp.z - gh.start.z) * e);
+    g.scale.setScalar(gh.u.scale * (1 - 0.45 * e));
+    g.rotation.y += realDt * 10;
+    if (k >= 1) { puff(kp, gh.u.def.color, 4, 0.8); scene.remove(g); disposeObject(g); ghosts.splice(i, 1); }
+  }
+  // end-of-battle confetti
+  if (endFx) endFx.t += realDt;
+  if (endFx && (phase === 'setup' || phase === 'title')) clearEndMoment();
+  if (confetti.pts.visible) {
+    const a = confetti.pts.geometry.attributes.position;
+    let alive = 0;
+    for (let i = 0; i < CONFETTI_N; i++) {
+      let y = a.getY(i) - confetti.vy[i] * realDt;
+      if (y < 0.05) { if (confetti.on && endFx && endFx.t < 4) { confettiRespawn(i, false); continue; } y = -10; } else alive++;
+      a.setXYZ(i, a.getX(i) + Math.sin(t * 2 + i) * realDt * 0.8, y, a.getZ(i));
+    }
+    a.needsUpdate = true;
+    if (!alive && !confetti.on) confetti.pts.visible = false;
+  }
+  // environment
+  if (reducedMotion()) return;
+  for (const p of envPads) { p.pad.position.y = -0.23 + Math.sin(t * 1.3 + p.ph) * 0.022; p.pad.rotation.y = Math.sin(t * 0.6 + p.ph) * 0.05; }
+  for (const tr of envTrees) { tr.g.rotation.z = Math.sin(t * 0.7 + tr.ph) * 0.03; tr.g.rotation.x = Math.cos(t * 0.55 + tr.ph) * 0.022; }
+  pond.material.color.copy(pondBase).lerp(pondLight, 0.5 + 0.5 * Math.sin(t * 0.6));
+  rippleTimer -= realDt;
+  if (rippleTimer <= 0) { rippleTimer = 0.8 + Math.random() * 1.4; const s = randomWaterSpot(); spawnRipple(s.x, s.z); }
+  for (const r of ripples) {
+    if (!r.on) continue;
+    r.t += realDt;
+    const k = r.t / r.life;
+    if (k >= 1) { r.on = false; r.mesh.visible = false; continue; }
+    r.mesh.scale.setScalar(0.15 + k * 1.25);
+    r.mesh.material.opacity = 0.55 * (1 - k);
+  }
+  for (const s of shimmers) { const k = Math.sin(t * s.sp + s.ph); s.mesh.scale.x = Math.max(0.05, k); s.mesh.position.x += realDt * 0.05 * s.sp; if (s.mesh.position.x > 8.5) s.mesh.position.x = -8.5; }
+  updateReeds(t);
+  updateDragonfly(t);
+  updateFish(realDt);
+}
+
+// --- Music button, help panel
+function renderMusic() { const b = $('musicBtn'); b.innerHTML = svg('note'); b.classList.toggle('off', !Sound.musicOn); }
+renderMusic();
+$('musicBtn').onclick = () => { Sound.init(); Sound.setMusic(!Sound.musicOn); renderMusic(); };
+if (store.get('helpSeen')) document.body.classList.add('help-min');
+on('battleEnd', () => { store.set('helpSeen', '1'); setTimeout(() => document.body.classList.add('help-min'), 1500); });
+$('helpBtn').onclick = () => {
+  const h = $('help');
+  const phoneLayout = window.matchMedia('(max-width: 760px), (max-height: 540px)').matches;
+  const showing = h.classList.contains('open') || (!document.body.classList.contains('help-min') && !phoneLayout);
+  if (showing) { h.classList.remove('open'); document.body.classList.add('help-min'); } else h.classList.add('open');
+};
+
 
 // Hooks for automated testing and balance simulation
 window.__game = {
