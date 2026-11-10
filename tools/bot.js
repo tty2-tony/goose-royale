@@ -1,12 +1,14 @@
 // Balance bot: plays full runs with a simple greedy strategy using window.__game.simulate().
-// Usage: MODE=0|1|2 (Chick|Goose|Swan) node tools/bot.js [runs]
+// Usage: MODE=0|1|2 (Chick|Goose|Swan) [RULE=tiny|rich|wild|giant|speedy|mirror] node tools/bot.js [runs]
 const { open } = require('./harness');
 const RUNS = +(process.argv[2] || 2);
 (async () => {
   const { browser, page: p, errors } = await open();
   const summary = [];
   for (let run = 0; run < RUNS; run++) {
-    await p.click('#newBtn'); await p.click('.mode >> nth=' + (process.env.MODE || 1)); await p.waitForTimeout(200);
+    await p.click('#newBtn');
+    if (process.env.RULE) await p.evaluate(r => window.__game.pickRule(r), process.env.RULE); // Pond Rule: tiny|rich|wild|giant|speedy|mirror
+    await p.click('.mode >> nth=' + (process.env.MODE || 1)); await p.waitForTimeout(200);
     let last = '';
     for (let i = 0; i < 30; i++) {
       await p.evaluate(() => {

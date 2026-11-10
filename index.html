@@ -293,6 +293,74 @@
   /* ===== WORKSTREAM A CSS ===== */
 
   /* ===== WORKSTREAM B CSS ===== */
+  #titleScreen .menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: min(380px, 100%); }
+  #titleScreen .menu > button { grid-column: span 2; }
+  #titleScreen .menu > button.half { grid-column: span 1; font-size: 18px; padding: 9px 6px; }
+  #titleScreen .menu button small { display: block; font-size: 12px; font-weight: 600; opacity: 0.92; line-height: 1.2; }
+  button.purple { background: #8a4fc9; box-shadow: 0 4px 0 #5d3190; }
+  button.purple:active { box-shadow: 0 1px 0 #5d3190; }
+  button.gold { background: #d99a14; box-shadow: 0 4px 0 #9a6a08; }
+  button.gold:active { box-shadow: 0 1px 0 #9a6a08; }
+  .rulebox { width: 100%; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .rulehead { color: #fff; font-weight: 700; font-size: 17px; text-shadow: 0 2px 3px rgba(0,0,0,0.5); }
+  .rules { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .rule { background: #fff; border: 3px solid var(--panel-edge); border-radius: 12px; padding: 5px 10px; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--ink); display: inline-flex; align-items: center; gap: 4px; }
+  .rule.on { background: #ffe1b0; border-color: var(--accent); }
+  .rule svg { width: 13px; height: 13px; fill: #d9a514; }
+  .ruledesc { color: #fff; font-weight: 600; font-size: 14px; line-height: 1.3; text-shadow: 0 1px 3px rgba(0,0,0,0.7); min-height: 36px; max-width: 480px; }
+  #rulePill { cursor: pointer; }
+  #bUi { position: fixed; inset: 0; pointer-events: none; z-index: 8; }
+  #bUi > .screen.show { pointer-events: auto; }
+  #wardScreen .box { padding: 14px 16px; border-radius: 22px; border-width: 4px; width: min(900px, 100%); max-height: 100%; display: flex; flex-direction: column; text-align: center; }
+  .wardtop { display: flex; gap: 14px; align-items: center; justify-content: center; margin-bottom: 10px; flex: none; }
+  #wardPreview { width: 160px; height: 160px; border-radius: 16px; border: 3px solid var(--panel-edge); background: #bfe6f5; flex: none; }
+  .wardtop h1 { margin: 0; font-size: 30px; }
+  .wardtop p { margin: 2px 0 8px; font-size: 15px; }
+  .badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; overflow-y: auto; text-align: left; padding: 2px; min-height: 0; }
+  .bcard { background: #fff; border: 3px solid #e2c991; border-radius: 14px; padding: 8px 10px; font-size: 13px; line-height: 1.3; display: flex; flex-direction: column; gap: 4px; }
+  .bcard .top { display: flex; gap: 8px; align-items: center; }
+  .bcard h3 { margin: 0; font-size: 15px; }
+  .bcard .bic { width: 30px; height: 30px; border-radius: 50%; background: #e0a800; display: inline-flex; align-items: center; justify-content: center; flex: none; border: 2px solid rgba(0,0,0,0.2); }
+  .bcard .bic svg { width: 18px; height: 18px; fill: #fff; }
+  .bcard .reward { font-weight: 700; color: #8a5a00; font-size: 12px; }
+  .bcard .reward i { font-style: normal; text-transform: uppercase; letter-spacing: 1px; font-size: 10px; color: #8a7350; margin-right: 4px; }
+  .bcard.locked { background: #f1ece2; color: #7a6a50; }
+  .bcard.locked .bic { background: #b9ad95; }
+  .bcard.worn { border-color: #2f9e4a; background: #eefbf0; }
+  .bcard .wear { margin-top: auto; font-family: inherit; font-weight: 700; font-size: 14px; color: #fff; background: #3d7be0; border: none; border-radius: 10px; padding: 5px 8px; cursor: pointer; box-shadow: 0 3px 0 #2a56a0; }
+  .bcard.worn .wear { background: #2f9e4a; box-shadow: 0 3px 0 #1f6e32; }
+  #badgeToast { position: absolute; top: 12px; left: 50%; transform: translate(-50%, -160%); transition: transform 0.35s ease-out; display: flex; gap: 10px; align-items: center; padding: 8px 16px 8px 10px; border-color: #e0a800; background: #fffbe8; width: max-content; max-width: calc(100vw - 20px); text-align: left; }
+  #badgeToast.show { transform: translate(-50%, 0); }
+  #badgeToast .bic { width: 40px; height: 40px; border-radius: 50%; background: #e0a800; display: inline-flex; align-items: center; justify-content: center; flex: none; border: 2px solid rgba(0,0,0,0.2); }
+  #badgeToast .bic svg { width: 24px; height: 24px; fill: #fff; }
+  #badgeToast .bt1 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #b8860b; }
+  #badgeToast .bt2 { font-size: 18px; font-weight: 700; line-height: 1.1; }
+  #badgeToast .bt3 { font-size: 13px; font-weight: 600; color: #5a4a35; }
+  @media (prefers-reduced-motion: reduce) { #badgeToast { transition: none; } }
+  @media (max-width: 760px), (max-height: 540px) {
+    #titleScreen .menu > button.half { font-size: 16px; padding: 8px 4px; }
+    .rule { font-size: 13px; padding: 4px 8px; }
+    .ruledesc { font-size: 13px; }
+    #wardScreen .box { padding: 10px; }
+    #wardPreview { width: 96px; height: 96px; }
+    .wardtop h1 { font-size: 22px; }
+    .wardtop p { font-size: 13px; margin-bottom: 6px; }
+    .badges { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .bcard { padding: 6px 7px; font-size: 12px; }
+    .bcard h3 { font-size: 13px; }
+    .bcard .bic { width: 24px; height: 24px; }
+    .bcard .bic svg { width: 14px; height: 14px; }
+    #badgeToast { top: calc(6px + env(safe-area-inset-top, 0px)); }
+  }
+  @media (max-width: 480px) { #rulePill { display: none; } }
+  @media (max-height: 540px) and (min-width: 600px) {
+    #titleScreen .menu { grid-template-columns: repeat(4, auto); width: auto; gap: 8px; }
+    #titleScreen .menu > button { font-size: 17px; padding: 8px 14px; }
+    .ruledesc { min-height: 0; }
+    #titleScreen:has(#modeMenu:not([hidden])) .logo, #titleScreen:has(#modeMenu:not([hidden])) .tagline, #titleScreen:has(#modeMenu:not([hidden])) .best { display: none; }
+    .rulehead { display: none; }
+    .badges { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  }
 
   /* ===== WORKSTREAM C CSS ===== */
 </style>
@@ -367,6 +435,16 @@
 
 <!-- ===== WORKSTREAM A HTML ===== -->
 <!-- ===== WORKSTREAM B HTML ===== -->
+<div id="bUi">
+  <div id="wardScreen" class="screen"><div class="box panel">
+    <div class="wardtop">
+      <canvas id="wardPreview" width="280" height="280"></canvas>
+      <div><h1>Gerald's Wardrobe</h1><p id="wardCount"></p><button class="big blue" id="wardClose">Close</button></div>
+    </div>
+    <div class="badges" id="badgeGrid"></div>
+  </div></div>
+  <div id="badgeToast" class="panel" role="status"><span class="bic"></span><div><div class="bt1">Badge earned!</div><div class="bt2"></div><div class="bt3"></div></div></div>
+</div>
 <!-- ===== WORKSTREAM C HTML ===== -->
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
@@ -929,11 +1007,11 @@ let stats = { merges: 0, goldEarned: 0, bestLevel: 1 };
 let shop = [];
 let battleTime = 0, endTimer = 0, gameSpeed = 1, countdownStep = 0;
 const has = p => perks.includes(p);
-const flockCapFor = r => Math.min(9, 3 + r + (has('roomy') ? 1 : 0)); // includes Gerald
+const flockCapFor = r => Math.max(2, Math.min(9, 3 + r + (has('roomy') ? 1 : 0)) + RULE().capAdj); // includes Gerald
 const flockCap = () => flockCapFor(round);
 const isFinal = () => !endless && wins === WINS_TO_WIN - 1;
-const isBoss = () => isFinal() || round % 5 === 0;
-const rivalName = () => isFinal() ? "Hiss's Grand Armada" : (RIVALS[round - 1] === "Hiss's Grand Armada" ? "Hiss's Elite Guard" : RIVALS[round - 1]) || `Rival Flock #${round}`;
+const isBoss = () => isFinal() || round % RULE().bossEvery === 0;
+const rivalName = () => isFinal() ? "Hiss's Grand Armada" : (RIVALS[round - 1] === "Hiss's Grand Armada" ? "Hiss's Elite Guard" : RIVALS[round - 1]) || endlessRivalName(round);
 const unlockedTypes = r => SHOP_TYPES.filter(t => TYPES[t].unlock <= r);
 
 // ---------------------------------------------------------------------------
@@ -1115,8 +1193,10 @@ function updateTopbar() {
 $('feathers').onclick = () => toast(perks.map(p => PERKS[p].name).join(' + ') || 'No Golden Feathers yet');
 
 function rollShop() {
-  const pool = unlockedTypes(round);
-  shop = Array.from({ length: 5 }, () => ({ type: pick(pool), sold: false }));
+  const pool = shopPool();
+  if (runx.rollRound !== round) { runx.rollRound = round; runx.rolls = 0; }
+  runx.rolls++;
+  shop = seeded('shop' + runx.rolls, () => Array.from({ length: 5 }, () => ({ type: pick(pool), sold: false })));
   renderShop();
 }
 
@@ -1289,7 +1369,7 @@ function startRound(restoreShop = null) {
   freeRerollUsed = false;
   battleTime = 0; endTimer = 0;
   Sound.setTempo('calm');
-  buildEnemyTeam();
+  seeded('rival', buildEnemyTeam);
   if (restoreShop) { shop = restoreShop; renderShop(); } else rollShop();
   fightBtn.disabled = false;
   overlay.classList.remove('show');
@@ -1310,14 +1390,16 @@ function clearBoard() {
   clearBattleStuff();
 }
 
-function newGame(mode = difficulty) {
+function newGame(mode = difficulty, opts = {}) {
   Sound.init();
   clearBoard();
   store.del('run');
   difficulty = mode;
-  gold = D().gold; round = 1; wins = 0; losses = 0; hearts = D().hearts;
+  runx = freshRunx();
+  runx.rule = RULES[opts.rule] ? opts.rule : 'classic'; runx.daily = opts.daily || null; runx.startEndless = !!opts.endless;
+  gold = D().gold + RULE().startGold; round = 1; wins = 0; losses = 0; hearts = D().hearts;
   tutStep = store.get('tut') === 'done' ? -1 : 0;
-  perks = []; endless = false;
+  perks = []; endless = !!opts.endless;
   stats = { merges: 0, goldEarned: 0, bestLevel: 1 };
   createUnit('gerald', 'player', 3, 1);
   leaveTitle();
@@ -1332,11 +1414,11 @@ function saveGame(pending = null) {
     pending,
     v: SAVE_VERSION, difficulty, round, wins, losses, hearts, gold, perks, endless, stats, freeRerollUsed,
     units: playerUnits().filter(u => u.r !== -9).map(u => ({ type: u.type, level: u.level, c: u.c, r: u.r })),
-    shop,
+    shop, x: runx,
   };
   store.set('run', JSON.stringify(data));
 }
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
 const readJSON = (key, fallback) => { try { const v = JSON.parse(store.get(key) || 'null'); return v == null ? fallback : v; } catch (e) { return fallback; } };
 // Bring an older save up to date. Add a step here whenever SAVE_VERSION goes up; never reject old saves.
 function migrateSave(d) {
@@ -1345,6 +1427,9 @@ function migrateSave(d) {
   d.shop = (d.shop || []).filter(s => TYPES[s.type]);
   d.perks = (d.perks || []).filter(p => PERKS[p]);
   d.stats = Object.assign({ merges: 0, goldEarned: 0, bestLevel: 1 }, d.stats || {});
+  // v1 -> v2: `x` holds the Pond Rule, Daily Pond date, Endless start flag and event state
+  d.x = Object.assign(freshRunx(), d.v >= 2 && d.x && typeof d.x === 'object' ? d.x : {});
+  if (!RULES[d.x.rule]) d.x.rule = 'classic';
   d.v = SAVE_VERSION;
   return d;
 }
@@ -1355,6 +1440,7 @@ function continueGame() {
   Sound.init();
   clearBoard();
   ({ round, wins, losses, hearts, gold, perks, endless, stats } = d);
+  runx = d.x;
   difficulty = d.difficulty || 'normal';
   tutStep = -1;
   for (const s of d.units) createUnit(s.type, 'player', s.c, s.r, s.level);
@@ -1370,7 +1456,8 @@ function continueGame() {
 // Move to the next round: pay gold, then a Golden Feather pick on perk rounds.
 function advanceRound(earned) {
   round++; gold += earned;
-  if (PERK_ROUNDS.has(round)) showPerks(() => startRound()); else startRound();
+  const go = () => startRound();
+  if (isPerkRound(round)) showPerks(go); else if (eventDue()) showEvent(go); else go();
 }
 
 function recordBest() {
@@ -1380,6 +1467,9 @@ function recordBest() {
     const champs = readJSON('champs', {});
     champs[difficulty] = (champs[difficulty] || 0) + 1;
     store.set('champs', JSON.stringify(champs));
+    const key = difficulty + '|' + runx.rule, by = readJSON('champs2', {}); // wins per difficulty and Pond Rule
+    by[key] = champCount(difficulty, runx.rule) + (runx.rule === 'classic' && by[key] == null ? 0 : 1);
+    store.set('champs2', JSON.stringify(by));
   }
 }
 
@@ -1424,26 +1514,17 @@ function showOverlay(title, color, text, extra, buttons) {
 // Golden Feather power-ups
 // ---------------------------------------------------------------------------
 function showPerks(then) {
-  phase = 'perk';
-  overlay.classList.remove('show');
-  const options = shuffle(Object.keys(PERKS).filter(p => !has(p))).slice(0, 3);
-  if (!options.length) { then(); return; }
-  const box = $('perks');
-  box.innerHTML = '';
-  for (const p of options) {
-    const el = document.createElement('button');
-    el.className = 'perk';
-    el.innerHTML = `${svg('feather')}<h3>${PERKS[p].name}</h3><div>${PERKS[p].desc}</div>`;
-    el.onclick = () => {
+  const options = seeded('perk', () => shuffle(Object.keys(PERKS).filter(p => !has(p))).slice(0, 3));
+  if (!options.length) { showGifts(then); return; }
+  showCards('Golden Feather!', 'Gerald found a Golden Feather. Pick one power-up for your flock.', options.map(p => ({
+    icon: 'feather', name: PERKS[p].name, desc: PERKS[p].desc,
+    pick: () => {
       perks.push(p);
       sfx('perk');
-      $('perkScreen').classList.remove('show');
       then();
       toast(`Golden Feather: ${PERKS[p].name}!`);
-    };
-    box.appendChild(el);
-  }
-  $('perkScreen').classList.add('show');
+    },
+  })));
   sfx('perk');
 }
 
@@ -1857,6 +1938,7 @@ function stepBattle(dt) {
 function endBattle() {
   phase = 'result';
   Sound.setTempo('calm');
+  const wasBoss = isBoss();
   const p = fighters('player').length, e = fighters('enemy').length;
   let win;
   if (p && e) {
@@ -1864,12 +1946,15 @@ function endBattle() {
     win = frac('player') >= frac('enemy');
   } else win = p > 0;
   if (win) wins++; else { hearts--; losses++; }
+  const bossHeart = win && wasBoss && endless && hearts < D().hearts; // Endless: a beaten boss gives a heart back
+  if (bossHeart) hearts++;
   emit('battleEnd', { win });
   if (win) { const b = loadBook(); if (!b.hissMet) { b.hissMet = 1; store.set('book', JSON.stringify(b)); } }
 
   // Gold for next round
-  const lines = [['Round pay', ROUND_GOLD]];
+  const lines = [['Round pay', ROUND_GOLD + RULE().payAdj]];
   if (win) lines.push(['Victory bonus', WIN_BONUS]);
+  if (win && wasBoss && RULE().bossGold) lines.push(['Boss bounty', RULE().bossGold]);
   const interest = Math.min(3, Math.floor(gold / 5));
   if (interest) lines.push(['Savings bonus', interest]);
   const payOf = u => u.def.goldPerWin[u.level - 1] + (u.luckyBonus || 0);
@@ -1892,6 +1977,9 @@ function endBattle() {
 
   updateTopbar();
   recordBest();
+  const champ = !endless && wins >= WINS_TO_WIN;
+  afterBattleMeta(win, champ);
+  const retry = () => (runx.daily ? startDaily() : newGame(difficulty, { rule: runx.rule, endless: runx.startEndless }));
   const summary = `<div class="ledger"><span>Battles won</span><span>${wins}</span><span>Battles lost</span><span>${losses}</span>
     <span>Geese merged</span><span>${stats.merges}</span><span>Highest goose level</span><span>${stats.bestLevel}</span>
     <span>Golden Feathers</span><span>${perks.length}</span></div>`;
@@ -1901,25 +1989,26 @@ function endBattle() {
   const next = () => advanceRound(earned);
   saveGame(earned);
 
-  if (!endless && wins >= WINS_TO_WIN) {
+  if (champ) {
     store.del('run');
-    showOverlay('Goose Champion!', '#d9a514', `Gerald's flock beat Captain Hiss's Grand Armada on ${D().name} difficulty! The whole pond is cheering.`, mvpHtml + summary, [
-      { label: 'Keep playing', cls: 'green', onClick: () => { endless = true; next(); } },
+    showOverlay('Goose Champion!', '#d9a514', `Gerald's flock beat Captain Hiss's Grand Armada on ${D().name} difficulty${runx.rule !== 'classic' ? ' with the ' + RULE().name + ' rule' : ''}${runx.daily ? " in today's Daily Pond" : ''}! The whole pond is cheering.`, mvpHtml + summary, [
+      { label: 'Keep playing (Endless)', cls: 'green', onClick: () => { endless = true; next(); } },
       { label: 'Title screen', cls: 'blue', onClick: showTitle },
     ]);
   } else if (hearts <= 0) {
     store.del('run');
-    showOverlay('Game over', '#c0392b', `Captain Hiss wins this time. You reached round ${round}.`, mvpHtml + summary, [
-      { label: 'Try again', onClick: () => newGame(difficulty) },
+    showOverlay('Game over', '#c0392b', endless ? `What a run! You reached round ${round} in Endless. Your best is round ${Math.max(round, loadMeta().endlessBest)}.` : `Captain Hiss wins this time. You reached round ${round}.`, mvpHtml + summary, [
+      { label: 'Try again', onClick: retry },
       { label: 'Title screen', cls: 'blue', onClick: showTitle },
     ]);
   } else {
     const capNext = flockCapFor(round + 1);
     const extras = [];
     if (capNext > flockCap()) extras.push(`Your flock can now have <b>${capNext}</b> geese.`);
-    const fresh = SHOP_TYPES.filter(t => TYPES[t].unlock === round + 1);
+    const fresh = RULE().wild ? [] : SHOP_TYPES.filter(t => TYPES[t].unlock === round + 1);
     if (fresh.length) extras.push(`New in the shop: <b>${fresh.map(t => TYPES[t].name).join(', ')}</b>`);
-    if (PERK_ROUNDS.has(round + 1)) extras.push('Gerald found a <b>Golden Feather</b>!');
+    if (isPerkRound(round + 1)) extras.push('Gerald found a <b>Golden Feather</b>!');
+    if (bossHeart) extras.push('You beat a boss and got a <b>heart</b> back!');
     showOverlay(win ? 'Victory!' : 'Defeat...', win ? '#2f9e4a' : '#c0392b',
       (win ? `Gerald's flock beat ${rivalName()}!` : `${rivalName()} won this one. You lost a heart.`) + (extras.length ? '<br>' + extras.join('<br>') : ''),
       mvpHtml + ledger,
@@ -1947,9 +2036,7 @@ function showTitle() {
   const d = loadSave();
   const cont = $('contBtn');
   cont.hidden = !d;
-  if (d) cont.textContent = `Continue (${(DIFFS[d.difficulty] || DIFFS.normal).name}, round ${d.round})`;
-  const best = Number(store.get('best') || 0);
-  $('bestLine').textContent = best ? `Best run: ${best} ${best === 1 ? 'win' : 'wins'}` : '';
+  refreshTitle(d);
   (d ? cont : $('newBtn')).focus();
 }
 function leaveTitle() {
@@ -1957,21 +2044,7 @@ function leaveTitle() {
   $('titleScreen').classList.remove('show');
   camAngleGoal = 0;
 }
-$('newBtn').onclick = () => {
-  Sound.init(); sfx('click');
-  const champs = readJSON('champs', {});
-  const list = $('modeList');
-  list.innerHTML = '';
-  for (const [key, m] of Object.entries(DIFFS)) {
-    const el = document.createElement('button');
-    el.className = 'mode';
-    el.innerHTML = `<h3>${m.name}</h3><div>${m.desc}</div><div class="won">${champs[key] ? 'Champion x' + champs[key] : ''}</div>`;
-    el.onclick = () => { sfx('click'); newGame(key); };
-    list.appendChild(el);
-  }
-  $('mainMenu').hidden = true; $('howto').classList.remove('open'); $('modeMenu').hidden = false;
-  list.children[store.get('tut') === 'done' ? 1 : 0].focus();
-};
+$('newBtn').onclick = () => openModeMenu('new');
 $('modeBack').onclick = () => { sfx('click'); $('modeMenu').hidden = true; $('mainMenu').hidden = false; };
 $('bookBtn').onclick = () => { Sound.init(); sfx('click'); showBook(); };
 $('bookClose').onclick = () => { sfx('click'); $('bookScreen').classList.remove('show'); $('titleScreen').classList.add('show'); };
@@ -2129,6 +2202,625 @@ window.addEventListener('resize', () => {
 
 // ===== WORKSTREAM B (meta & playtime) additions go here =====
 
+// ---------------------------------------------------------------------------
+// Pond Rules: optional twists for a run. Each rule is a row of modifiers that
+// flockCapFor, isBoss, rollShop, endBattle and the hooks below read through RULE().
+// ---------------------------------------------------------------------------
+const RULE_BASE = { capAdj: 0, geeseMult: 1, startGold: 0, payAdj: 0, enemyMult: 1, wild: false, bossEvery: 5, bossGold: 0, speed: 1, mirror: false };
+const RULES = {
+  classic: { name: 'Classic', short: 'Classic', desc: 'The normal game. No twists.' },
+  tiny:    { name: 'Tiny Flock', short: 'Tiny', desc: 'Your flock is 2 geese smaller, but all your geese are 40% stronger.', capAdj: -2, geeseMult: 1.4 },
+  rich:    { name: 'Rich Pond', short: 'Rich', desc: 'Start with 5 extra gold and get 4 more every round. Rival flocks are 15% stronger.', startGold: 5, payAdj: 4, enemyMult: 1.15 },
+  wild:    { name: 'Wild Shop', short: 'Wild', desc: 'Every kind of goose can show up in the shop from round 1.', wild: true },
+  giant:   { name: 'Giant Hiss', short: 'Giant', desc: 'A boss battle every 3 rounds. Beating a boss pays 4 bonus gold.', bossEvery: 3, bossGold: 4 },
+  speedy:  { name: 'Speedy Pond', short: 'Speedy', desc: 'Battles zoom by at double speed. Good for a quick game.', speed: 2 },
+  mirror:  { name: 'Mirror Match', short: 'Mirror', desc: 'Captain Hiss copies your flock! Every rival goose is a copy of one of yours.', mirror: true },
+};
+for (const k in RULES) RULES[k] = Object.assign({}, RULE_BASE, RULES[k]);
+
+// Extra run state owned by workstream B. Saved with the run as `x` (save version 2).
+const freshRunx = () => ({ rule: 'classic', daily: null, startEndless: false, events: 0, lastEvent: 0, prevEvent: '', buff: null, rolls: 0, rollRound: 0, usedBrute: false });
+let runx = freshRunx();
+const RULE = () => RULES[runx.rule] || RULES.classic;
+const isPerkRound = r => PERK_ROUNDS.has(r) || (endless && r % 3 === 0);
+const shopPool = () => (RULE().wild ? SHOP_TYPES.filter(t => TYPES[t]) : unlockedTypes(round));
+
+// Seeded random numbers for the Daily Pond: the same shop, rivals, feathers and
+// events for everyone on the same day. Outside a daily run this just calls fn.
+function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
+function mulberry32(a) {
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function seeded(key, fn) {
+  if (!runx.daily) return fn();
+  const real = Math.random;
+  Math.random = mulberry32(hashStr(`${runx.daily}|${round}|${key}`));
+  try { return fn(); } finally { Math.random = real; }
+}
+const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const todayKey = () => dayKey(new Date());
+const dayBefore = key => { const [y, m, d] = key.split('-').map(Number); return dayKey(new Date(y, m - 1, d - 1)); };
+const dailyRule = key => { const ks = Object.keys(RULES); return ks[hashStr(key + '|rule') % ks.length]; };
+const loadDaily = () => Object.assign({ date: '', best: 0, streak: 0, won: false }, readJSON('daily', {}));
+function noteDaily(champ) {
+  const t = todayKey();
+  if (runx.daily !== t) return null;
+  const d = loadDaily();
+  if (d.date !== t) { d.streak = d.date === dayBefore(t) ? d.streak + 1 : 1; d.date = t; d.best = 0; d.won = false; }
+  d.best = Math.max(d.best, wins);
+  if (champ) d.won = true;
+  store.set('daily', JSON.stringify(d));
+  return d;
+}
+function startDaily() { const t = todayKey(); newGame('normal', { rule: dailyRule(t), daily: t }); }
+
+// Rival names for rounds past the end of the RIVALS list (the same round always gets the same name)
+const RIVAL_ADJ = ['Soggy', 'Grumpy', 'Sneaky', 'Mighty', 'Stormy', 'Muddy', 'Frosty', 'Fancy', 'Rowdy', 'Sleepy', 'Prickly', 'Thundering'];
+const RIVAL_NOUN = ['Mallards', 'Marsh Mob', 'Reed Raiders', 'Pond Patrol', 'Puddle Crew', 'Bog Brigade', 'Creek Crashers', 'Lagoon Legion', 'Drizzle Gang', 'Cattail Clan'];
+function endlessRivalName(r) {
+  const adj = RIVAL_ADJ[hashStr('adj' + r) % RIVAL_ADJ.length];
+  return isBoss() ? `Hiss's ${adj} Guard` : `The ${adj} ${RIVAL_NOUN[hashStr('noun' + r) % RIVAL_NOUN.length]}`;
+}
+
+// Lifetime numbers across all runs (own store key)
+const loadMeta = () => Object.assign({ battles: 0, runs: 0, maxRound: 0, events: 0, rulesWon: {}, endlessBest: 0, endlessBy: {} }, readJSON('meta', {}));
+function bumpMeta(fn) { const m = loadMeta(); fn(m); store.set('meta', JSON.stringify(m)); return m; }
+const champCount = (diff, rule) => { const v = readJSON('champs2', {})[diff + '|' + rule]; return v != null ? v : (rule === 'classic' ? readJSON('champs', {})[diff] || 0 : 0); };
+const anyChampion = () => Object.values(readJSON('champs', {})).some(n => n > 0);
+const rulesUnlocked = meta => meta.maxRound >= 5 || anyChampion();
+
+// ---------------------------------------------------------------------------
+// Gerald's wardrobe: cosmetics unlocked by badges. Small meshes added to Gerald
+// from the unitCreated hook; nothing here changes how he fights.
+// ---------------------------------------------------------------------------
+SVG.lock = '<path fill-rule="evenodd" d="M7 10V7a5 5 0 0110 0v3h2v11H5V10zm2 0h6V7a3 3 0 00-6 0z"/>';
+const SLOT_NAMES = { hat: 'Hat', neck: 'Neck', cape: 'Cape', ring: 'Honk ring' };
+const scarf = color => ({ add, neck }) => {
+  add(neck, new THREE.TorusGeometry(0.1, 0.035, 8, 16), color, [0, 0.12, 0], [Math.PI / 2, 0, 0]);
+  add(neck, new THREE.BoxGeometry(0.06, 0.17, 0.03), color, [0.07, 0.03, 0.085], [0.25, 0, -0.2]);
+};
+const COSMETICS = {
+  party: { slot: 'hat', name: 'Party Hat', build({ add, neck }) {
+    add(neck, new THREE.ConeGeometry(0.085, 0.22, 12), 0xff5fa2, [0, 0.7, 0.03]);
+    add(neck, new THREE.SphereGeometry(0.03, 8, 6), 0xffd23f, [0, 0.82, 0.03]);
+  } },
+  wizard: { slot: 'hat', name: 'Wizard Hat', build({ add, neck }) {
+    add(neck, new THREE.CylinderGeometry(0.18, 0.18, 0.015, 16), 0x6a3fb5, [0, 0.585, 0.03]);
+    add(neck, new THREE.ConeGeometry(0.105, 0.3, 12), 0x6a3fb5, [0, 0.74, 0.03], [-0.12, 0, 0]);
+    add(neck, new THREE.CylinderGeometry(0.1, 0.108, 0.03, 12), 0xffd23f, [0, 0.61, 0.03]);
+  } },
+  horned: { slot: 'hat', name: 'Horned Helmet', build({ add, neck }) {
+    add(neck, new THREE.SphereGeometry(0.15, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), 0x8a6a3a, [0, 0.49, 0.03]);
+    add(neck, new THREE.ConeGeometry(0.03, 0.14, 6), 0xfff3d6, [0.15, 0.61, 0.03], [0, 0, -0.7]);
+    add(neck, new THREE.ConeGeometry(0.03, 0.14, 6), 0xfff3d6, [-0.15, 0.61, 0.03], [0, 0, 0.7]);
+  } },
+  explorer: { slot: 'hat', name: 'Explorer Hat', build({ add, neck }) {
+    add(neck, new THREE.CylinderGeometry(0.2, 0.2, 0.015, 16), 0xc9a46a, [0, 0.585, 0.03]);
+    add(neck, new THREE.CylinderGeometry(0.095, 0.115, 0.1, 12), 0xc9a46a, [0, 0.64, 0.03]);
+    add(neck, new THREE.CylinderGeometry(0.118, 0.118, 0.025, 12), 0x6b4423, [0, 0.607, 0.03]);
+  } },
+  captain: { slot: 'hat', name: "Captain's Hat", build({ add, neck }) {
+    add(neck, new THREE.CylinderGeometry(0.12, 0.12, 0.05, 14), 0x1f2f5c, [0, 0.61, 0.03]);
+    add(neck, new THREE.CylinderGeometry(0.17, 0.125, 0.05, 14), 0xffffff, [0, 0.66, 0.03]);
+    add(neck, new THREE.BoxGeometry(0.17, 0.012, 0.09), 0x111111, [0, 0.59, 0.16], [0.25, 0, 0]);
+    add(neck, new THREE.SphereGeometry(0.022, 8, 6), 0xffd23f, [0, 0.625, 0.15]);
+  } },
+  halo: { slot: 'hat', name: 'Golden Halo', build({ add, neck }) {
+    add(neck, new THREE.TorusGeometry(0.11, 0.018, 8, 20), 0xffe066, [0, 0.74, 0.03], [Math.PI / 2, 0, 0], { emissive: 0x665500 });
+  } },
+  feathercap: { slot: 'hat', name: 'Feather Cap', build({ add, neck }) {
+    add(neck, new THREE.CylinderGeometry(0.06, 0.14, 0.1, 12), 0x2f9e4a, [0, 0.63, 0.03]);
+    add(neck, new THREE.BoxGeometry(0.02, 0.2, 0.05), 0xe8352e, [0.1, 0.71, 0.0], [0.3, 0, -0.45]);
+  } },
+  lily: { slot: 'hat', name: 'Lily Pad Hat', build({ add, neck }) {
+    add(neck, new THREE.CylinderGeometry(0.19, 0.19, 0.02, 16), 0x5fbf5f, [0, 0.59, 0.03]);
+    add(neck, new THREE.SphereGeometry(0.05, 10, 8), 0xff8fc0, [0, 0.625, 0.03]);
+    add(neck, new THREE.SphereGeometry(0.022, 8, 6), 0xffd23f, [0, 0.67, 0.03]);
+  } },
+  glasses: { slot: 'hat', name: 'Smart Glasses', keepCrown: true, build({ add, neck }) {
+    add(neck, new THREE.TorusGeometry(0.042, 0.009, 6, 14), 0x222222, [0.075, 0.51, 0.13], [0, 0.5, 0]);
+    add(neck, new THREE.TorusGeometry(0.042, 0.009, 6, 14), 0x222222, [-0.075, 0.51, 0.13], [0, -0.5, 0]);
+    add(neck, new THREE.BoxGeometry(0.07, 0.01, 0.01), 0x222222, [0, 0.515, 0.155]);
+  } },
+  scarfSun: { slot: 'neck', name: 'Sunny Scarf', build: scarf(0xffd23f) },
+  scarfLeaf: { slot: 'neck', name: 'Leafy Scarf', build: scarf(0x2f9e4a) },
+  scarfFire: { slot: 'neck', name: 'Sunset Scarf', build: scarf(0xf2701f) },
+  bowtie: { slot: 'neck', name: 'Bow Tie', build({ add, neck }) {
+    add(neck, new THREE.ConeGeometry(0.045, 0.08, 8), 0xe8352e, [-0.045, 0.2, 0.1], [0, 0, -Math.PI / 2]);
+    add(neck, new THREE.ConeGeometry(0.045, 0.08, 8), 0xe8352e, [0.045, 0.2, 0.1], [0, 0, Math.PI / 2]);
+    add(neck, new THREE.SphereGeometry(0.022, 8, 6), 0xb81f1f, [0, 0.2, 0.105]);
+  } },
+  medal: { slot: 'neck', name: 'Gold Medal', build({ add, neck }) {
+    add(neck, new THREE.TorusGeometry(0.095, 0.014, 6, 16), 0x3d7be0, [0, 0.14, 0], [Math.PI / 2 - 0.25, 0, 0]);
+    add(neck, new THREE.CylinderGeometry(0.05, 0.05, 0.014, 14), 0xffd23f, [0, 0.07, 0.115], [Math.PI / 2, 0, 0], { emissive: 0x553300 });
+  } },
+  capeRuby: { slot: 'cape', name: 'Ruby Cape', color: 0xd62f2f },
+  capeSwan: { slot: 'cape', name: 'Swan Cape', color: 0xfff6dc },
+  capeRose: { slot: 'cape', name: 'Rose Cape', color: 0xff7fb5 },
+  capeMoss: { slot: 'cape', name: 'Mossy Cape', color: 0x2f9e4a },
+  capeStar: { slot: 'cape', name: 'Starry Cape', color: 0x1b2466, stars: true },
+  ringGold: { slot: 'ring', name: 'Golden Honk Ring', color: 0xffc93c },
+  ringAqua: { slot: 'ring', name: 'Aqua Honk Ring', color: 0x35d6c8 },
+  ringSilver: { slot: 'ring', name: 'Silver Honk Ring', color: 0xe6edf5 },
+  ringBerry: { slot: 'ring', name: 'Berry Honk Ring', color: 0xff5fa2 },
+};
+const loadWear = () => readJSON('wear', {});
+const wearing = slot => { const id = loadWear()[slot]; return COSMETICS[id] && COSMETICS[id].slot === slot && readJSON('badges', {})[badgeForCos(id)] ? COSMETICS[id] : null; };
+
+// Put the equipped cosmetics on a Gerald model ({ group, neck, mats }). Safe to call again after a change.
+function dressGerald(u) {
+  const g = u.group, neck = u.neck;
+  if (u.cos) {
+    for (const o of u.cos.objs) { if (o.parent) o.parent.remove(o); disposeObject(o); }
+    u.mats = u.mats.filter(m => !u.cos.mats.includes(m));
+  }
+  u.cos = { objs: [], mats: [] };
+  const add = (parent, geo, color, pos, rot, extra) => {
+    const m = toon(color, extra || {});
+    const o = new THREE.Mesh(geo, m);
+    if (pos) o.position.set(...pos);
+    if (rot) o.rotation.set(...rot);
+    o.castShadow = true;
+    o.userData.unit = g.userData.unit;
+    parent.add(o);
+    u.cos.objs.push(o); u.cos.mats.push(m); u.mats.push(m);
+    return o;
+  };
+  const hat = wearing('hat'), neckItem = wearing('neck'), cape = wearing('cape'), ring = wearing('ring');
+  for (const o of neck.children) if (o.material && o.material.color && o.material.color.getHex() === 0xffc93c) o.visible = !hat || !!hat.keepCrown;
+  if (hat) hat.build({ add, neck, g });
+  if (neckItem) neckItem.build({ add, neck, g });
+  const capeMesh = g.children.find(o => o.geometry && o.geometry.type === 'PlaneGeometry');
+  if (capeMesh) {
+    if (capeMesh.userData.baseColor === undefined) capeMesh.userData.baseColor = capeMesh.material.color.getHex();
+    capeMesh.material.color.setHex(cape ? cape.color : capeMesh.userData.baseColor);
+    if (cape && cape.stars) {
+      for (const [x, y] of [[-0.14, 0.16], [0.1, 0.12], [-0.03, 0], [0.15, -0.1], [-0.13, -0.15]]) {
+        add(capeMesh, new THREE.SphereGeometry(0.02, 6, 5), 0xffe066, [x, y, -0.012], null, { emissive: 0x886600 });
+      }
+    }
+  }
+  const ringMesh = g.children.find(o => o.geometry && o.geometry.type === 'RingGeometry');
+  if (ringMesh) {
+    if (ringMesh.userData.baseColor === undefined) ringMesh.userData.baseColor = ringMesh.material.color.getHex();
+    ringMesh.material.color.setHex(ring ? ring.color : ringMesh.userData.baseColor);
+  }
+}
+const isMyGerald = u => u.type === 'gerald' && u.team === 'player';
+on('unitCreated', u => { if (isMyGerald(u)) dressGerald(u); });
+function redressAll() { for (const u of units) if (isMyGerald(u)) dressGerald(u); if (ward) dressGerald(ward.model); }
+
+// ---------------------------------------------------------------------------
+// Badges: goals that last across runs. Each one unlocks a cosmetic for Gerald.
+// test(c) gets c = { meta, win, champ, n (geese fielded), solo, daily }.
+// ---------------------------------------------------------------------------
+const bookFull = () => { const b = loadBook(); return !!b.hissMet && SHOP_TYPES.every(t => b[t]); };
+const BADGES = [
+  { id: 'first_win', name: 'First Honk', goal: 'Win your first battle.', cos: 'party', test: c => c.meta.battles >= 1 },
+  { id: 'champ_easy', name: 'Chick Champion', goal: 'Win a run on Chick.', cos: 'scarfSun', test: () => readJSON('champs', {}).easy > 0 },
+  { id: 'champ_normal', name: 'Goose Champion', goal: 'Win a run on Goose.', cos: 'capeRuby', test: () => readJSON('champs', {}).normal > 0 },
+  { id: 'champ_hard', name: 'Swan Champion', goal: 'Win a run on Swan.', cos: 'capeSwan', test: () => readJSON('champs', {}).hard > 0 },
+  { id: 'boss5', name: 'Boss Bonker', goal: 'Beat the round 5 boss.', cos: 'horned', test: c => c.win && round === 5 },
+  { id: 'lvl3', name: 'Three Stars', goal: 'Own a level 3 goose.', cos: 'ringGold', test: () => stats.bestLevel >= 3 },
+  { id: 'merge10', name: 'Merge Master', goal: 'Merge 10 times in one run.', cos: 'wizard', test: () => stats.merges >= 10 },
+  { id: 'small3', name: 'Tiny Team', goal: 'Win a battle in round 5 or later with only 3 geese.', cos: 'scarfLeaf', test: c => c.win && round >= 5 && c.n <= 3 },
+  { id: 'nobrute', name: 'No Brutes Allowed', goal: 'Win a run without sending a Brute into battle.', cos: 'capeRose', test: c => c.champ && !runx.usedBrute },
+  { id: 'flawless', name: 'Untouchable', goal: 'Win a run without losing a heart.', cos: 'halo', test: c => c.champ && losses === 0 },
+  { id: 'rich', name: 'Treasure Goose', goal: 'Have 30 gold at once.', cos: 'medal', test: () => gold >= 30 },
+  { id: 'feathers5', name: 'Feather Collector', goal: 'Hold 5 Golden Feathers in one run.', cos: 'feathercap', test: () => perks.length >= 5 },
+  { id: 'fullflock', name: 'Big Flock', goal: 'Send 9 geese into one battle.', cos: 'scarfFire', test: c => c.win != null && c.n >= 9 },
+  { id: 'comeback', name: 'Last Goose Standing', goal: 'Win a battle with only Gerald left standing.', cos: 'captain', test: c => c.solo && c.n >= 4 },
+  { id: 'book', name: 'Goose Scholar', goal: 'Find every goose in the Goose Book.', cos: 'glasses', test: bookFull },
+  { id: 'events10', name: 'Curious Goose', goal: 'Take part in 10 pond events.', cos: 'lily', test: c => c.meta.events >= 10, prog: m => [m.events, 10] },
+  { id: 'rule3', name: 'Pond Hopper', goal: 'Win runs with 3 different Pond Rules.', cos: 'ringAqua', test: c => Object.keys(c.meta.rulesWon).length >= 3, prog: m => [Object.keys(m.rulesWon).length, 3] },
+  { id: 'mirror', name: 'Mirror Master', goal: 'Win a Mirror Match run.', cos: 'ringSilver', test: c => c.champ && runx.rule === 'mirror' },
+  { id: 'daily5', name: 'Daily Dipper', goal: 'Win 5 battles in one Daily Pond.', cos: 'bowtie', test: c => !!runx.daily && wins >= 5 },
+  { id: 'streak3', name: 'Three Day Honk', goal: 'Play the Daily Pond 3 days in a row.', cos: 'ringBerry', test: () => loadDaily().streak >= 3, prog: () => [Math.min(3, loadDaily().streak), 3] },
+  { id: 'endless15', name: 'Endless Explorer', goal: 'Reach round 15 in Endless.', cos: 'explorer', test: c => c.meta.endlessBest >= 15, prog: m => [m.endlessBest, 15] },
+  { id: 'endless25', name: 'Pond Legend', goal: 'Reach round 25 in Endless.', cos: 'capeStar', test: c => c.meta.endlessBest >= 25, prog: m => [m.endlessBest, 25] },
+  { id: 'battles100', name: 'Veteran Honker', goal: 'Win 100 battles in total.', cos: 'capeMoss', test: c => c.meta.battles >= 100, prog: m => [m.battles, 100] },
+];
+const badgeForCos = cos => (BADGES.find(b => b.cos === cos) || {}).id;
+const badgeQueue = [];
+let badgeBusy = false;
+function showBadgeToast() {
+  if (badgeBusy || !badgeQueue.length) return;
+  badgeBusy = true;
+  const b = badgeQueue.shift(), el = $('badgeToast');
+  el.querySelector('.bic').innerHTML = svg('star');
+  el.querySelector('.bt2').textContent = b.name;
+  el.querySelector('.bt3').textContent = `New for Gerald: ${COSMETICS[b.cos].name}`;
+  el.classList.add('show');
+  sfx('perk');
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => { badgeBusy = false; showBadgeToast(); }, 400); }, 3200);
+}
+function grantBadge(id) {
+  const b = BADGES.find(x => x.id === id), got = readJSON('badges', {});
+  if (!b || got[id]) return false;
+  got[id] = Date.now();
+  store.set('badges', JSON.stringify(got));
+  const wear = loadWear(), slot = COSMETICS[b.cos].slot;
+  if (!wear[slot]) { wear[slot] = b.cos; store.set('wear', JSON.stringify(wear)); redressAll(); } // try it on right away
+  if (badgeQueue.length < 6) badgeQueue.push(b);
+  if (phase === 'title') refreshTitle(loadSave());
+  showBadgeToast();
+  return true;
+}
+function checkBadges(c = {}) {
+  const got = readJSON('badges', {});
+  c.meta = c.meta || loadMeta();
+  for (const b of BADGES) {
+    if (got[b.id]) continue;
+    let ok = false;
+    try { ok = !!b.test(c); } catch (e) { ok = false; }
+    if (ok) grantBadge(b.id);
+  }
+}
+
+// Wardrobe screen: badges (locked ones show their goal) and what Gerald wears
+let ward = null; // { model, scene, cam, ctx } while the screen is open
+function renderWardrobe() {
+  const got = readJSON('badges', {}), wear = loadWear(), meta = loadMeta();
+  const grid = $('badgeGrid');
+  grid.innerHTML = '';
+  let n = 0;
+  for (const b of BADGES) {
+    const c = COSMETICS[b.cos], have = !!got[b.id], worn = have && wear[c.slot] === b.cos;
+    if (have) n++;
+    const p = !have && b.prog ? b.prog(meta) : null;
+    const el = document.createElement('div');
+    el.className = 'bcard' + (have ? '' : ' locked') + (worn ? ' worn' : '');
+    el.innerHTML = `<div class="top"><span class="bic">${svg(have ? 'star' : 'lock')}</span><h3>${b.name}</h3></div>
+      <div class="goal">${b.goal}${p ? ` (${Math.min(p[0], p[1])}/${p[1]})` : ''}</div>
+      <div class="reward"><i>${SLOT_NAMES[c.slot]}</i>${c.name}</div>`;
+    if (have) {
+      const btn = document.createElement('button');
+      btn.className = 'wear';
+      btn.textContent = worn ? 'Take off' : 'Wear';
+      btn.onclick = () => {
+        const w = loadWear();
+        if (w[c.slot] === b.cos) delete w[c.slot]; else w[c.slot] = b.cos;
+        store.set('wear', JSON.stringify(w));
+        sfx('click');
+        redressAll();
+        const top = grid.scrollTop;
+        renderWardrobe();
+        grid.scrollTop = top;
+      };
+      el.appendChild(btn);
+    }
+    grid.appendChild(el);
+  }
+  $('wardCount').textContent = n ? `${n} of ${BADGES.length} badges earned. Each badge unlocks something for Gerald to wear.`
+    : 'Earn badges to unlock hats, scarves, capes and honk rings for Gerald.';
+}
+function showWardrobe() {
+  checkBadges();
+  renderWardrobe();
+  try {
+    const model = makeGooseModel('gerald', 'player');
+    const sc = new THREE.Scene();
+    sc.background = new THREE.Color(0xbfe6f5);
+    sc.add(new THREE.HemisphereLight(0xdff4ff, 0x6b8f3a, 1.5));
+    const dl = new THREE.DirectionalLight(0xfff2d6, 2);
+    dl.position.set(-3, 6, 5);
+    sc.add(dl, model.group);
+    const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 20);
+    cam.position.set(0, 1.2, 3.1);
+    cam.lookAt(0, 0.72, 0);
+    ward = { model, scene: sc, cam, ctx: $('wardPreview').getContext('2d') };
+    dressGerald(model);
+  } catch (e) { ward = null; }
+  $('titleScreen').classList.remove('show');
+  $('wardScreen').classList.add('show');
+  $('wardClose').focus();
+}
+function closeWardrobe() {
+  if (ward) { disposeObject(ward.model.group); ward = null; }
+  $('wardScreen').classList.remove('show');
+  $('titleScreen').classList.add('show');
+  refreshTitle(loadSave());
+}
+const calmMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Draw the wardrobe Gerald with the main renderer into a corner of its canvas, then copy that corner out.
+function drawWardPreview() {
+  const S = Math.min(200, window.innerWidth, window.innerHeight), px = Math.round(S * renderer.getPixelRatio());
+  ward.model.group.rotation.y = calmMotion ? 0.6 : elapsed * 0.9;
+  renderer.setViewport(0, 0, S, S); renderer.setScissor(0, 0, S, S); renderer.setScissorTest(true);
+  renderer.render(ward.scene, ward.cam);
+  renderer.setScissorTest(false); renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+  const src = renderer.domElement, cv = $('wardPreview');
+  ward.ctx.drawImage(src, 0, src.height - px, px, px, 0, 0, cv.width, cv.height);
+}
+$('wardClose').onclick = () => { sfx('click'); closeWardrobe(); };
+
+// ---------------------------------------------------------------------------
+// Choice cards (Golden Feathers, feather gifts and pond events share one screen)
+// ---------------------------------------------------------------------------
+function showCards(title, text, cards) {
+  phase = 'perk';
+  overlay.classList.remove('show');
+  const scr = $('perkScreen');
+  scr.querySelector('h1').textContent = title;
+  scr.querySelector('p').textContent = text;
+  const box = $('perks');
+  box.innerHTML = '';
+  for (const c of cards) {
+    const el = document.createElement('button');
+    el.className = 'perk';
+    el.innerHTML = `${svg(c.icon || 'feather')}<h3>${c.name}</h3><div>${c.desc}</div>`;
+    el.onclick = () => { scr.classList.remove('show'); c.pick(); };
+    box.appendChild(el);
+  }
+  scr.classList.add('show');
+  showInfo(null);
+}
+const hasRoom = () => !!freeSpotFor(SHOP_TYPES[0]);
+function giftGoose(level = 1) {
+  const type = pick(shopPool());
+  const spot = freeSpotFor(type);
+  if (!spot) { gold += 3; return type; }
+  const u = createUnit(type, 'player', spot.c, spot.r, level);
+  u.group.position.y = 2; u.dropT = 0.4;
+  noteBook(type, level, true);
+  tryMerge();
+  return type;
+}
+const levelOnes = () => playerUnits().filter(u => !u.def.hero && u.level === 1 && u.r !== -9);
+function trainGoose() {
+  const list = levelOnes();
+  const u = pick(list.some(x => x.r >= 0) ? list.filter(x => x.r >= 0) : list);
+  u.level = 2;
+  applyStats(u);
+  noteBook(u.type, 2, true);
+  stats.bestLevel = Math.max(stats.bestLevel, 2);
+  tryMerge();
+  return u.def.name;
+}
+function scoutText() {
+  let extra = '';
+  try { // Builder A's rival rules, if they are in this build
+    if (typeof rivalFor === 'function') {
+      const r = rivalFor(round);
+      const t = r && (r.ruleText || r.desc || (r.rule && (r.rule.desc || r.rule.text || r.rule.name)));
+      if (t && typeof t === 'string') extra = ' Their trick: ' + t;
+    }
+  } catch (e) { /* no rival rules */ }
+  return 'The scout spilled the beans: the rivals start hurt!' + extra;
+}
+// Pond events: a quick choice between rounds. The first option is always possible.
+const EVENTS = [
+  { id: 'gosling', title: 'A lost gosling!', text: 'A little gosling is all alone in the reeds. It wants to join your flock.', ok: () => hasRoom(), options: () => [
+    { icon: 'heart', name: 'Welcome it', desc: 'A free goose joins your flock.', run: () => `${TYPES[giftGoose(1)].name} joined your flock!` },
+    { icon: 'coin', name: 'Walk it home', desc: 'Its family says thank you with 3 gold.', run: () => { gold += 3; return 'The gosling is home safe. +3 gold'; } },
+  ] },
+  { id: 'bread', title: 'The bread stall', text: 'A baker duck is selling warm bread by the pond.', ok: () => hearts < D().hearts && gold >= 4, options: () => [
+    { icon: 'heart', name: 'Buy warm bread', desc: 'Pay 4 gold to get 1 heart back.', run: () => { gold -= 4; hearts++; return 'Yum! You got a heart back.'; } },
+    { icon: 'coin', name: 'Save your gold', desc: 'Keep walking and keep your gold.', run: () => '' },
+  ] },
+  { id: 'egg', title: 'A mystery egg!', text: 'Gerald found a strange spotted egg. What could be inside?', ok: () => true, options: () => [
+    { icon: 'egg', name: 'Crack it open', desc: 'A surprise! It could be gold, a new goose, or just a frog.', run: () => {
+      const r = Math.random();
+      if (r < 0.9 && r >= 0.4 && hasRoom()) { const lvl = r > 0.75 ? 2 : 1; return `${TYPES[giftGoose(lvl)].name} hatched${lvl > 1 ? ' at level 2' : ''}!`; }
+      if (r < 0.9) { gold += 6; return 'The egg was full of gold! +6 gold'; }
+      return 'Ribbit! Just a frog. It hops away.';
+    } },
+    { icon: 'coin', name: 'Sell the egg', desc: 'A sure thing: get 3 gold.', run: () => { gold += 3; return 'Sold! +3 gold'; } },
+  ] },
+  { id: 'scout', title: 'A rival scout', text: "One of Captain Hiss's scouts is tired of being bossed around. It wants to help you.", ok: () => true, options: () => [
+    { icon: 'target', name: 'Hear the secret', desc: 'The next rival flock starts the battle with 15% less health.', run: () => { runx.buff = { round, kind: 'scout' }; return scoutText(); } },
+    { icon: 'coin', name: 'Trade snacks', desc: 'Swap some bread crumbs for 3 gold.', run: () => { gold += 3; return 'Nice trade! +3 gold'; } },
+  ] },
+  { id: 'heron', title: 'The wise old heron', text: 'An old heron runs a flying school by the pond.', ok: () => gold >= 5 && levelOnes().length > 0, options: () => [
+    { icon: 'star', name: 'Pay for a lesson', desc: 'Pay 5 gold. One of your level 1 geese becomes level 2.', run: () => { gold -= 5; return `${trainGoose()} learned a lot and is now level 2!`; } },
+    { icon: 'coin', name: 'No thanks', desc: 'Keep your gold.', run: () => '' },
+  ] },
+  { id: 'reeds', title: 'Something shiny', text: 'Something is glittering in the reeds.', ok: () => true, options: () => [
+    { icon: 'coin', name: 'Grab the coins', desc: 'Get 5 gold.', run: () => { gold += 5; return 'Shiny! +5 gold'; } },
+    { icon: 'crown', name: "Polish Gerald's crown", desc: 'Gerald gets +30% health and attack in the next battle.', run: () => { runx.buff = { round, kind: 'crown' }; return 'Gerald feels extra brave for the next battle!'; } },
+  ] },
+];
+function eventDue() {
+  if (tutStep >= 0 || round < 3 || round - runx.lastEvent < 2) return false;
+  return seeded('evroll', () => Math.random()) < 0.5;
+}
+function showEvent(then) {
+  const pool = EVENTS.filter(e => e.id !== runx.prevEvent && e.ok());
+  const ev = seeded('event', () => pick(pool));
+  runx.lastEvent = round; runx.prevEvent = ev.id;
+  showCards(ev.title, ev.text, ev.options().map(o => ({
+    icon: o.icon, name: o.name, desc: o.desc,
+    pick: () => {
+      const msg = seeded('evrun', o.run);
+      runx.events++;
+      bumpMeta(m => { m.events++; });
+      sfx('buy');
+      then();
+      if (msg) toast(msg);
+    },
+  })));
+  sfx('click');
+}
+// A Golden Feather when Gerald already has every power-up (long Endless runs): a gift instead
+function showGifts(then) {
+  const gifts = [{ icon: 'coin', name: 'Bag of gold', desc: 'Get 8 gold.', run: () => { gold += 8; return '+8 gold'; } }];
+  if (hearts < D().hearts) gifts.push({ icon: 'heart', name: 'Warm bread', desc: 'Get 1 heart back.', run: () => { hearts++; return 'You got a heart back.'; } });
+  if (hasRoom()) gifts.push({ icon: 'star', name: 'Star recruit', desc: 'A free level 2 goose joins your flock.', run: () => `A level 2 ${TYPES[giftGoose(2)].name} joined your flock!` });
+  if (gifts.length < 3) gifts.push({ icon: 'crown', name: 'Shiny crown', desc: 'Gerald gets +30% health and attack in the next battle.', run: () => { runx.buff = { round, kind: 'crown' }; return 'Gerald feels extra brave!'; } });
+  showCards('Golden Feather!', 'Gerald already has every power-up, so this feather turns into a gift. Pick one.', gifts.map(o => ({
+    icon: o.icon, name: o.name, desc: o.desc, pick: () => { const msg = seeded('gift', o.run); sfx('perk'); then(); toast(msg); },
+  })));
+  sfx('perk');
+}
+
+// ---------------------------------------------------------------------------
+// Hooks: rule effects, next-battle buffs, badge checks
+// ---------------------------------------------------------------------------
+let battleInfo = { n: 99 };
+// Mirror Match: Hiss stands alone while you build, then copies your flock when the fight starts
+function buildMirror(mine) {
+  const hiss = units.find(u => u.team === 'enemy' && u.def.hero);
+  for (const u of units.filter(u => u.team === 'enemy' && u !== hiss)) removeUnit(u);
+  for (const p of mine) {
+    const c = COLS - 1 - p.c, r = ROWS - 1 - p.r;
+    if (p.def.hero) { if (hiss) { hiss.c = c; hiss.r = r; snapToTile(hiss); } continue; }
+    const e = createUnit(p.type, 'enemy', c, r, p.level);
+    puff(e.group.position, 0xffffff, 3);
+  }
+}
+on('battleStart', () => {
+  const R = RULE();
+  const mine = playerUnits().filter(u => u.r >= 0);
+  battleInfo = { n: mine.length };
+  if (mine.some(u => u.type === 'brute')) runx.usedBrute = true;
+  if (R.mirror) buildMirror(mine);
+  const buff = runx.buff && runx.buff.round === round ? runx.buff.kind : null;
+  for (const u of units) {
+    if (u.r < 0) continue;
+    let hp = 1, atk = 1;
+    if (u.team === 'player') { hp = atk = R.geeseMult; if (buff === 'crown' && u.def.hero) { hp *= 1.3; atk *= 1.3; } }
+    else hp = atk = R.enemyMult;
+    if (hp !== 1) { u.maxHp = Math.round(u.maxHp * hp); u.hp = u.maxHp; }
+    if (atk !== 1) { u.atk *= atk; u.healAmt *= atk; }
+    if (u.team === 'enemy' && buff === 'scout') u.hp = Math.round(u.maxHp * 0.85);
+  }
+});
+const rulePill = document.createElement('div');
+rulePill.className = 'pill'; rulePill.id = 'rulePill'; rulePill.hidden = true;
+$('feathers').after(rulePill);
+function renderRulePill() {
+  const twist = runx.rule !== 'classic';
+  const mode = runx.daily ? 'Daily' : endless ? 'Endless' : '';
+  rulePill.hidden = !twist && !mode;
+  rulePill.innerHTML = twist ? `<small>${mode || 'Rule'}</small><b>${RULE().short}</b>` : `<small>Mode</small><b>${mode}</b>`;
+  rulePill.title = 'Pond rule: ' + RULE().name;
+}
+rulePill.onclick = () => toast([runx.daily ? 'Daily Pond' : '', endless ? 'Endless' : '', `${RULE().name}: ${RULE().desc}`].filter(Boolean).join(' - '));
+on('roundStart', () => {
+  if (RULE().mirror) for (const u of units.filter(u => u.team === 'enemy' && !u.def.hero)) removeUnit(u);
+  renderRulePill();
+  if (endless) {
+    const m = loadMeta();
+    if (round > m.endlessBest || round > (m.endlessBy[difficulty] || 0)) {
+      bumpMeta(x => { x.endlessBest = Math.max(x.endlessBest, round); x.endlessBy[difficulty] = Math.max(x.endlessBy[difficulty] || 0, round); });
+    }
+  }
+  const buff = runx.buff && runx.buff.round === round ? runx.buff.kind : null;
+  if (round === 1 && runx.rule !== 'classic') setTimeout(() => toast(`Pond rule: ${RULE().name}`), 1800);
+  else if (RULE().mirror && round === 2) setTimeout(() => toast('Captain Hiss will copy your flock when you press FIGHT!'), 1800);
+  else if (buff === 'scout') setTimeout(() => toast('Scout report: this rival flock starts hurt.'), 1800);
+  else if (buff === 'crown') setTimeout(() => toast('Gerald is extra brave this battle.'), 1800);
+  checkBadges();
+});
+let lastHonk = 0;
+on('tick', dt => {
+  // Speedy Pond: run extra battle steps (simulate() does not come through here)
+  if (phase === 'battle' && !simulating && RULE().speed > 1) stepBattle(dt * (RULE().speed - 1));
+  // Honk ring cosmetic: an extra colored ring when Gerald honks
+  if (phase === 'battle' && !simulating && battleTime > 0) {
+    const g = units.find(isMyGerald);
+    if (g && !g.dead) {
+      if (g.honkTimer > lastHonk + 1) { const ring = wearing('ring'); if (ring) ringEffect(g.group.position, ring.color, HERO_HONK_RADIUS * 0.75, 0.7); }
+      lastHonk = g.honkTimer;
+    }
+  }
+  if (ward) { try { drawWardPreview(); } catch (e) { /* preview is optional */ } }
+});
+// Called by endBattle after the result is known
+function afterBattleMeta(win, champ) {
+  const m = bumpMeta(x => {
+    if (win) x.battles++;
+    x.maxRound = Math.max(x.maxRound, round);
+    if (champ) { x.runs++; x.rulesWon[runx.rule] = (x.rulesWon[runx.rule] || 0) + 1; }
+  });
+  noteDaily(champ);
+  const alive = fighters('player');
+  checkBadges({ meta: m, win, champ, n: battleInfo.n, solo: win && alive.length === 1 && !!alive[0].def.hero });
+}
+
+// ---------------------------------------------------------------------------
+// Title menus: Daily Pond, Endless, Wardrobe, and the Pond Rule picker
+// ---------------------------------------------------------------------------
+const menuBtn = (id, cls, label) => { const b = document.createElement('button'); b.id = id; b.className = 'big ' + cls; b.innerHTML = label; return b; };
+const dailyBtn = menuBtn('dailyBtn', 'purple half', 'Daily Pond');
+const endlessBtn = menuBtn('endlessBtn', 'purple half', 'Endless');
+const wardBtn = menuBtn('wardBtn', 'gold half', 'Wardrobe');
+$('bookBtn').before(dailyBtn, endlessBtn, wardBtn);
+$('bookBtn').classList.add('half');
+const ruleBox = document.createElement('div');
+ruleBox.className = 'rulebox';
+ruleBox.innerHTML = '<div class="rulehead">Pond rule</div><div class="rules" id="ruleList"></div><div class="ruledesc" id="ruleDesc"></div>';
+$('modeBack').before(ruleBox);
+let menuKind = 'new', selRule = 'classic';
+function renderModeMenu() {
+  const meta = loadMeta(), list = $('modeList');
+  list.innerHTML = '';
+  for (const [key, m] of Object.entries(DIFFS)) {
+    const el = document.createElement('button');
+    el.className = 'mode';
+    const n = champCount(key, selRule), best = meta.endlessBy[key];
+    const line = menuKind === 'endless' ? (best ? 'Best: round ' + best : '') : (n ? `${selRule === 'classic' ? 'Champion' : RULES[selRule].name + ' champion'} x${n}` : '');
+    el.innerHTML = `<h3>${m.name}</h3><div>${m.desc}</div><div class="won">${line}</div>`;
+    el.onclick = () => { sfx('click'); newGame(key, { rule: selRule, endless: menuKind === 'endless' }); };
+    list.appendChild(el);
+  }
+  const open = rulesUnlocked(meta), rl = $('ruleList');
+  rl.innerHTML = '';
+  ruleBox.querySelector('.rulehead').hidden = !open;
+  if (open) {
+    for (const [key, r] of Object.entries(RULES)) {
+      const won = Object.keys(DIFFS).filter(d => champCount(d, key) > 0).length;
+      const el = document.createElement('button');
+      el.className = 'rule' + (key === selRule ? ' on' : '');
+      el.innerHTML = r.name + (won ? svg('crown') + won : '');
+      el.title = r.desc;
+      el.onclick = () => { sfx('click'); selRule = key; store.set('rule', key); renderModeMenu(); $('ruleList').querySelector('.on').focus(); };
+      rl.appendChild(el);
+    }
+  }
+  $('ruleDesc').textContent = open ? `${RULES[selRule].name}: ${RULES[selRule].desc}` : 'Reach round 5 to unlock Pond Rules: fun twists for your next game.';
+}
+function openModeMenu(kind) {
+  Sound.init(); sfx('click');
+  menuKind = kind;
+  const saved = store.get('rule');
+  selRule = RULES[saved] && rulesUnlocked(loadMeta()) ? saved : 'classic';
+  $('modeMenu').querySelector('.modehead').textContent = kind === 'endless' ? 'Endless: how far can you go?' : 'Choose a difficulty';
+  renderModeMenu();
+  $('mainMenu').hidden = true; $('howto').classList.remove('open'); $('modeMenu').hidden = false;
+  $('modeList').children[store.get('tut') === 'done' ? 1 : 0].focus();
+}
+endlessBtn.onclick = () => openModeMenu('endless');
+dailyBtn.onclick = () => { Sound.init(); sfx('click'); startDaily(); };
+wardBtn.onclick = () => { Sound.init(); sfx('click'); showWardrobe(); };
+// Called by showTitle with the saved run (or null)
+function refreshTitle(d) {
+  const meta = loadMeta(), daily = loadDaily(), t = todayKey();
+  if (d) {
+    const bits = [(DIFFS[d.difficulty] || DIFFS.normal).name];
+    if (d.x.daily) bits.push('Daily');
+    if (d.endless) bits.push('Endless');
+    if (d.x.rule !== 'classic') bits.push(RULES[d.x.rule].name);
+    bits.push('round ' + d.round);
+    $('contBtn').innerHTML = `Continue<small>${bits.join(' - ')}</small>`;
+  }
+  endlessBtn.hidden = !anyChampion();
+  dailyBtn.hidden = store.get('tut') !== 'done' && !anyChampion();
+  dailyBtn.classList.toggle('half', !endlessBtn.hidden);
+  const today = daily.date === t;
+  dailyBtn.innerHTML = `Daily Pond<small>${RULES[dailyRule(t)].name}${today ? (daily.won ? ' - won today!' : daily.best ? ` - best ${daily.best}` : '') : ''}</small>`;
+  endlessBtn.innerHTML = `Endless<small>${meta.endlessBest ? 'Best: round ' + meta.endlessBest : 'How far can you go?'}</small>`;
+  const got = Object.keys(readJSON('badges', {})).filter(id => BADGES.some(b => b.id === id)).length;
+  wardBtn.innerHTML = `Wardrobe<small>${got}/${BADGES.length} badges</small>`;
+  const best = Number(store.get('best') || 0);
+  const streak = daily.date === t || daily.date === dayBefore(t) ? daily.streak : 0;
+  $('bestLine').textContent = [
+    best ? `Best run: ${best} ${best === 1 ? 'win' : 'wins'}` : '',
+    meta.endlessBest ? `Endless best: round ${meta.endlessBest}` : '',
+    streak >= 2 ? `Daily streak: ${streak} days` : '',
+  ].filter(Boolean).join('  |  ');
+}
+
 // ===== WORKSTREAM C (polish & feel) additions go here =====
 
 // Hooks for automated testing and balance simulation
@@ -2136,6 +2828,8 @@ window.__game = {
   get phase() { return phase; }, get units() { return units; }, get gold() { return gold; }, set gold(v) { gold = v; renderShop(); },
   get round() { return round; }, get hearts() { return hearts; }, get wins() { return wins; }, get shop() { return shop; },
   get perks() { return perks; }, camera, buy, reroll, newGame, continueGame, showTitle, TYPES,
+  get endless() { return endless; }, get runx() { return runx; }, RULES, BADGES, grantBadge, checkBadges, startDaily, showWardrobe,
+  pickRule(r) { selRule = RULES[r] ? r : 'classic'; }, // then click a difficulty card
   setShop(types) { shop = types.map(type => ({ type, sold: false })); renderShop(); },
   // Run the current battle instantly (no countdown, no rendering) and return the result
   simulate() {
