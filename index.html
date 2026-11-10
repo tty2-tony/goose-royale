@@ -352,7 +352,11 @@
     .bcard .bic svg { width: 14px; height: 14px; }
     #badgeToast { top: calc(6px + env(safe-area-inset-top, 0px)); }
   }
-  @media (max-width: 480px) { #rulePill { display: none; } }
+  @media (max-width: 480px) {
+    #rulePill { display: none; }
+    /* first-game tips sit above the board so they never cover the shop preview (tap once to look, again to buy) */
+    #coach { bottom: auto; top: calc(158px + env(safe-area-inset-top, 0px)); font-size: 14px; padding: 7px 10px; }
+  }
   @media (max-height: 540px) and (min-width: 600px) {
     #titleScreen .menu { grid-template-columns: repeat(4, auto); width: auto; gap: 8px; }
     #titleScreen .menu > button { font-size: 17px; padding: 8px 14px; }
@@ -444,6 +448,7 @@
     <div class="tip">Get 3 of the same goose and they merge into a stronger one with a star. New kinds of geese show up as you win. Every 3 rounds Gerald finds a Golden Feather power-up.</div>
     <div class="legend" id="legend"></div>
     <div class="tip">Saving gold earns a bonus: +1 for every 5 gold you keep (up to +3). Tap or click a goose to see it and sell it. Drag empty space to turn the camera.</div>
+    <div class="tip">Between rounds you may get a pond event: pick one of the cards. Badges you earn unlock new looks for Gerald in the Wardrobe on the title screen.</div>
   </div>
   <div id="info" class="panel"></div>
   <div id="bonds" class="panel" hidden></div>
@@ -478,6 +483,7 @@
         <li>Press FIGHT! Your geese battle on their own.</li>
         <li>Buy 3 of the same goose to merge them into a stronger one.</li>
         <li>Win 10 battles before you lose your 3 hearts. Watch out for boss battles!</li>
+        <li>Earn badges to dress up Gerald in the Wardrobe. Win a run to unlock Endless, and try the Daily Pond and Pond Rules for new twists.</li>
       </ol>
     </div>
     <div class="best" id="bestLine"></div>
@@ -1785,7 +1791,7 @@ function showInfo(type, u) {
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
       <div class="role" style="color:${roleInk(d.role)}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
-    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}</div>` : ''}${sellBtn}`;
+    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}</div>` : ''}${boostNote(u)}${sellBtn}`;
   const sb = $('sellBtn');
   if (sb) sb.onclick = () => { const v = selected; if (!confirmSell(v, sb)) return; selected = null; sell(v); showInfo(null); };
   infoEl.style.display = 'block';
@@ -2328,7 +2334,7 @@ function showBook() {
     const lvl = t === 'hiss' ? 0 : Math.floor(v);
     const stars = t === 'hiss' ? '' : `<div class="stars" title="Best level">${[1, 2, 3].map(i => svg('star', i <= lvl ? '' : 'class="off"')).join('')}</div>`;
     return `<div class="bookcard"><div class="top">${roleIcon(d.role, 34)}<div><h3>${d.name}</h3>
-      <div class="meta" style="color:${ROLES[d.role].color}">${d.role}${d.cost ? ' &middot; ' + d.cost + ' gold' : ''}</div></div></div>
+      <div class="meta" style="color:${roleInk(d.role)}">${d.role}${d.cost ? ' &middot; ' + d.cost + ' gold' : ''}</div></div></div>
       ${stars}<div class="desc">${lvl === 0 && t !== 'hiss' ? 'Met in battle. Buy one to add it to your flock!' : d.desc}</div></div>`;
   }).join('');
   $('bookCount').textContent = `You have found ${found} of ${list.length} geese. Merge geese to earn stars.`;
@@ -2822,10 +2828,12 @@ function dressGerald(u) {
     return o;
   };
   const hat = wearing('hat'), neckItem = wearing('neck'), cape = wearing('cape'), ring = wearing('ring');
-  for (const o of neck.children) if (o.material && o.material.color && o.material.color.getHex() === 0xffc93c) o.visible = !hat || !!hat.keepCrown;
+  for (const o of neck.children) if (o.isMesh && !o.material.userData.shared && o.material.color.getHex() === 0xffc93c) o.visible = !hat || !!hat.keepCrown;
   if (hat) hat.build({ add, neck, g });
   if (neckItem) neckItem.build({ add, neck, g });
-  const capeMesh = g.children.find(o => o.geometry && o.geometry.type === 'PlaneGeometry');
+  // The cape is the flat mesh on the body (u.inner); the team ring is the flat ring that is a direct child of the root group
+  let capeMesh = null;
+  (u.inner || g).traverse(o => { if (!capeMesh && o.isMesh && o.geometry.type === 'PlaneGeometry' && !u.cos.objs.includes(o)) capeMesh = o; });
   if (capeMesh) {
     if (capeMesh.userData.baseColor === undefined) capeMesh.userData.baseColor = capeMesh.material.color.getHex();
     capeMesh.material.color.setHex(cape ? cape.color : capeMesh.userData.baseColor);
@@ -2835,7 +2843,7 @@ function dressGerald(u) {
       }
     }
   }
-  const ringMesh = g.children.find(o => o.geometry && o.geometry.type === 'RingGeometry');
+  const ringMesh = g.children.find(o => o.isMesh && o.geometry.type === 'RingGeometry');
   if (ringMesh) {
     if (ringMesh.userData.baseColor === undefined) ringMesh.userData.baseColor = ringMesh.material.color.getHex();
     ringMesh.material.color.setHex(ring ? ring.color : ringMesh.userData.baseColor);
@@ -3140,6 +3148,20 @@ on('battleStart', () => {
     if (u.team === 'enemy' && buff === 'scout') u.hp = Math.round(u.maxHp * 0.85);
   }
 });
+// Info panel lines for boosts that only switch on when the fight starts (Pond Rule and one-battle buffs)
+function boostNote(u) {
+  if (!u || phase !== 'setup' || u.r === -1) return '';
+  const R = RULE(), buff = runx.buff && runx.buff.round === round ? runx.buff.kind : null, notes = [];
+  const pct = m => `${m > 1 ? '+' : '-'}${Math.round(Math.abs(m - 1) * 100)}%`;
+  if (u.team === 'player') {
+    if (R.geeseMult !== 1) notes.push(`${R.name}: ${pct(R.geeseMult)} health and attack in battle`);
+    if (buff === 'crown' && u.def.hero) notes.push('Shiny crown: +30% health and attack this battle');
+  } else {
+    if (R.enemyMult !== 1) notes.push(`${R.name}: ${pct(R.enemyMult)} health and attack in battle`);
+    if (buff === 'scout') notes.push('Scout report: starts with 15% less health');
+  }
+  return notes.map(n => `<div class="bondtip">${svg('star', 'style="width:14px;height:14px;fill:#d9a514;flex:none"')} ${n}</div>`).join('');
+}
 const rulePill = document.createElement('div');
 rulePill.className = 'pill'; rulePill.id = 'rulePill'; rulePill.hidden = true;
 $('feathers').after(rulePill);
@@ -3169,7 +3191,7 @@ on('roundStart', () => {
 });
 on('tick', dt => {
   // Speedy Pond: run extra battle steps (simulate() does not come through here)
-  if (phase === 'battle' && !simulating && RULE().speed > 1) stepBattle(dt * (RULE().speed - 1));
+  if (phase === 'battle' && !simulating && !endFx && RULE().speed > 1) stepBattle(dt * (RULE().speed - 1)); // not during the win/lose moment, so it keeps its full length
   // Honk ring cosmetic: an extra colored ring when Gerald honks
   if (phase === 'battle' && !simulating && battleTime > 0) {
     const g = units.find(isMyGerald);
