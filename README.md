@@ -36,6 +36,10 @@ Every 3 rounds Gerald finds a Golden Feather: pick one of three power-ups. Savin
 
 Controls: drag geese to move them, tap or click a goose to see it and sell it, drag empty space (or use the arrow buttons, Q/E, arrow keys) to turn the camera, scroll to zoom. Works on phones in portrait and landscape. On a touch screen, tap a shop card once to see it and a second time to buy it. Selling a level 2 or 3 goose needs a second click or tap. The ? button brings back the help panel, which folds away after your first battle. Merged geese get a gold ring (level 2) or a rainbow ring and glow (level 3).
 
+## Keeping the screen simple
+
+The top bar shows only round, wins, hearts, gold, flock size, FIGHT, speed and a menu button. Sound, music, how to play, Golden Feathers and the Pond Rule live in the game menu. Labels over the geese show level stars and job icons while planning and health bars while fighting, and the shop and side panels hide during a battle. On the title screen, Daily Pond, Endless and Pond Rules sit inside New Game.
+
 ## Pond maps
 
 From round 3 the battle moves to a new pond every two rounds. There are six layouts besides the Open Meadow (Rocky Pass, Twin Ponds, Muddy Middle, Nest Hill, Lookout Ridge, The Crossing), each mirrored so both sides get the same tiles.

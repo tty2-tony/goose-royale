@@ -605,6 +605,38 @@
   .pausebtns #pauseResume { grid-column: span 2; font-size: 20px; }
   .pausebtns #pauseQuit, .pausebtns #pauseHelp { grid-column: span 2; }
   @media (max-width: 480px) { #menuBtn { order: 3; } #topbar #muteBtn, #topbar #musicBtn, #topbar #helpBtn { display: none; } }
+  /* ===== DECLUTTER: fewer things on screen at once ===== */
+  /* Top bar keeps the essentials; sound, music, help, power-ups and the pond rule live in the game menu */
+  #topbar #muteBtn, #topbar #musicBtn, #topbar #helpBtn, #topbar #feathers, #topbar #rulePill { display: none !important; }
+  /* Help opens only when asked for (the first-game coach tips do the teaching) */
+  #help, body.help-min #help { display: none; }
+  #help.open, body.help-min #help.open { display: block; z-index: 5; }
+  /* Labels over the geese: stars and job icon while planning, health bars while fighting */
+  body[data-phase="setup"] .uhud .hpbar { display: none; }
+  body[data-phase="battle"] .uhud .row .icon, body[data-phase="result"] .uhud .row .icon { display: none; }
+  body[data-phase="battle"] .uhud .stars { display: none; }
+  /* During a battle the planning panels step aside so the fight is easy to watch */
+  #shop, #bonds, #mapKey { transition: opacity 0.3s; }
+  body[data-phase="battle"] #shop, body[data-phase="battle"] #bonds, body[data-phase="battle"] #mapKey,
+  body[data-phase="result"] #shop, body[data-phase="result"] #bonds, body[data-phase="result"] #mapKey { opacity: 0; visibility: hidden; pointer-events: none; }
+  /* Shop cards: name, job and price. Numbers are in the info panel */
+  .card .mini { display: none; }
+  .card { padding-bottom: 9px; }
+  #pauseInfo { font-size: 14px !important; text-align: left; background: #fff; border: 2px solid var(--panel-edge); border-radius: 12px; padding: 8px 12px; line-height: 1.45 !important; }
+  /* Title: two big choices first, extras smaller */
+  #titleScreen .menu > #howBtn, #titleScreen .menu > #saveBtn { background: rgba(255, 255, 255, 0.12); background-image: none; border: 2px solid rgba(255, 255, 255, 0.45); box-shadow: none; font-size: 15px; padding: 6px 8px; text-shadow: none; }
+  #titleScreen .menu > #howBtn:active, #titleScreen .menu > #saveBtn:active { box-shadow: none; }
+  .moreways { display: flex; gap: 10px; width: 100%; }
+  .moreways button { flex: 1 1 0; font-size: 17px; padding: 8px 8px; }
+  .moreways button small { display: block; font-size: 12px; font-weight: 600; line-height: 1.2; }
+  .ruletoggle { font-family: inherit; font-weight: 700; font-size: 15px; color: #fff; background: rgba(255, 255, 255, 0.12); border: 2px solid rgba(255, 255, 255, 0.45); border-radius: 12px; padding: 6px 14px; cursor: pointer; }
+  .rulebox.closed .rulehead, .rulebox.closed .rules, .rulebox.closed .ruledesc { display: none; }
+  .rulebox .rulehead { display: none; }
+  @media (max-width: 760px), (max-height: 540px) {
+    #bonds.none { display: none; }
+    #bonds .bond:not(.on) { display: none; }
+    .moreways button { font-size: 15px; padding: 6px 6px; }
+  }
 </style>
 </head>
 <body class="on-title">
@@ -711,6 +743,7 @@
   <div id="pauseScreen" class="screen" style="pointer-events:auto"><div class="box panel">
     <h1>Game menu</h1>
     <p id="pauseText"></p>
+    <p id="pauseInfo" hidden></p>
     <div class="pausebtns">
       <button class="big green" id="pauseResume">Keep playing</button>
       <button class="big blue" id="pauseSound"></button>
@@ -1580,8 +1613,10 @@ function renderBonds() {
     if (sig !== bondSig) { bondSig = sig; applyBonds(); }
   } else bondSig = '';
   const counts = bondCounts('player');
-  const roles = Object.keys(counts);
+  const active = Object.keys(counts).filter(r => bondTier(counts[r]));
+  const roles = [...active, ...Object.keys(counts).filter(r => !bondTier(counts[r])).slice(0, active.length ? 1 : 2)]; // keep the list short
   el.hidden = !roles.length || phase === 'title';
+  el.classList.toggle('none', !active.length);
   el.innerHTML = '<div class="bh">Flock bonuses</div>' + roles.map(r => {
     const b = BONDS[r], n = counts[r], tier = bondTier(n), goal = n >= 2 ? 4 : 2;
     const kinds = SHOP_TYPES.filter(t => TYPES[t].role === r).map(t => pluralName(TYPES[t].name)).join(' or ');
@@ -1643,7 +1678,7 @@ function updateTopbar() {
   renderBonds();
   const rt = $('rivalTag');
   const prule = typeof rulePill !== 'undefined' && !rulePill.hidden ? rulePill.textContent.replace(/\s+/g, ' ').trim() : '';
-  rt.innerHTML = `<b>Round ${round} vs ${rivalName()}</b><span class="rrule">${rivalFor(round).rule}</span>${prule ? `<span class="prule">Pond rule: ${prule}</span>` : ''}${mapId !== 'meadow' ? `<span class="mrule">Map: ${MAPS[mapId].name}</span>` : ''}`;
+  rt.innerHTML = `<b>vs ${rivalName()}</b><span class="rrule">${rivalFor(round).rule}</span>${prule ? `<span class="prule">Pond rule: ${prule}</span>` : ''}${mapId !== 'meadow' ? `<span class="mrule">Map: ${MAPS[mapId].name}</span>` : ''}`;
   rt.title = rt.textContent;
   rt.classList.toggle('boss', isBoss());
 }
@@ -2026,7 +2061,7 @@ function showInfo(type, u) {
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
       <div class="role" style="color:${roleInk(d.role)}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
-    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}. 4 = ${BONDS[d.role].text4}.</div>` : ''}${boostNote(u)}${tileNote(u)}${sellBtn}`;
+    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: ${(bondCounts('player')[d.role] || 0) >= 2 ? `4 ${BONDS[d.role].plural} = ${BONDS[d.role].text4}` : `2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}`}</div>` : ''}${boostNote(u)}${tileNote(u)}${sellBtn}`;
   const sb = $('sellBtn');
   if (sb) sb.onclick = () => { const v = selected; if (!confirmSell(v, sb)) return; selected = null; sell(v); showInfo(null); };
   infoEl.style.display = 'block';
@@ -2889,7 +2924,6 @@ on('roundStart', () => {
   const r = rivalFor(round);
   const fresh = !RULE().wild && SHOP_TYPES.some(t => TYPES[t].unlock === round && round > 1);
   const thisRound = round;
-  setTimeout(() => { if (phase === 'setup' && round === thisRound) toast(`${r.name}: ${r.rule}`); }, fresh ? 3700 : 400);
 });
 
 // ===== WORKSTREAM B (meta & playtime) additions go here =====
@@ -4366,6 +4400,13 @@ function initSaves() {
       ? `Round ${round}, ${wins} wins. Your game is saved. You can stop now and pick Continue on the title screen later.`
       : 'A battle is going on. Your game is saved when the battle ends.';
     $('pauseQuit').disabled = !inSetup;
+    const bits = [];
+    if (perks.length) bits.push('<b>Golden Feathers:</b> ' + perks.map(p => PERKS[p].name).join(', '));
+    if (runx.rule !== 'classic') bits.push(`<b>Pond rule:</b> ${RULE().name}. ${RULE().desc}`);
+    if (runx.daily) bits.push('<b>Daily Pond</b>');
+    if (endless) bits.push('<b>Endless</b>');
+    $('pauseInfo').innerHTML = bits.join('<br>');
+    $('pauseInfo').hidden = !bits.length;
     pauseLabels();
     $('pauseScreen').classList.add('show');
     $('pauseResume').focus();
@@ -4380,6 +4421,27 @@ function initSaves() {
   $('pauseResume').onclick = () => { sfx('click'); $('pauseScreen').classList.remove('show'); };
   $('pauseQuit').onclick = () => { if (phase !== 'setup') return; sfx('click'); saveGame(); $('pauseScreen').classList.remove('show'); showTitle(); };
 }
+// Declutter: the page knows the phase so labels over the geese can show less at a time
+on('tick', () => { if (document.body.dataset.phase !== phase) document.body.dataset.phase = phase; });
+// New Game screen holds the extra ways to play; Pond rules stay folded until asked for
+const moreWays = document.createElement('div');
+moreWays.className = 'moreways';
+$('modeList').after(moreWays);
+moreWays.append(dailyBtn, endlessBtn);
+const ruleToggle = document.createElement('button');
+ruleToggle.className = 'ruletoggle';
+ruleBox.prepend(ruleToggle);
+const syncRuleBox = force => {
+  const meta = loadMeta(), unlocked = rulesUnlocked(meta);
+  if (force !== undefined) ruleBox.classList.toggle('closed', force);
+  ruleToggle.hidden = !unlocked;
+  if (!unlocked) ruleBox.classList.remove('closed');
+  ruleToggle.textContent = ruleBox.classList.contains('closed') ? 'Add a twist (optional)' : 'Hide twists';
+  moreWays.hidden = menuKind === 'endless' || (dailyBtn.hidden && endlessBtn.hidden);
+};
+ruleToggle.onclick = () => { sfx('click'); syncRuleBox(!ruleBox.classList.contains('closed')); };
+$('newBtn').addEventListener('click', () => syncRuleBox(selRule === 'classic'));
+endlessBtn.addEventListener('click', () => syncRuleBox(selRule === 'classic'));
 SVG.menu = '<path d="M3 5.5h18v2.8H3zm0 5.1h18v2.8H3zm0 5.1h18v2.8H3z"/>';
 initSaves();
 
