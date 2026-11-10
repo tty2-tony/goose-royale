@@ -290,6 +290,11 @@
     #titleScreen .menu { flex-direction: row; width: auto; }
     .modelist { flex-direction: row; }
   }
+  /* ===== WORKSTREAM A CSS ===== */
+
+  /* ===== WORKSTREAM B CSS ===== */
+
+  /* ===== WORKSTREAM C CSS ===== */
 </style>
 </head>
 <body class="on-title">
@@ -360,6 +365,9 @@
   </div>
 </div>
 
+<!-- ===== WORKSTREAM A HTML ===== -->
+<!-- ===== WORKSTREAM B HTML ===== -->
+<!-- ===== WORKSTREAM C HTML ===== -->
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
 </script>
@@ -369,6 +377,8 @@ import * as THREE from 'three';
 // ---------------------------------------------------------------------------
 // Storage helpers (storage can be missing or blocked, so everything is guarded)
 // ---------------------------------------------------------------------------
+let simulating = false; // true while window.__game.simulate() runs a battle instantly
+
 const store = {
   get(k) { try { return localStorage.getItem('geraldRoyale.' + k); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem('geraldRoyale.' + k, v); } catch (e) { /* ignore */ } },
@@ -467,7 +477,13 @@ const Sound = (() => {
     setTempo(t) { tempo = t; },
   };
 })();
-const sfx = (name, ...a) => Sound.fx[name](...a);
+const sfx = (name, ...a) => { if (!simulating) Sound.fx[name](...a); };
+
+// Event hooks so features can react without editing core functions.
+// Events: roundStart, battleStart, battleEnd({win}), unitDied(unit), unitCreated(unit), tick(dt)
+const hooks = { roundStart: [], battleStart: [], battleEnd: [], unitDied: [], unitCreated: [], tick: [] };
+const on = (name, fn) => hooks[name].push(fn);
+const emit = (name, payload) => { for (const fn of hooks[name]) { try { fn(payload); } catch (e) { console.error(e); } } };
 
 // ---------------------------------------------------------------------------
 // Icons and roles
@@ -741,6 +757,7 @@ function featherMat(color) {
   return featherMats[color];
 }
 function puff(pos, color, n = 4, power = 1) {
+  if (simulating) return;
   for (let i = 0; i < n; i++) {
     let f = feathers.length >= 160 ? feathers.shift() : null;
     if (!f) { f = { mesh: new THREE.Mesh(featherGeo, featherMat(color)) }; scene.add(f.mesh); }
@@ -769,6 +786,76 @@ function updateFeathers(dt) {
 // ---------------------------------------------------------------------------
 // Goose models
 // ---------------------------------------------------------------------------
+// Per-goose accessories. To add a goose, add a TYPES entry and a function here.
+// k = { g, neck, mat, mesh, headTop }
+const MODEL_EXTRAS = {
+  gerald({ g, neck, mat, mesh, headTop }) {
+    const gold = mat(0xffc93c, { emissive: 0x553300 });
+    mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 10), gold, neck, headTop);
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      mesh(new THREE.ConeGeometry(0.03, 0.08, 5), gold, neck, [Math.sin(a) * 0.085, 0.66, 0.03 + Math.cos(a) * 0.085]);
+    }
+    const cape = mesh(new THREE.PlaneGeometry(0.5, 0.55), mat(0x2f6fe0, { side: THREE.DoubleSide }), g, [0, 0.48, -0.2], [0.35, 0, 0]);
+    cape.scale.set(1.1, 1, 1);
+  },
+  hiss({ g, neck, mat, mesh, headTop }) {
+    const dark = mat(0x111111);
+    mesh(new THREE.CylinderGeometry(0.21, 0.21, 0.02, 16), dark, neck, [0, 0.57, 0.03]);
+    mesh(new THREE.CylinderGeometry(0.1, 0.13, 0.12, 12), dark, neck, [0, 0.64, 0.03]);
+    mesh(new THREE.BoxGeometry(0.05, 0.05, 0.01), mat(0xffffff), neck, [0, 0.64, 0.155]);
+    mesh(new THREE.PlaneGeometry(0.5, 0.55), mat(0x7a2a9a, { side: THREE.DoubleSide }), g, [0, 0.48, -0.2], [0.35, 0, 0]);
+  },
+  brute({ g, neck, mat, mesh, headTop }) {
+    const steel = mat(0x5d6670);
+    mesh(new THREE.SphereGeometry(0.15, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), steel, neck, [0, 0.49, 0.03]);
+    mesh(new THREE.ConeGeometry(0.03, 0.1, 6), steel, neck, [0, 0.67, 0.03]);
+  },
+  honker({ g, neck, mat, mesh, headTop }) {
+    mesh(new THREE.CylinderGeometry(0.1, 0.035, 0.2, 12, 1, true), mat(0xe03c3c, { side: THREE.DoubleSide }), neck, [0, 0.45, 0.27], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.TorusGeometry(0.09, 0.025, 6, 14), mat(0xe03c3c), neck, [0, 0.27, 0.02], [Math.PI / 2 - 0.2, 0, 0]);
+  },
+  sprinter({ g, neck, mat, mesh, headTop }) {
+    mesh(new THREE.TorusGeometry(0.13, 0.025, 6, 16), mat(0xe8352e), neck, [0, 0.52, 0.03], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.BoxGeometry(0.06, 0.02, 0.6), mat(0xffffff), g, [0, 0.68, 0], [0.05, 0, 0]);
+  },
+  nurse({ g, neck, mat, mesh, headTop }) {
+    mesh(new THREE.BoxGeometry(0.17, 0.08, 0.13), mat(0xffffff), neck, [0, 0.61, 0.02]);
+    const red = mat(0xe8352e);
+    mesh(new THREE.BoxGeometry(0.07, 0.02, 0.005), red, neck, [0, 0.61, 0.088]);
+    mesh(new THREE.BoxGeometry(0.02, 0.06, 0.005), red, neck, [0, 0.61, 0.088]);
+  },
+  golden({ g, neck, mat, mesh, headTop }) {
+    const dark = mat(0x1a1a1a);
+    mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.015, 14), dark, neck, [0, 0.585, 0.03]);
+    mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.13, 14), dark, neck, [0, 0.655, 0.03]);
+    mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 14), mat(0xffffff), neck, [0.085, 0.51, 0.115]);
+  },
+  bomber({ g, neck, mat, mesh, headTop }) {
+    const lens = mat(0x9fd8f0, { emissive: 0x113344 });
+    const strap = mat(0x5a3b22);
+    mesh(new THREE.TorusGeometry(0.135, 0.02, 6, 16), strap, neck, [0, 0.52, 0.03], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.04, 10), lens, neck, [0.05, 0.53, 0.14], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.04, 10), lens, neck, [-0.05, 0.53, 0.14], [Math.PI / 2, 0, 0]);
+    const egg = mesh(new THREE.SphereGeometry(0.1, 10, 8), mat(0xfff8e6), g, [0.22, 0.62, -0.1]);
+    egg.scale.set(0.85, 1.15, 0.85);
+  },
+  ninja({ g, neck, mat, mesh, headTop }) {
+    const red = mat(0xd62f2f);
+    mesh(new THREE.TorusGeometry(0.135, 0.028, 6, 16), red, neck, [0, 0.5, 0.03], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.BoxGeometry(0.03, 0.02, 0.18), red, neck, [0.03, 0.5, -0.17], [0.4, 0.2, 0]);
+    mesh(new THREE.BoxGeometry(0.03, 0.02, 0.16), red, neck, [-0.03, 0.48, -0.16], [0.6, -0.2, 0]);
+    mesh(new THREE.BoxGeometry(0.2, 0.04, 0.02), mat(0xf4f1e8), neck, [0, 0.515, 0.125]);
+  },
+  drummer({ g, neck, mat, mesh, headTop }) {
+    const drum = mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.16, 16), mat(0xd62f2f), g, [0, 0.36, 0.36], [Math.PI / 2, 0, 0]);
+    drum.scale.set(1, 1, 1);
+    mesh(new THREE.CylinderGeometry(0.165, 0.165, 0.02, 16), mat(0xffffff), g, [0, 0.36, 0.45], [Math.PI / 2, 0, 0]);
+    mesh(new THREE.CylinderGeometry(0.1, 0.11, 0.18, 12), mat(0x2a4fb0), neck, [0, 0.64, 0.03]);
+    mesh(new THREE.SphereGeometry(0.04, 8, 6), mat(0xffd23f), neck, [0, 0.75, 0.03]);
+  },
+};
+
 function makeGooseModel(type, team) {
   const def = TYPES[type];
   const g = new THREE.Group();
@@ -815,62 +902,7 @@ function makeGooseModel(type, team) {
   }
 
   const headTop = [0, 0.58, 0.03];
-  if (type === 'gerald') {
-    const gold = mat(0xffc93c, { emissive: 0x553300 });
-    mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 10), gold, neck, headTop);
-    for (let i = 0; i < 5; i++) {
-      const a = (i / 5) * Math.PI * 2;
-      mesh(new THREE.ConeGeometry(0.03, 0.08, 5), gold, neck, [Math.sin(a) * 0.085, 0.66, 0.03 + Math.cos(a) * 0.085]);
-    }
-    const cape = mesh(new THREE.PlaneGeometry(0.5, 0.55), mat(0x2f6fe0, { side: THREE.DoubleSide }), g, [0, 0.48, -0.2], [0.35, 0, 0]);
-    cape.scale.set(1.1, 1, 1);
-  } else if (type === 'hiss') {
-    const dark = mat(0x111111);
-    mesh(new THREE.CylinderGeometry(0.21, 0.21, 0.02, 16), dark, neck, [0, 0.57, 0.03]);
-    mesh(new THREE.CylinderGeometry(0.1, 0.13, 0.12, 12), dark, neck, [0, 0.64, 0.03]);
-    mesh(new THREE.BoxGeometry(0.05, 0.05, 0.01), mat(0xffffff), neck, [0, 0.64, 0.155]);
-    mesh(new THREE.PlaneGeometry(0.5, 0.55), mat(0x7a2a9a, { side: THREE.DoubleSide }), g, [0, 0.48, -0.2], [0.35, 0, 0]);
-  } else if (type === 'brute') {
-    const steel = mat(0x5d6670);
-    mesh(new THREE.SphereGeometry(0.15, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), steel, neck, [0, 0.49, 0.03]);
-    mesh(new THREE.ConeGeometry(0.03, 0.1, 6), steel, neck, [0, 0.67, 0.03]);
-  } else if (type === 'honker') {
-    mesh(new THREE.CylinderGeometry(0.1, 0.035, 0.2, 12, 1, true), mat(0xe03c3c, { side: THREE.DoubleSide }), neck, [0, 0.45, 0.27], [Math.PI / 2, 0, 0]);
-    mesh(new THREE.TorusGeometry(0.09, 0.025, 6, 14), mat(0xe03c3c), neck, [0, 0.27, 0.02], [Math.PI / 2 - 0.2, 0, 0]);
-  } else if (type === 'sprinter') {
-    mesh(new THREE.TorusGeometry(0.13, 0.025, 6, 16), mat(0xe8352e), neck, [0, 0.52, 0.03], [Math.PI / 2, 0, 0]);
-    mesh(new THREE.BoxGeometry(0.06, 0.02, 0.6), mat(0xffffff), g, [0, 0.68, 0], [0.05, 0, 0]);
-  } else if (type === 'nurse') {
-    mesh(new THREE.BoxGeometry(0.17, 0.08, 0.13), mat(0xffffff), neck, [0, 0.61, 0.02]);
-    const red = mat(0xe8352e);
-    mesh(new THREE.BoxGeometry(0.07, 0.02, 0.005), red, neck, [0, 0.61, 0.088]);
-    mesh(new THREE.BoxGeometry(0.02, 0.06, 0.005), red, neck, [0, 0.61, 0.088]);
-  } else if (type === 'golden') {
-    const dark = mat(0x1a1a1a);
-    mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.015, 14), dark, neck, [0, 0.585, 0.03]);
-    mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.13, 14), dark, neck, [0, 0.655, 0.03]);
-    mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 14), mat(0xffffff), neck, [0.085, 0.51, 0.115]);
-  } else if (type === 'bomber') {
-    const lens = mat(0x9fd8f0, { emissive: 0x113344 });
-    const strap = mat(0x5a3b22);
-    mesh(new THREE.TorusGeometry(0.135, 0.02, 6, 16), strap, neck, [0, 0.52, 0.03], [Math.PI / 2, 0, 0]);
-    mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.04, 10), lens, neck, [0.05, 0.53, 0.14], [Math.PI / 2, 0, 0]);
-    mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.04, 10), lens, neck, [-0.05, 0.53, 0.14], [Math.PI / 2, 0, 0]);
-    const egg = mesh(new THREE.SphereGeometry(0.1, 10, 8), mat(0xfff8e6), g, [0.22, 0.62, -0.1]);
-    egg.scale.set(0.85, 1.15, 0.85);
-  } else if (type === 'ninja') {
-    const red = mat(0xd62f2f);
-    mesh(new THREE.TorusGeometry(0.135, 0.028, 6, 16), red, neck, [0, 0.5, 0.03], [Math.PI / 2, 0, 0]);
-    mesh(new THREE.BoxGeometry(0.03, 0.02, 0.18), red, neck, [0.03, 0.5, -0.17], [0.4, 0.2, 0]);
-    mesh(new THREE.BoxGeometry(0.03, 0.02, 0.16), red, neck, [-0.03, 0.48, -0.16], [0.6, -0.2, 0]);
-    mesh(new THREE.BoxGeometry(0.2, 0.04, 0.02), mat(0xf4f1e8), neck, [0, 0.515, 0.125]);
-  } else if (type === 'drummer') {
-    const drum = mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.16, 16), mat(0xd62f2f), g, [0, 0.36, 0.36], [Math.PI / 2, 0, 0]);
-    drum.scale.set(1, 1, 1);
-    mesh(new THREE.CylinderGeometry(0.165, 0.165, 0.02, 16), mat(0xffffff), g, [0, 0.36, 0.45], [Math.PI / 2, 0, 0]);
-    mesh(new THREE.CylinderGeometry(0.1, 0.11, 0.18, 12), mat(0x2a4fb0), neck, [0, 0.64, 0.03]);
-    mesh(new THREE.SphereGeometry(0.04, 8, 6), mat(0xffd23f), neck, [0, 0.75, 0.03]);
-  }
+  if (MODEL_EXTRAS[type]) MODEL_EXTRAS[type]({ g, neck, mat, mesh, headTop });
 
   const ring = new THREE.Mesh(
     new THREE.RingGeometry(0.34, 0.44, 28),
@@ -897,10 +929,11 @@ let stats = { merges: 0, goldEarned: 0, bestLevel: 1 };
 let shop = [];
 let battleTime = 0, endTimer = 0, gameSpeed = 1, countdownStep = 0;
 const has = p => perks.includes(p);
-const flockCap = () => Math.min(9, 3 + round + (has('roomy') ? 1 : 0)); // includes Gerald
+const flockCapFor = r => Math.min(9, 3 + r + (has('roomy') ? 1 : 0)); // includes Gerald
+const flockCap = () => flockCapFor(round);
 const isFinal = () => !endless && wins === WINS_TO_WIN - 1;
 const isBoss = () => isFinal() || round % 5 === 0;
-const rivalName = () => isFinal() ? "Hiss's Grand Armada" : (RIVALS[round - 1] || `Rival Flock #${round}`);
+const rivalName = () => isFinal() ? "Hiss's Grand Armada" : (RIVALS[round - 1] === "Hiss's Grand Armada" ? "Hiss's Elite Guard" : RIVALS[round - 1]) || `Rival Flock #${round}`;
 const unlockedTypes = r => SHOP_TYPES.filter(t => TYPES[t].unlock <= r);
 
 // ---------------------------------------------------------------------------
@@ -964,11 +997,19 @@ function createUnit(type, team, c, r, level = 1, opts = {}) {
   scene.add(model.group);
   units.push(u);
   if (team === 'player') stats.bestLevel = Math.max(stats.bestLevel, level);
+  emit('unitCreated', u);
   return u;
 }
 
+function disposeObject(obj) {
+  obj.traverse(o => {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose());
+  });
+}
 function removeUnit(u) {
   scene.remove(u.group);
+  disposeObject(u.group);
   u.hudEl.remove();
   units = units.filter(x => x !== u);
 }
@@ -1224,9 +1265,9 @@ function buildEnemyTeam() {
 }
 
 function clearBattleStuff() {
-  for (const p of projectiles) scene.remove(p.mesh);
+  for (const p of projectiles) { scene.remove(p.mesh); disposeObject(p.mesh); }
   projectiles.length = 0;
-  for (const f of effects) scene.remove(f.mesh);
+  for (const f of effects) { scene.remove(f.mesh); disposeObject(f.mesh); }
   effects.length = 0;
 }
 
@@ -1260,6 +1301,7 @@ function startRound(restoreShop = null) {
   if (fresh.length) setTimeout(() => toast(`New goose in the shop: ${fresh.map(t => TYPES[t].name).join(', ')}!`), 1700);
   for (const u of units.filter(u => u.team === 'enemy')) noteBook(u.type, u.level, false);
   tutorial('round');
+  emit('roundStart');
   saveGame();
 }
 
@@ -1282,18 +1324,31 @@ function newGame(mode = difficulty) {
   startRound();
 }
 
-function saveGame() {
-  if (phase !== 'setup') return;
+// Saves during setup, and right after a battle (with `pending` = gold owed) so a
+// reload on the result screen cannot replay a lost battle.
+function saveGame(pending = null) {
+  if (phase !== 'setup' && pending == null) return;
   const data = {
-    v: 1, difficulty, round, wins, losses, hearts, gold, perks, endless, stats, freeRerollUsed,
+    pending,
+    v: SAVE_VERSION, difficulty, round, wins, losses, hearts, gold, perks, endless, stats, freeRerollUsed,
     units: playerUnits().filter(u => u.r !== -9).map(u => ({ type: u.type, level: u.level, c: u.c, r: u.r })),
     shop,
   };
   store.set('run', JSON.stringify(data));
 }
-function loadSave() {
-  try { const d = JSON.parse(store.get('run') || 'null'); return d && d.v === 1 ? d : null; } catch (e) { return null; }
+const SAVE_VERSION = 1;
+const readJSON = (key, fallback) => { try { const v = JSON.parse(store.get(key) || 'null'); return v == null ? fallback : v; } catch (e) { return fallback; } };
+// Bring an older save up to date. Add a step here whenever SAVE_VERSION goes up; never reject old saves.
+function migrateSave(d) {
+  if (!d || typeof d !== 'object' || !(d.v >= 1)) return null;
+  d.units = (d.units || []).filter(s => TYPES[s.type]);
+  d.shop = (d.shop || []).filter(s => TYPES[s.type]);
+  d.perks = (d.perks || []).filter(p => PERKS[p]);
+  d.stats = Object.assign({ merges: 0, goldEarned: 0, bestLevel: 1 }, d.stats || {});
+  d.v = SAVE_VERSION;
+  return d;
 }
+function loadSave() { return migrateSave(readJSON('run', null)); }
 function continueGame() {
   const d = loadSave();
   if (!d) { newGame(); return; }
@@ -1305,16 +1360,24 @@ function continueGame() {
   for (const s of d.units) createUnit(s.type, 'player', s.c, s.r, s.level);
   if (!playerUnits().some(u => u.def.hero)) createUnit('gerald', 'player', 3, 1);
   leaveTitle();
-  startRound(d.shop);
+  if (d.pending != null) { advanceRound(d.pending); return; }
+  startRound(d.shop.length ? d.shop : null);
   freeRerollUsed = !!d.freeRerollUsed;
   renderShop();
+  saveGame();
+}
+
+// Move to the next round: pay gold, then a Golden Feather pick on perk rounds.
+function advanceRound(earned) {
+  round++; gold += earned;
+  if (PERK_ROUNDS.has(round)) showPerks(() => startRound()); else startRound();
 }
 
 function recordBest() {
   const best = Number(store.get('best') || 0);
   if (wins > best) store.set('best', String(wins));
   if (!endless && wins >= WINS_TO_WIN) {
-    const champs = JSON.parse(store.get('champs') || '{}');
+    const champs = readJSON('champs', {});
     champs[difficulty] = (champs[difficulty] || 0) + 1;
     store.set('champs', JSON.stringify(champs));
   }
@@ -1332,6 +1395,7 @@ fightBtn.onclick = () => {
   battleTime = -1.8; countdownStep = 0;
   Sound.setTempo('battle');
   tutorial('fight');
+  emit('battleStart');
 };
 const speedBtn = $('speedBtn');
 speedBtn.onclick = () => { gameSpeed = gameSpeed === 1 ? 2 : 1; speedBtn.querySelector('b').textContent = 'x' + gameSpeed; sfx('click'); };
@@ -1559,6 +1623,7 @@ function damage(target, amount, opts = {}) {
   if (target.hp <= 0) {
     target.hp = 0; target.dead = true; target.deathT = 0;
     puff(target.group.position, target.def.color, target.boss ? 24 : 12, 1.2);
+    emit('unitDied', target);
     sfx('pop');
     if (target.boss) shake = 0.5;
   }
@@ -1626,6 +1691,20 @@ function drumBonus(u, allies) {
   return best;
 }
 
+// Attack styles. A goose can name one with `attack: 'name'` in TYPES; otherwise it is picked from projectile/heal.
+const ATTACKS = {
+  heal(u, target) { spawnProjectile(u, target, 'heal'); u.flapT = 0.3; sfx('heal'); },
+  honk(u, target) { spawnProjectile(u, target, 'honk'); u.peckT = 0.25; sfx('honk', false); },
+  egg(u, target) { spawnProjectile(u, target, 'egg'); u.flapT = 0.3; },
+  pebble(u, target) { spawnProjectile(u, target, 'pebble'); u.peckT = 0.25; },
+  peck(u, target) {
+    u.peckT = 0.25;
+    const crit = u.def.crit && Math.random() < u.def.crit + (u.critBonus || 0);
+    if (crit) sfx('crit');
+    damage(target, u.atk * (0.9 + Math.random() * 0.2) * (crit ? 2 : 1), { from: u, crit });
+  },
+};
+
 function updateUnitAI(u, dt) {
   const enemies = fighters(u.team === 'player' ? 'enemy' : 'player');
   const allies = fighters(u.team);
@@ -1687,16 +1766,8 @@ function updateUnitAI(u, dt) {
     u.walkT += dt * def.speed * 6;
   } else if (u.atkTimer <= 0) {
     u.atkTimer = def.cd;
-    if (isHeal) { spawnProjectile(u, target, 'heal'); u.flapT = 0.3; sfx('heal'); }
-    else if (def.projectile === 'honk') { spawnProjectile(u, target, 'honk'); u.peckT = 0.25; sfx('honk', false); }
-    else if (def.projectile === 'egg') { spawnProjectile(u, target, 'egg'); u.flapT = 0.3; }
-    else if (def.heal) { spawnProjectile(u, target, 'pebble'); u.peckT = 0.25; }
-    else {
-      u.peckT = 0.25;
-      const crit = def.crit && Math.random() < def.crit + (u.critBonus || 0);
-      if (crit) sfx('crit');
-      damage(target, u.atk * (0.9 + Math.random() * 0.2) * (crit ? 2 : 1), { from: u, crit });
-    }
+    const attack = isHeal ? ATTACKS.heal : ATTACKS[def.attack || (def.projectile === 'honk' ? 'honk' : def.projectile === 'egg' ? 'egg' : def.heal ? 'pebble' : 'peck')];
+    attack(u, target);
     if (def.aura) u.flapT = 0.25;
   }
 }
@@ -1737,7 +1808,7 @@ function updateProjectiles(dt) {
       p.mesh.position.y = p.start.y * (1 - k) + Math.sin(k * Math.PI) * 1.4;
       p.mesh.rotation.x += dt * 8;
       if (k >= 1) {
-        scene.remove(p.mesh); projectiles.splice(i, 1);
+        scene.remove(p.mesh); disposeObject(p.mesh); projectiles.splice(i, 1);
         const radius = (p.from.def.splash || 1) * (p.from.splashMult || 1) * T;
         ringEffect(p.land, 0xfff2b0, radius, 0.4);
         puff(p.land, 0xfff8e6, 6, 0.8);
@@ -1755,7 +1826,7 @@ function updateProjectiles(dt) {
     const d = dir.length();
     const step = p.speed * dt;
     if (d <= step || p.to.dead) {
-      scene.remove(p.mesh);
+      scene.remove(p.mesh); disposeObject(p.mesh);
       projectiles.splice(i, 1);
       if (p.to.dead) continue;
       if (p.kind === 'heal') heal(p.to, p.amount, p.from);
@@ -1793,6 +1864,7 @@ function endBattle() {
     win = frac('player') >= frac('enemy');
   } else win = p > 0;
   if (win) wins++; else { hearts--; losses++; }
+  emit('battleEnd', { win });
   if (win) { const b = loadBook(); if (!b.hissMet) { b.hissMet = 1; store.set('book', JSON.stringify(b)); } }
 
   // Gold for next round
@@ -1826,7 +1898,8 @@ function endBattle() {
 
   if (!simulating) win ? sfx('win') : sfx('lose');
   stats.goldEarned += earned;
-  const next = () => { round++; gold += earned; if (PERK_ROUNDS.has(round)) showPerks(() => startRound()); else startRound(); };
+  const next = () => advanceRound(earned);
+  saveGame(earned);
 
   if (!endless && wins >= WINS_TO_WIN) {
     store.del('run');
@@ -1841,7 +1914,7 @@ function endBattle() {
       { label: 'Title screen', cls: 'blue', onClick: showTitle },
     ]);
   } else {
-    const capNext = Math.min(9, 4 + round + (has('roomy') ? 1 : 0));
+    const capNext = flockCapFor(round + 1);
     const extras = [];
     if (capNext > flockCap()) extras.push(`Your flock can now have <b>${capNext}</b> geese.`);
     const fresh = SHOP_TYPES.filter(t => TYPES[t].unlock === round + 1);
@@ -1886,7 +1959,7 @@ function leaveTitle() {
 }
 $('newBtn').onclick = () => {
   Sound.init(); sfx('click');
-  const champs = JSON.parse(store.get('champs') || '{}');
+  const champs = readJSON('champs', {});
   const list = $('modeList');
   list.innerHTML = '';
   for (const [key, m] of Object.entries(DIFFS)) {
@@ -1906,7 +1979,7 @@ $('bookClose').onclick = () => { sfx('click'); $('bookScreen').classList.remove(
 // ---------------------------------------------------------------------------
 // Goose Book: every goose you have owned (with the best level) or met in battle
 // ---------------------------------------------------------------------------
-function loadBook() { try { return JSON.parse(store.get('book') || '{}'); } catch (e) { return {}; } }
+function loadBook() { return readJSON('book', {}); }
 function noteBook(type, level, owned) {
   if (TYPES[type].hero) return;
   const b = loadBook();
@@ -1969,7 +2042,6 @@ $('howBtn').onclick = () => { Sound.init(); sfx('click'); $('howto').classList.t
 // ---------------------------------------------------------------------------
 // Main loop
 // ---------------------------------------------------------------------------
-let simulating = false;
 const clock = new THREE.Clock();
 let elapsed = 0;
 function tick() {
@@ -1983,6 +2055,7 @@ function tick() {
   placeCamera();
 
   if (phase === 'battle') stepBattle(dt);
+  emit('tick', dt);
   updateFeathers(realDt);
 
   for (const u of [...units]) {
@@ -2028,7 +2101,7 @@ function tick() {
     const k = f.t / f.life;
     f.mesh.scale.setScalar(1 + k * f.grow);
     f.mesh.material.opacity = 0.9 * (1 - k);
-    if (k >= 1) { scene.remove(f.mesh); effects.splice(i, 1); }
+    if (k >= 1) { scene.remove(f.mesh); disposeObject(f.mesh); effects.splice(i, 1); }
   }
 
   for (const c of clouds) { c.position.x += realDt * 0.4; if (c.position.x > 30) c.position.x = -30; }
@@ -2051,6 +2124,12 @@ window.addEventListener('resize', () => {
   fitCamera();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// ===== WORKSTREAM A (content & combat) additions go here =====
+
+// ===== WORKSTREAM B (meta & playtime) additions go here =====
+
+// ===== WORKSTREAM C (polish & feel) additions go here =====
 
 // Hooks for automated testing and balance simulation
 window.__game = {
