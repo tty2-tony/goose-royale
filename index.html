@@ -830,12 +830,7 @@ for (let i = 0; i < 6; i++) {
 // Feather particles
 // ---------------------------------------------------------------------------
 const featherGeo = new THREE.PlaneGeometry(0.09, 0.2);
-const featherMats = {};
 const feathers = [];
-function featherMat(color) {
-  if (!featherMats[color]) featherMats[color] = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true });
-  return featherMats[color];
-}
 function puff(pos, color, n = 4, power = 1) {
   if (simulating) return;
   for (let i = 0; i < n; i++) {
@@ -910,7 +905,7 @@ const MODEL_EXTRAS = {
     const dark = mat(0x1a1a1a);
     mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.015, 14), dark, neck, [0, 0.585, 0.03]);
     mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.13, 14), dark, neck, [0, 0.655, 0.03]);
-    mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 14), mat(0xffffff), neck, [0.085, 0.51, 0.115]);
+    mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 14), mat(0xffffff), neck, [0.115, 0.51, 0.16]);
   },
   bomber({ g, neck, mat, mesh, headTop }) {
     const lens = mat(0x9fd8f0, { emissive: 0x113344 });
@@ -940,6 +935,7 @@ const MODEL_EXTRAS = {
 const EYE_WHITE_GEO = new THREE.SphereGeometry(0.047, 10, 8);
 const EYE_PUPIL_GEO = new THREE.SphereGeometry(0.026, 8, 6);
 const EYE_WHITE_MAT = new THREE.MeshBasicMaterial({ color: 0xffffff });
+[EYE_WHITE_GEO, EYE_PUPIL_GEO, EYE_WHITE_MAT].forEach(o => { o.userData.shared = true; }); // disposeObject skips shared resources
 function makeGooseModel(type, team) {
   const def = TYPES[type];
   const root = new THREE.Group();
@@ -1098,8 +1094,8 @@ function createUnit(type, team, c, r, level = 1, opts = {}) {
 
 function disposeObject(obj) {
   obj.traverse(o => {
-    if (o.geometry) o.geometry.dispose();
-    if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => m.dispose());
+    if (o.geometry && !o.geometry.userData.shared) o.geometry.dispose();
+    if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (!m.userData.shared) m.dispose(); });
   });
 }
 function removeUnit(u) {
@@ -1953,9 +1949,11 @@ function stepBattle(dt) {
     return;
   }
   if (countdownStep !== -1) { countdownStep = -1; if (!simulating) { banner('HONK!', '', 700); sfx('go'); } }
-  for (const u of units) if (!u.dead && u.r !== -1) updateUnitAI(u, dt);
-  separate();
-  updateProjectiles(dt);
+  if (!endFx) { // the fight freezes during the victory/defeat moment so the result matches the banner
+    for (const u of units) if (!u.dead && u.r !== -1) updateUnitAI(u, dt);
+    separate();
+    updateProjectiles(dt);
+  }
   const over = !fighters('player').length || !fighters('enemy').length || battleTime > 60;
   if (over) { endTimer += dt; if (!simulating) startEndMoment(); if (endTimer > (simulating ? 1.2 : 1.2 + 1.5 * gameSpeed)) endBattle(); }
 }
@@ -2132,7 +2130,7 @@ function finishTutorial() { tutStep = -1; store.set('tut', 'done'); coach(null);
 $('coachSkip').onclick = finishTutorial;
 function tutorial(event) {
   if (tutStep < 0) return;
-  if (event === 'round' && round === 1 && tutStep === 0) { tutBuys = 0; coach(`Tap a goose in the shop to buy it. You have ${gold} gold.`); }
+  if (event === 'round' && round === 1 && tutStep === 0) { tutBuys = 0; coach(`${isTouchUser() ? 'Tap a goose in the shop to see it, then tap again to buy it.' : 'Tap a goose in the shop to buy it.'} You have ${gold} gold.`); }
   else if (event === 'buy' && tutStep <= 1) {
     tutBuys++;
     if (tutBuys === 1) { tutStep = 1; coach('Nice! Drag geese to move them. Tough geese go in front, ranged geese in the back.'); }
@@ -2321,6 +2319,7 @@ function lvlAssets() {
     glowGeo: new THREE.SphereGeometry(0.72, 14, 10),
     glowMat: new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false }),
   };
+  Object.values(LVL).forEach(o => { o.userData.shared = true; });
   return LVL;
 }
 function buildLevelFx(u) {
@@ -2693,7 +2692,7 @@ window.__game = {
   get phase() { return phase; }, get units() { return units; }, get gold() { return gold; }, set gold(v) { gold = v; renderShop(); },
   get round() { return round; }, get hearts() { return hearts; }, get wins() { return wins; }, get shop() { return shop; },
   get perks() { return perks; }, camera, buy, reroll, newGame, continueGame, showTitle, TYPES,
-  setShop(types) { shop = types.map(type => ({ type, sold: false })); renderShop(); },
+  setShop(types) { previewIdx = -1; shop = types.map(type => ({ type, sold: false })); renderShop(); },
   // Run the current battle instantly (no countdown, no rendering) and return the result
   simulate() {
     fightBtn.click();
