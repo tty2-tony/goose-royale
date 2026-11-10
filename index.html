@@ -1524,8 +1524,8 @@ function applyStats(u) {
   u.atk = def.atk * atkMult;
   u.speedMult = speedMult;
   u.healAmt = (def.heal || 0) * LEVEL_MULT[u.level - 1] * (u.team === 'player' && has('sharp') ? 1.15 : 1);
-  u.scale = def.scale * (1 + 0.14 * (u.level - 1)) * (u.boss ? 1.4 : 1);
-  u.radius = 0.34 * u.scale;
+  u.radius = 0.34 * def.scale * (1 + 0.14 * (u.level - 1)) * (u.boss ? 1.4 : 1); // body size for the battle rules
+  u.scale = def.scale * 0.86 * (1 + 0.08 * (u.level - 1)) * (u.boss ? 1.3 : 1); // drawn a little smaller so a full board stays readable
   u.splashMult = 1; u.critBonus = 0; u.auraRange = 2.2; u.luckyBonus = 0;
   resetCombat(u);
   u.group.scale.setScalar(u.scale);
@@ -3620,7 +3620,7 @@ function mergeGhost(u, keep) {
 }
 function mergeCeremony(keep) {
   if (simulating) return;
-  const oldF = 1 + 0.14 * (keep.level - 2), newF = 1 + 0.14 * (keep.level - 1);
+  const oldF = 1 + 0.08 * (keep.level - 2), newF = 1 + 0.08 * (keep.level - 1);
   keep.merge = { t: 0, from: oldF / newF, fired: false };
 }
 function stampStars(u) {
@@ -4442,6 +4442,22 @@ const syncRuleBox = force => {
 ruleToggle.onclick = () => { sfx('click'); syncRuleBox(!ruleBox.classList.contains('closed')); };
 $('newBtn').addEventListener('click', () => syncRuleBox(selRule === 'classic'));
 endlessBtn.addEventListener('click', () => syncRuleBox(selRule === 'classic'));
+// Benched geese turn see-through during a battle so they do not hide the front of the board
+function setGhost(u, on) {
+  u.ghost = on;
+  for (const m of u.mats) { m.transparent = on; m.opacity = on ? 0.28 : 1; m.depthWrite = !on; m.needsUpdate = true; }
+  for (const e of u.eyes || []) e.visible = !on;
+  if (u.lvlFx) u.lvlFx.visible = !on;
+  u.group.traverse(o => { if (!o.isMesh) return; if (on) { o.userData.cs = o.castShadow; o.castShadow = false; } else if (o.userData.cs !== undefined) o.castShadow = o.userData.cs; });
+  if (u.hudEl) u.hudEl.style.opacity = on ? 0 : '';
+}
+on('tick', () => {
+  const fighting = phase === 'battle' || phase === 'result';
+  for (const u of units) {
+    const want = fighting && u.team === 'player' && u.r === -1 && !u.dead;
+    if (!!u.ghost !== want) setGhost(u, want);
+  }
+});
 SVG.menu = '<path d="M3 5.5h18v2.8H3zm0 5.1h18v2.8H3zm0 5.1h18v2.8H3z"/>';
 initSaves();
 
