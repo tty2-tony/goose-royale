@@ -363,6 +363,23 @@
   }
 
   /* ===== WORKSTREAM C CSS ===== */
+  /* Rival tag: name, then the rule. One line on wide screens, stacked lines on phones */
+  #rivalTag .rrule::before { content: ": "; }
+  #rivalTag .rrule { font-weight: 400; }
+  #rivalTag .prule { display: none; }
+  @media (max-width: 760px) {
+    #rivalTag { white-space: normal; overflow: visible; max-width: calc(100vw - 116px); line-height: 1.2; padding: 3px 8px; font-size: 13px; }
+    #rivalTag b, #rivalTag .rrule { display: block; }
+    #rivalTag .rrule::before { content: none; }
+    #rivalTag .prule { display: block; font-weight: 600; color: #ffe08a; }
+    #bonds { top: calc(158px + env(safe-area-inset-top, 0px)); }
+  }
+  @media (max-height: 540px) and (min-width: 600px) {
+    #rivalTag { white-space: nowrap; max-width: none; }
+    #rivalTag b, #rivalTag .rrule { display: inline; }
+    #rivalTag .rrule::before { content: ": "; }
+    #rivalTag .prule { display: none; }
+  }
   /* Bigger small text */
   .pill small { font-size: 13px; }
   .card .role, .card .mini { font-size: 13px; }
@@ -371,6 +388,7 @@
   #info .role, #info .bondtip, #bonds .bh, #bonds { font-size: 13px; }
   #help .tip, .legend { font-size: 14px; }
   .bookcard .meta, .mode .won { font-size: 13px; }
+  .bookcard .meta { letter-spacing: 0.4px; }
   #camctl { font-size: 14px; }
   #reroll span { font-size: 14px; }
   /* Help panel folds away after the first game; the ? button brings it back */
@@ -404,6 +422,8 @@
     #bonds { font-size: 13px; }
   }
   @media (max-width: 480px) {
+    .card .gs { display: none; }
+    .card .name { font-size: 11px; letter-spacing: -0.5px; text-overflow: clip; margin: 0 -2px; }
     .card.sold { flex: 0 0 38px; width: 38px; }
     #topbar { gap: 4px; padding: 5px 4px; }
     #topbar button.big { padding: 5px 8px; }
@@ -1406,7 +1426,9 @@ function updateTopbar() {
   fe.title = 'Golden Feathers: ' + perks.map(p => PERKS[p].name).join(', ');
   renderBonds();
   const rt = $('rivalTag');
-  rt.textContent = `Round ${round} vs ${rivalName()}: ${rivalFor(round).rule}`; rt.title = rt.textContent;
+  const prule = typeof rulePill !== 'undefined' && !rulePill.hidden ? rulePill.textContent.replace(/\s+/g, ' ').trim() : '';
+  rt.innerHTML = `<b>Round ${round} vs ${rivalName()}</b><span class="rrule">${rivalFor(round).rule}</span>${prule ? `<span class="prule">Pond rule: ${prule}</span>` : ''}`;
+  rt.title = rt.textContent;
   rt.classList.toggle('boss', isBoss());
 }
 $('feathers').onclick = () => toast(perks.map(p => PERKS[p].name).join(' + ') || 'No Golden Feathers yet');
@@ -1437,7 +1459,7 @@ function renderShop() {
     const badge = owned >= 2 ? '<div class="badge merge">MERGE!</div>' : owned === 1 ? '<div class="badge">1 owned</div>' : fresh ? '<div class="badge fresh">NEW</div>' : '';
     el.innerHTML = `${badge}<div class="cost">${d.cost}g</div>
       ${roleIcon(d.role)}
-      <div class="name">${d.name}</div><div class="role" style="color:${roleInk(d.role)}">${d.role}</div>
+      <div class="name">${d.name.replace(/ Goose$/, '<span class="gs"> Goose</span>')}</div><div class="role" style="color:${roleInk(d.role)}">${d.role}</div>
       <div class="mini">HP ${d.hp} &middot; ATK ${d.atk}</div>`;
     el.onclick = () => {
       if (isTouchUser() && phase === 'setup' && previewIdx !== i) { previewIdx = i; sfx('click'); renderShop(); showInfo(item.type); return; }
@@ -1785,7 +1807,7 @@ function showInfo(type, u) {
   infoEl.innerHTML = `<div class="head">${roleIcon(d.role, 36)}<div>
       <div class="role" style="color:${roleInk(d.role)}">${d.role}${lvl}${side}</div><h3>${u && u.boss ? 'BOSS ' : ''}${d.name}</h3></div></div>
     <div class="stats"><span>HP ${hpText}</span><span>ATK ${atk}</span><span>${d.range > 1 ? 'Ranged' : 'Melee'}</span></div>
-    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}</div>` : ''}${sellBtn}`;
+    <div class="desc">${d.desc}</div>${BONDS[d.role] ? `<div class="bondtip">${roleIcon(d.role, 16)} Flock bonus: 2 ${BONDS[d.role].plural} = ${BONDS[d.role].text}. 4 = ${BONDS[d.role].text4}.</div>` : ''}${sellBtn}`;
   const sb = $('sellBtn');
   if (sb) sb.onclick = () => { const v = selected; if (!confirmSell(v, sb)) return; selected = null; sell(v); showInfo(null); };
   infoEl.style.display = 'block';
@@ -2328,7 +2350,7 @@ function showBook() {
     const lvl = t === 'hiss' ? 0 : Math.floor(v);
     const stars = t === 'hiss' ? '' : `<div class="stars" title="Best level">${[1, 2, 3].map(i => svg('star', i <= lvl ? '' : 'class="off"')).join('')}</div>`;
     return `<div class="bookcard"><div class="top">${roleIcon(d.role, 34)}<div><h3>${d.name}</h3>
-      <div class="meta" style="color:${ROLES[d.role].color}">${d.role}${d.cost ? ' &middot; ' + d.cost + ' gold' : ''}</div></div></div>
+      <div class="meta" style="color:${roleInk(d.role)}">${d.role}${d.cost ? ' &middot; ' + d.cost + ' gold' : ''}</div></div></div>
       ${stars}<div class="desc">${lvl === 0 && t !== 'hiss' ? 'Met in battle. Buy one to add it to your flock!' : d.desc}</div></div>`;
   }).join('');
   $('bookCount').textContent = `You have found ${found} of ${list.length} geese. Merge geese to earn stars.`;
@@ -3455,6 +3477,64 @@ on('unitCreated', faceCamera);
 on('roundStart', () => { clearEndMoment(); previewIdx = -1; sellArm = null; playerUnits().forEach(faceCamera); });
 on('battleStart', () => { for (const u of playerUnits()) u.facing = Math.PI; });
 
+// --- Status looks for A's combat effects (stun, slow, shield, hatch). Read-only: they only look at A's fields.
+let FXA = null;
+function fxAssets() {
+  if (FXA) return FXA;
+  FXA = {
+    starGeo: new THREE.OctahedronGeometry(0.1), starMat: new THREE.MeshBasicMaterial({ color: 0xffe14d }),
+    shieldGeo: new THREE.SphereGeometry(0.62, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2),
+    shieldMat: new THREE.MeshBasicMaterial({ color: 0x6fb4ff, transparent: true, opacity: 0.45, depthWrite: false, side: THREE.DoubleSide }),
+  };
+  Object.values(FXA).forEach(o => { o.userData.shared = true; });
+  return FXA;
+}
+function statusFx(u, realDt) {
+  const a = fxAssets();
+  // Dizzy stars circle over a stunned goose
+  const dizzy = u.stunT > 0;
+  if (dizzy && !u.stunFx) {
+    const grp = new THREE.Group();
+    for (let i = 0; i < 3; i++) { const m = new THREE.Mesh(a.starGeo, a.starMat); m.raycast = () => {}; grp.add(m); }
+    grp.position.y = 1.25; u.group.add(grp); u.stunFx = grp;
+  }
+  if (u.stunFx) {
+    u.stunFx.visible = dizzy;
+    if (dizzy) u.stunFx.children.forEach((m, i) => { const ang = elapsed * 5 + i * 2.094; m.position.set(Math.cos(ang) * 0.3, Math.sin(elapsed * 8 + i) * 0.03, Math.sin(ang) * 0.3); m.rotation.y = ang * 2; });
+  }
+  // Slowed by a snowball: pale blue tint and a little frost
+  if (u.slowT > 0) {
+    for (const m of u.mats) if (u.flashT <= 0) m.emissive.setRGB(0.1, 0.3, 0.5);
+    u.frostT = (u.frostT || 0) - realDt;
+    if (u.frostT <= 0) { u.frostT = 0.45; puff(u.group.position, 0xd8f2ff, 1, 0.4); }
+  }
+  // Guard Goose shield flash when she is hit; also when a cattail block uses up
+  const hurt = u.def.guard && u.hitNow, blocked = u.lastBlocks !== undefined && u.blocks < u.lastBlocks;
+  u.lastBlocks = u.blocks; u.hitNow = false;
+  if (hurt || blocked) {
+    if (!u.shieldFx) { u.shieldFx = new THREE.Mesh(a.shieldGeo, a.shieldMat.clone()); u.shieldFx.material.userData.shared = false; u.shieldFx.raycast = () => {}; u.shieldFx.position.y = 0.1; u.group.add(u.shieldFx); }
+    u.shieldT = 0.3;
+  }
+  if (u.shieldFx) {
+    u.shieldT = Math.max(0, (u.shieldT || 0) - realDt);
+    u.shieldFx.visible = u.shieldT > 0;
+    u.shieldFx.material.opacity = 0.6 * (u.shieldT / 0.3);
+    u.shieldFx.scale.setScalar(1 + (1 - u.shieldT / 0.3) * 0.15);
+  }
+  // Gosling hatching: shell bits and a pop
+  if (u.def.summon && u.hatchT === undefined && phase === 'battle') {
+    u.hatchT = 0;
+    puff(u.group.position, 0xfff3d6, 6, 0.9); puff(u.group.position, 0xffe066, 3, 0.7);
+    ringEffect(u.group.position, 0xfff3d6, 0.7, 0.4);
+  }
+  if (u.hatchT !== undefined && u.hatchT < 0.4) {
+    u.hatchT += realDt;
+    const k = Math.min(1, u.hatchT / 0.4);
+    return 0.2 + 0.8 * (1 + 2.7 * Math.pow(k - 1, 3) + 1.7 * Math.pow(k - 1, 2));
+  }
+  return 1;
+}
+
 // --- Per-goose animation (called from tick after the core animation). Only touches inner/neck/eyes and small offsets.
 function polishUnit(u, dt, realDt) {
   const inner = u.inner, g = u.group;
@@ -3486,7 +3566,7 @@ function polishUnit(u, dt, realDt) {
   // Lunge on a peck
   if (u.peckT > 0) oz += Math.sin((u.peckT / 0.25) * Math.PI) * 0.2;
   // Squash and knockback when hit
-  if (u.lastHp !== undefined && u.hp < u.lastHp - 0.01) u.hitT = 0.3;
+  if (u.lastHp !== undefined && u.hp < u.lastHp - 0.01) { u.hitT = 0.3; u.hitNow = true; }
   u.lastHp = u.hp;
   if (u.hitT > 0) {
     u.hitT = Math.max(0, u.hitT - realDt);
@@ -3526,6 +3606,7 @@ function polishUnit(u, dt, realDt) {
     }
   }
   if (flash > 0) for (const m of u.mats) m.emissive.setRGB(flash * 0.9, flash * 0.9, flash * 0.9);
+  pop *= statusFx(u, realDt);
   // Idle head tilt and looking around
   if (u.tiltT === undefined) u.tiltT = 2 + Math.random() * 5;
   u.tiltT -= realDt;
