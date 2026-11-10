@@ -2724,7 +2724,7 @@ function startDaily() { const t = todayKey(); newGame('normal', { rule: dailyRul
 
 // Rival names for rounds past the end of the RIVALS list (the same round always gets the same name)
 const RIVAL_ADJ = ['Soggy', 'Grumpy', 'Sneaky', 'Mighty', 'Stormy', 'Muddy', 'Frosty', 'Fancy', 'Rowdy', 'Sleepy', 'Prickly', 'Thundering'];
-const RIVAL_NOUN = ['Mallards', 'Marsh Mob', 'Reed Raiders', 'Pond Patrol', 'Puddle Crew', 'Bog Brigade', 'Creek Crashers', 'Lagoon Legion', 'Drizzle Gang', 'Cattail Clan'];
+const RIVAL_NOUN = ['Mallards', 'Marsh Mob', 'Reed Raiders', 'Pond Patrol', 'Puddle Crew', 'Bog Brigade', 'Creek Crashers', 'Lagoon Legion', 'Drizzle Gang', 'Splash Squad'];
 function endlessRivalName(r) {
   const adj = RIVAL_ADJ[hashStr('adj' + r) % RIVAL_ADJ.length];
   return isBoss() ? `Hiss's ${adj} Guard` : `The ${adj} ${RIVAL_NOUN[hashStr('noun' + r) % RIVAL_NOUN.length]}`;
