@@ -1151,6 +1151,7 @@ function bondCounts(team) {
   for (const u of units) if (u.team === team && u.r >= 0 && !u.def.hero && !u.def.summon && BONDS[u.def.role]) counts[u.def.role] = (counts[u.def.role] || 0) + 1;
   return counts;
 }
+let bondSig = '';
 const bondTier = n => (n >= 4 ? 2 : n >= 2 ? 1 : 0);
 // Recomputes every goose from its base stats first, so bonuses never stack. Runs at battle start, and during
 // setup (from renderBonds) so the info panel shows HP/ATK with the active bonuses.
@@ -1168,7 +1169,11 @@ function applyBonds() {
 }
 function renderBonds() {
   const el = $('bonds');
-  if (phase === 'setup') applyBonds();
+  if (phase === 'setup') {
+    // Skip the recompute when nothing that affects stats changed since the last one
+    const sig = round + '|' + perks.join() + '|' + units.map(u => `${u.id}.${u.level}.${u.r >= 0 ? 1 : 0}`).join();
+    if (sig !== bondSig) { bondSig = sig; applyBonds(); }
+  } else bondSig = '';
   const counts = bondCounts('player');
   const roles = Object.keys(counts);
   el.hidden = !roles.length || phase === 'title';
@@ -2388,7 +2393,7 @@ function shieldDamage(target, amount, opts) {
 
 // Called from damage() after a hit: Mother Goose hatches goslings the first time she drops below half health.
 function afterHurt(target) {
-  if (!target.def.goslings || target.hatched || target.hp >= target.maxHp / 2 || phase !== 'battle') return;
+  if (!target.def.goslings || target.hatched || target.hp <= 0 || target.hp >= target.maxHp / 2 || phase !== 'battle') return;
   target.hatched = true;
   const have = units.filter(u => u.def.summon && u.team === target.team).length;
   const n = Math.min(target.def.goslings[target.level - 1] + (target.goslingBonus || 0), GOSLING_MAX - have);
